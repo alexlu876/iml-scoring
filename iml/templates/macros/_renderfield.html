@@ -1,0 +1,57 @@
+{% macro render_field(field) %}
+    {# casework #}
+    {% if field.type in ["DateTimeField", "IntegerField", "StringField", "PasswordField", "SelectField", "EmailField"] %}
+                {{ field.label }}
+                {{ field(class="full-width")|safe }}
+            {% if (field.errors|length) != 0 %}
+                <ul class="error-list">
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+    {% endif %}
+    {% if field.type == "TextAreaField" %}
+                {{ field.label }}
+                {{ field(class="u-full-width")|safe }}
+            {% if (field.errors|length) != 0 %}
+                <ul class="error-list">
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+    {% endif %}
+    {% if field.type == "SubmitField" %}
+        <div class="row">
+            <div class = "four columns"><br></div>
+            <div class="four columns">
+                {{ field(class="full-width")|safe }}
+            </div>
+            <div class = "four columns"><br></div>
+        </div>
+    {% endif %}
+    {% if field.type == "FileField" %}
+                {{ field.label }}
+                {{ field(class="full-width")|safe }}
+            {% if (field.errors|length) != 0 %}
+                <ul class="error-list">
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+    {% endif %}
+    {% if field.type in ["SelectMultipleField", "MultiCheckboxField"] %}
+                {{ field.label }}
+                {{ field(class="multiselect", rows=6, multiple=True)|safe }}
+            {% if (field.errors|length) != 0 %}
+                <ul class="error-list">
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+    {% endif %}
+    <br>
+{% endmacro %}
