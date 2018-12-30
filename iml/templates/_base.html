@@ -11,7 +11,13 @@
 
 
         <!-- css -->
-        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'mdc.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'vendor/mdc.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'vendor/normalize.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'css/mdc-theme.css')}}">
+
+        <link href="https://fonts.googleapis.com/css?family=Merriweather|Noto+Serif+SC" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         
         {% block css_imports %}
         {% endblock css_imports %}
@@ -22,7 +28,7 @@
     <body>
         <aside class="mdc-drawer mdc-drawer--modal">
             <div class="mdc-drawer__header" style="margin-bottom: 25px;">
-                <h3 class="mdc-drawer__title"> Jabroni</h3>
+                <h3 class="mdc-drawer__title">IML Scores</h3>
             </div>
 
             <div class="mdc-drawer__content">
@@ -35,14 +41,32 @@
                 </nav>
             </div>
         </aside> 
-    </body>
+        <div class="mdc-drawer-scrim"></div>
+
+        <header class="mdc-top-app-bar" id="app-bar">
+            <div class="mdc-top-app-bar__row">
+                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                    <a href="#" class="material-icons mdc-top-app-bar__navigation-icon">menu</a>
+                    <span class="mdc-top-app-bar__title">IML Scores</span>
+                </section>
+                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+                    <a href="/" class="material-icons mdc-top-app-bar__action-item" aria-label="Download" alt="Download">home</a>
+                </section>
+            </div>
+        </header>
     <main>
+        <div style="padding-top:100px"></div>
         {% block below_nav %}
-        <div style="margin-top:50px"></div>
         {% endblock below_nav %}
         <div>
             {% block content %}
             {% endblock content%}
         </div>
     </main>
+
+    <!-- javascript -->
+    <script type="text/javascript" src="{{ url_for('static', filename='vendor/jquery.js') }}"></script>
+    <script type="text/javascript" src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/mdc-nav.js') }}"></script>
+    </body>
 </html>
