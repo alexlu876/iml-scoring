@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+
+
+<html>
+    <head>
+        <meta charset = "UTF-8">
+        <meta name = "author" content = "Alex Lu, Gilvir Gill, Haiyao Liu, Datian Zhang, Andrew Chen">
+        <meta name = "viewport" content = "width=device-width, initial-scale=0.8">
+        <meta name = "mobile-web-app-capable" content="yes">
+        <title>IML Scoring</title>
+
+
+        <!-- css -->
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'mdc.css')}}">
+        
+        {% block css_imports %}
+        {% endblock css_imports %}
+        <!-- end css -->
+    </head>
+
+
+    <body>
+        <aside class="mdc-drawer mdc-drawer--modal">
+            <div class="mdc-drawer__header" style="margin-bottom: 25px;">
+                <h3 class="mdc-drawer__title"> Jabroni</h3>
+            </div>
+
+            <div class="mdc-drawer__content">
+                <nav class="mdc-list">
+                    <hr class="mdc-list-divider">
+                    <a class="mdc-list-item mdc-list-item--activated" href="/">
+                        <i class="material-icons mdc-list-item__graphic" aria-hidden="true">home</i>
+                        Home
+                    </a>                   
+                </nav>
+            </div>
+        </aside> 
+    </body>
+    <main>
+        {% block below_nav %}
+        <div style="margin-top:50px"></div>
+        {% endblock below_nav %}
+        <div>
+            {% block content %}
+            {% endblock content%}
+        </div>
+    </main>
+</html>
