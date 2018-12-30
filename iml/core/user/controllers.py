@@ -6,3 +6,7 @@ user = Blueprint("user", __name__)
 @user.route("/login")
 def login():
     return render_template("temp.html")
+
+@user.route('/questions')
+def question():
+    return render_template("question.html")

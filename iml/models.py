@@ -20,20 +20,20 @@ class User(db.Model):
 
     def checkPassword(self, password):
         return bcrypt.checkpw(password.encode("utf-8"), self.password)
-    
-        
 
-    
+
+
+
 
 class Student(db.Model):
-    __tablename __ = 'students'
+    __tablename__ = 'students'
 
     id = db.Column(db.Integer, primary_key=True)
     first = db.Column(db.String(32), nullable=False)
     last = db.Column(db.String(32), nullable=False)
     division = db.Column(db.String(32), nullable=False)
     pubid = db.Column(db.String(32), nullable=False)
-  
+
 
 
 
@@ -57,5 +57,3 @@ class Contest(db.Model):
     name = db.Column(db.String(32), nullable=False)
     date = db.Column(db.Date(), nullable=False)
     question_count = db.Column(db.Integer, nullable=False)
-
-
