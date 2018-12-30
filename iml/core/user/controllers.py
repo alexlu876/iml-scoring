@@ -9,7 +9,7 @@ user = Blueprint("user", __name__)
 
 @user.route("/login")
 def login():
-    return render_template("temp.html")
+    return render_template("core/user/temp.html")
 
 @user.route('/questions')
 def question():
