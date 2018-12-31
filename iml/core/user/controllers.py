@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
 from iml.models import User
-from iml.forms import LoginForm
+from iml.forms import LoginForm, RegisterForm
 
 
 questions = ["what is 3 + 5?", "what is 9 + 10?"]
@@ -31,7 +31,7 @@ def login():
                 }
                 session.permanent = True
                 flash("Login Successful!", "success")
-                return redirect('/home')
+                return redirect('/')
             else:
                 flash("Email and password do not match!", "error")
         else:
@@ -42,7 +42,25 @@ def login():
                            title="IML Scoring | Login",
                            loginForm = loginForm,
                            )
-
+@user.route('/register', methods=["GET", "POST"])
+def register():
+	user = None
+	registerForm = RegisterForm()
+	
+	if registerForm.validate_on_submit() and registerForm.submit.data:
+		email = registerForm.email.data
+		password = registerForm.password.data
+	
+		user = User("d", "c", email, "4204206969", "dc", password, False)
+		flash("succ cess", "success")
+		return redirect('/login')
+	
+	
+	return render_template("core/user/register.html",
+							user=user,
+							title="IML Scoring | Register",
+							registerForm = registerForm,
+							)
 
 @user.route('/questions')
 def question():

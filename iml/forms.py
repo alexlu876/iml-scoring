@@ -14,3 +14,15 @@ class LoginForm(FlaskForm):
                               validators.Length(min=3,
                                                 max=25)])
     submit = SubmitField("Login")
+	
+	
+class RegisterForm(FlaskForm):
+	email = StringField("Email: ",
+                        [validators.DataRequired(),
+                         validators.Length(min=3,
+                                           max=25)])
+	password = PasswordField("Password: ",
+                             [validators.DataRequired(),
+                              validators.Length(min=3,
+                                                max=25)])
+	submit = SubmitField("Register")

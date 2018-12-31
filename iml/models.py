@@ -24,6 +24,8 @@ class User(db.Model):
         self.is_admin = isAdmin
         self.username = username
         self.setPassword(password)
+        db.session.add(self)
+        db.session.commit()
 
     def setPassword(self, newpass):
         self.password = bcrypt.hashpw(newpass.encode("utf-8"),
