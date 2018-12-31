@@ -8,6 +8,7 @@ from iml.config import DATABASE_TYPE, SQLITE_FILE_NAME
 from iml.config import SQLALCHEMY_TRACK_MODIFICATIONS, APP_SECRET_KEY, SESSION_TYPE
 from iml.database import db
 from iml.core.user.controllers import user
+from iml.models import User
 
 import os
 
@@ -49,7 +50,24 @@ with app.app_context():
 
 migrate = Migrate(app, db)
 
+
+# test account
+
+with app.app_context():
+    if not User.query.filter_by(username="admin").first():
+        sampleAdmin = User(first="Bank of",
+                           last="America",
+                           email="ayy@lmao.com",
+                           phone_num="1877CARS",
+                           username="admin",
+                           password="password",
+                           isAdmin=True
+                           )
+        db.session.add(sampleAdmin)
+        db.session.commit()
+
 ### TEMPORARY ROUTER CHECKER ###
+
 
 
 @app.route('/')

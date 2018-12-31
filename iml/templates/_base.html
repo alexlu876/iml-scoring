@@ -43,6 +43,7 @@
         </aside> 
         <div class="mdc-drawer-scrim"></div>
 
+        {% block navbar %}
         <header class="mdc-top-app-bar" id="app-bar">
             <div class="mdc-top-app-bar__row">
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
@@ -54,8 +55,18 @@
                 </section>
             </div>
         </header>
+        {% endblock navbar %}
     <main>
         <div style="padding-top:100px"></div>
+        <!-- Unformatted Flashes -->
+        {% with flashes = get_flashed_messages(with_categories=True) %}
+            {% if flashes %}
+                {% for category, message in flashes %}
+                <div>{{message}}</div>
+                <br>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         {% block below_nav %}
         {% endblock below_nav %}
         <div>

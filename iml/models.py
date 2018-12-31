@@ -10,11 +10,20 @@ class User(db.Model):
     first = db.Column(db.String(32), nullable=False)
     last = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), nullable=False)
-    phone = db.Column(db.String(32), nullable=False)
+    phone_num = db.Column(db.String(32), nullable=False)
     # school = ??
     username = db.Column(db.String(32), nullable=False)
     password = db.Column(db.Binary(60), nullable=False)
-    admin = db.Column(db.Boolean, nullable=False)
+    is_admin = db.Column(db.Boolean, nullable=False)
+
+    def __init__(self, first, last, email, phone_num, username, password, isAdmin):
+        self.first = first
+        self.last = last
+        self.email = email
+        self.phone_num = phone_num
+        self.is_admin = isAdmin
+        self.username = username
+        self.setPassword(password)
 
     def setPassword(self, newpass):
         self.password = bcrypt.hashpw(newpass.encode("utf-8"),
