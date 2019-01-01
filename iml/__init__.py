@@ -68,11 +68,4 @@ with app.app_context():
 
 ### TEMPORARY ROUTER CHECKER ###
 
-
-
-@app.route('/')
-def hello_j():
-    return render_template('temp.html', X=request.remote_addr)
-
-
 app.register_blueprint(user, url_prefix="")

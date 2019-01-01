@@ -8,10 +8,11 @@ answers = ["8", "21"]
 index = 0
 
 user = Blueprint("user", __name__)
-
+login = False
 
 @user.route("/login", methods=["GET", "POST"])
 def login():
+    global login
     user = None
     loginForm = LoginForm()
 
@@ -30,6 +31,7 @@ def login():
                     "email": user.email,
                 }
                 session.permanent = True
+                login = True
                 flash("Login Successful!", "success")
                 return redirect('/')
             else:
@@ -96,9 +98,11 @@ def get_session():
 
 @user.route('/logout')
 def logout():
+    global login
     session.clear()
     flash("You have been logged out!", "message")
-    return redirect('/')
+    login = False
+    return redirect('/login')
 
 competition = [
     {
@@ -125,4 +129,11 @@ competition = [
 ]
 @user.route('/info')
 def info():
-    return render_template('data.html', competition = competition)
+    return render_template('data.html', competition = competition, user = user)
+
+@user.route('/')
+@user.route('/index')
+def index():
+    if(login == False):
+        return render_template('index.html',X=request.remote_addr)
+    return render_template('index.html', X=request.remote_addr, user = user)

@@ -8,15 +8,31 @@
     style="width:100%;height:32px;background-color:#00b894;opacity: 1.0;"
   ></div>
   <div class="mdc-card__media"></div>
-
+  {% if user %}
+  <a class="mdc-list-item mdc-list-item--activated" href="/logout"
+    >Logout</a
+  >
+  {% else %}
   <a class="mdc-list-item mdc-list-item--activated" href="/register"
     >Register</a
   >
   <a class="mdc-list-item mdc-list-item--activated" href="/login"> Login </a>
+  {% endif %}
+
   <div
     style="width:100%;height:32px;background-color:#00b894;opacity: 1.0;"
   ></div>
+
   <div class="mdc-card__media"></div>
-  <h2>Homepage Jabroni</h2>
+  <h2>Homepage J</h2>
+
+  <div
+    style="width:100%;height:32px;background-color:#00b894;opacity: 1.0;"
+  ></div>
+  
+  <a class="mdc-list-item mdc-list-item--activated" href="/info"
+    >Competition data</a
+  >
+
 </div>
 {% endblock %}
