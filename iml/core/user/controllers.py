@@ -46,16 +46,16 @@ def login():
 def register():
 	user = None
 	registerForm = RegisterForm()
-	
+
 	if registerForm.validate_on_submit() and registerForm.submit.data:
 		email = registerForm.email.data
 		password = registerForm.password.data
-	
+
 		user = User("d", "c", email, "4204206969", "dc", password, False)
 		flash("succ cess", "success")
 		return redirect('/login')
-	
-	
+
+
 	return render_template("core/user/register.html",
 							user=user,
 							title="IML Scoring | Register",
@@ -99,3 +99,30 @@ def logout():
     session.clear()
     flash("You have been logged out!", "message")
     return redirect('/')
+
+competition = [
+    {
+        'name' : 'Datian Zhang',
+        'score' : {'Q1' : '1',
+                   'Q2' : '1' }
+    },
+    {
+        'name' : 'Alex Lu',
+        'score' : '0'
+    },
+    {
+        'name' : 'Andrew Chen',
+        'score' : '0'
+    },
+    {
+        'name' : 'Gilvir Gill',
+        'score' : '0'
+    },
+    {
+        'name' : 'Haiyao Uil',
+        'score' : '0'
+    }
+]
+@user.route('/info')
+def info():
+    return render_template('data.html', competition = competition)
