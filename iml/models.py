@@ -12,7 +12,7 @@ class User(db.Model):
     email = db.Column(db.String(64), nullable=False)
     phone_num = db.Column(db.String(32), nullable=False)
     username = db.Column(db.String(32), nullable=False)
-    password = db.Column(db.Binary(60), nullable=False)
+    password_hash = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, nullable=False)
     approval_status = db.Column(db.Integer)
     school_id = db.Column(db.Boolean, db.ForeignKey('schools.id'))
@@ -32,11 +32,11 @@ class User(db.Model):
         db.session.commit()
 
     def setPassword(self, newpass):
-        self.password = bcrypt.hashpw(newpass.encode("utf-8"),
+        self.password_hash = bcrypt.hashpw(newpass.encode("utf-8"),
                                       bcrypt.gensalt(12))
 
     def checkPassword(self, password):
-        return bcrypt.checkpw(password.encode("utf-8"), self.password)
+        return bcrypt.checkpw(password.encode("utf-8"), self.password_hash)
 
 
 class Student(db.Model):
