@@ -35,5 +35,5 @@ class RegisterForm(FlaskForm):
                          validators.Email()],)
 
     new_school = StringField("School (If not in Dropdown)")
-    old_school = SelectField("School: ", choices= [('Stuyvesant'), ('Stuyvesant')]
+    old_school = SelectField("School: ", choices= [('Stuyvesant'), ('Stuyvesant')])
     submit = SubmitField("Register")
