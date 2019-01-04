@@ -2,10 +2,12 @@ from flask import Blueprint, render_template, session, request, redirect, flash,
 from iml.database import db
 from iml.models import User, Student
 from iml.forms import StudentForm
+from iml.core.user.wrappers import login_required
 
 students = Blueprint("students", __name__)
 
-@students.route('/addStudents', methods = ["GET","POST"])
+@students.route('/add_student', methods = ["GET","POST"])
+@login_required()
 def addStudents():
     studentForm = StudentForm()
 
@@ -26,7 +28,7 @@ def addStudents():
         else:
             flash("username already taken!")
 
-        return redirect('/addStudents')
+        return redirect('/add_students')
     return render_template("core/students/addStudents.html",
                            title="Add a student",
                            studentForm = studentForm

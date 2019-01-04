@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, session, request, redirect, flash,
 from iml.database import db
 from iml.models import User, School
 from iml.forms import LoginForm, RegisterForm
+from iml.core.user.wrappers import login_required, login_forbidden
 
 
 questions = ["what is 3 + 5?", "what is 9 + 10?"]
@@ -12,8 +13,8 @@ user = Blueprint("user", __name__)
 login = False
 
 @user.route("/login", methods=["GET", "POST"])
+@login_forbidden()
 def login():
-    global login
     user = None
     loginForm = LoginForm()
 
@@ -32,7 +33,6 @@ def login():
                     "email": user.email,
                 }
                 session.permanent = True
-                login = True
                 flash("Login Successful!", "success")
                 return redirect('/')
             else:
@@ -46,6 +46,7 @@ def login():
                            loginForm = loginForm,
                            )
 @user.route('/register', methods=["GET", "POST"])
+@login_forbidden()
 def register():
     user = None
     registerForm = RegisterForm()
