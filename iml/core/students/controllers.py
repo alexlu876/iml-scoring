@@ -14,13 +14,18 @@ def addStudents():
             username=studentForm.username.data
         ).first()
         if newStudent is None:
+            school_id = User.query.filter_by(id = session["userdata"]["id"]).first().school_id
+
             newStudent = Student(first=studentForm.first.data,
                                  last= studentForm.last.data,
                                  username=studentForm.username.data,
-                                 school_id = User.query.filter_by(id = db.session["userdata"]["id"].first())
+                                 school_id = school_id
                                  )
+            db.session.add(newStudent)
+            db.session.commit()
         else:
             flash("username already taken!")
+
         return redirect('/addStudents')
     return render_template("core/students/addStudents.html",
                            title="Add a student",
