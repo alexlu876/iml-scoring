@@ -17,8 +17,12 @@
         <div class = "mdc-layout-grid">
             <div class="mdc-layout-grid__inner">
                 <div class="mdc-layout-grid__cell">
+                    {{ render_field(registerForm.first)}}
+                    {{ render_field(registerForm.last)}}
+                    {{ render_field(registerForm.phone_num)}}
                     {{ render_field(registerForm.email) }}
                     {{ render_field(registerForm.password) }}
+                    {{ render_field(registerForm.new_school) }}
                     {{ render_field(registerForm.submit) }}
                 </div>
                 <div class="mdc-layout-grid__cell"></div>

@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
-from iml.models import User
+from iml.database import db
+from iml.models import User, School
 from iml.forms import LoginForm, RegisterForm
 
 
@@ -46,23 +47,37 @@ def login():
                            )
 @user.route('/register', methods=["GET", "POST"])
 def register():
-	user = None
-	registerForm = RegisterForm()
+    user = None
+    registerForm = RegisterForm()
 
-	if registerForm.validate_on_submit() and registerForm.submit.data:
-		email = registerForm.email.data
-		password = registerForm.password.data
+    if registerForm.validate_on_submit() and registerForm.submit.data:
+        # TODO - uniqueness check, append numbers
+        username = registerForm.first.data[0]+registerForm.last.data
+        user = User(first=registerForm.first.data,
+                    last=registerForm.last.data,
+                    email=registerForm.email.data,
+                    phone_num=registerForm.phone_num.data,
+                    username=username,
+                    password=registerForm.password.data,
+                    is_admin=False)
+        # create a new school object or nah?
+        if True:
+            school = School(name=registerForm.new_school.data)
+        else:
+            pass
+        user.school = school
+        db.session.add(user)
+        db.session.add(school)
+        db.session.commit()
+        flash("succ cess", "success")
+        return redirect('/login')
 
-		user = User("d", "c", email, "4204206969", "dc", password, False)
-		flash("succ cess", "success")
-		return redirect('/login')
 
-
-	return render_template("core/user/register.html",
-							user=user,
-							title="IML Scoring | Register",
-							registerForm = registerForm,
-							)
+    return render_template("core/user/register.html",
+                           user=user,
+                           title="IML Scoring | Register",
+                           registerForm = registerForm,
+                           )
 
 @user.route('/questions')
 def question():
@@ -91,10 +106,12 @@ def end():
 
 @user.route('/session_info')
 def get_session():
-    return jsonify(
-        {"userdata": session["userdata"],
-         "status" : session["status"]
-         })
+    if session.get("userdata") and session.get("status"):
+        return jsonify(
+            {"userdata": session["userdata"],
+             "status" : session["status"]
+             })
+    return jsonify({})
 
 @user.route('/logout')
 def logout():

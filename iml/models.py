@@ -12,7 +12,7 @@ class User(db.Model):
     email = db.Column(db.String(64), nullable=False)
     phone_num = db.Column(db.String(32), nullable=False)
     username = db.Column(db.String(32), nullable=False)
-    password_hash = db.Column(db.String(128))
+    password = db.Column(db.Binary(60), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False)
     approval_status = db.Column(db.Integer)
     school_id = db.Column(db.Boolean, db.ForeignKey('schools.id'))
@@ -20,23 +20,24 @@ class User(db.Model):
     school = db.relationship('School', back_populates='coaches')
     scores = db.relationship('Score', back_populates='coach')
 
-    def __init__(self, first, last, email, phone_num, username, password, isAdmin):
+    def __init__(self, first, last, email, phone_num,
+                 username, password, is_admin):
         self.first = first
         self.last = last
         self.email = email
         self.phone_num = phone_num
-        self.is_admin = isAdmin
+        self.is_admin = is_admin
         self.username = username
         self.setPassword(password)
         db.session.add(self)
         db.session.commit()
 
     def setPassword(self, newpass):
-        self.password_hash = bcrypt.hashpw(newpass.encode("utf-8"),
+        self.password = bcrypt.hashpw(newpass.encode("utf-8"),
                                       bcrypt.gensalt(12))
 
     def checkPassword(self, password):
-        return bcrypt.checkpw(password.encode("utf-8"), self.password_hash)
+        return bcrypt.checkpw(password.encode("utf-8"), self.password)
 
 
 class Student(db.Model):
@@ -119,6 +120,9 @@ class School(db.Model):
     teams = db.relationship('Team', back_populates='school')
     coaches = db.relationship('User', back_populates='school')
     students = db.relationship('Student', back_populates='school')
+
+    def __init__(self, name):
+        self.name = name
 
 
 class Team(db.Model):
