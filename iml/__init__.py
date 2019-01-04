@@ -8,6 +8,8 @@ from iml.config import DATABASE_TYPE, SQLITE_FILE_NAME
 from iml.config import SQLALCHEMY_TRACK_MODIFICATIONS, APP_SECRET_KEY, SESSION_TYPE
 from iml.database import db
 from iml.core.user.controllers import user
+from iml.core.students.controllers import students
+
 from iml.models import User
 
 import os
@@ -69,3 +71,4 @@ with app.app_context():
 ### TEMPORARY ROUTER CHECKER ###
 
 app.register_blueprint(user, url_prefix="")
+app.register_blueprint(students, url_prefix="")
