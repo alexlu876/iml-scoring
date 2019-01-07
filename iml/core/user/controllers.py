@@ -14,7 +14,7 @@ logged_in = False
 def login():
     user = None
     loginForm = LoginForm()
-
+	
     if loginForm.validate_on_submit() and loginForm.submit.data:
         user = User.query.filter_by(
             email=loginForm.email.data) \
@@ -130,4 +130,4 @@ def info():
 def index():
     if(user):
         return render_custom_template('index.html',X=request.remote_addr)
-    return render_custom_template('index.html', X=request.remote_addr, user = user)
+    return render_custom_template('index.html', X=request.remote_addr)
