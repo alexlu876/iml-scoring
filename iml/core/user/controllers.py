@@ -95,30 +95,6 @@ def logout():
     login = False
     return redirect('/login')
 
-#data for one competition, displayed in /results
-competition = [
-    {
-        'name' : 'Datian Zhang',
-        'score' : {'Q1' : '1',
-                   'Q2' : '1' }
-    },
-    {
-        'name' : 'Alex Lu',
-        'score' : '6'
-    },
-    {
-        'name' : 'Andrew Chen',
-        'score' : '0'
-    },
-    {
-        'name' : 'Gilvir Gill',
-        'score' : '0'
-    },
-    {
-        'name' : 'Haiyao Uiliu',
-        'score' : '0'
-    }
-]
 
 #competition results display
 @user.route('/info')
