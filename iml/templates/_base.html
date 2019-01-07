@@ -34,10 +34,19 @@
             <div class="mdc-drawer__content">
                 <nav class="mdc-list">
                     <hr class="mdc-list-divider">
+					<!-- sidebar items go here -->
                     <a class="mdc-list-item mdc-list-item--activated" href="/">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">home</i>
                         Home
-                    </a>                   
+                    </a>     
+					<a class="mdc-list-item mdc-list-item--activated" href="/login">
+                        <i class="material-icons mdc-list-item__graphic" aria-hidden="true">login</i>
+                        Login
+                    </a>       
+					<a class="mdc-list-item mdc-list-item--activated" href="/info">
+                        <i class="material-icons mdc-list-item__graphic" aria-hidden="true">info</i>
+                        Results
+                    </a>         					
                 </nav>
             </div>
         </aside> 
@@ -46,6 +55,7 @@
         {% block navbar %}
         <header class="mdc-top-app-bar" id="app-bar">
             <div class="mdc-top-app-bar__row">
+				<!-- topbar items -->
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                     <a href="#" class="material-icons mdc-top-app-bar__navigation-icon">menu</a>
                     <span class="mdc-top-app-bar__title">IML Scores</span>
@@ -53,6 +63,7 @@
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
                     <a href="/" class="material-icons mdc-top-app-bar__action-item" aria-label="Download" alt="Download">home</a>
                 </section>
+				
             </div>
         </header>
         {% endblock navbar %}

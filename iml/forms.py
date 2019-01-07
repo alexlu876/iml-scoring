@@ -36,6 +36,7 @@ class RegisterForm(FlaskForm):
 
     new_school = StringField("School (If not in Dropdown)")
     submit = SubmitField("Register")
+	
 class StudentForm(FlaskForm):
     first = StringField("First Name:", [validators.DataRequired()])
     last = StringField("Last Name:", [validators.DataRequired()])
