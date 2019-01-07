@@ -63,7 +63,7 @@ with app.app_context():
                            phone_num="1877CARS",
                            username="admin",
                            password="password",
-                           isAdmin=True
+                           is_admin=True
                            )
         db.session.add(sampleAdmin)
         db.session.commit()
