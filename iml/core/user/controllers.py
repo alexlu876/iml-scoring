@@ -35,7 +35,7 @@ def login():
             else:
                 flash("Email and password do not match!", "error")
         else:
-            flash("Invalid Email!", "error")
+            flash("Your email is not in our system!", "error")
 
     return render_custom_template("core/user/login.html",
                            user=user,
