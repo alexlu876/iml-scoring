@@ -3,6 +3,7 @@ from iml.database import db
 from iml.models import User, School
 from iml.forms import LoginForm, RegisterForm
 from iml.core.user.wrappers import login_required, login_forbidden
+from iml.util import render_custom_template
 
 
 user = Blueprint("user", __name__)
@@ -36,7 +37,7 @@ def login():
         else:
             flash("Invalid Email!", "error")
 
-    return render_template("core/user/login.html",
+    return render_custom_template("core/user/login.html",
                            user=user,
                            title="IML Scoring | Login",
                            loginForm = loginForm,
@@ -70,7 +71,7 @@ def register():
         return redirect('/login')
 
 
-    return render_template("core/user/register.html",
+    return render_custom_template("core/user/register.html",
                            user=user,
                            title="IML Scoring | Register",
                            registerForm = registerForm,
@@ -122,11 +123,11 @@ competition = [
 #competition results display
 @user.route('/info')
 def info():
-    return render_template('data.html', competition = competition, user = user)
+    return render_custom_template('data.html', competition = competition, user = user)
 
 @user.route('/')
 @user.route('/index')
 def index():
-    if(logged_in):
-        return render_template('index.html',X=request.remote_addr)
-    return render_template('index.html', X=request.remote_addr, user = user)
+    if(user):
+        return render_custom_template('index.html',X=request.remote_addr)
+    return render_custom_template('index.html', X=request.remote_addr, user = user)

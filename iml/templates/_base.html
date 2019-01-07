@@ -39,10 +39,20 @@
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">home</i>
                         Home
                     </a>     
-					<a class="mdc-list-item mdc-list-item--activated" href="/login">
-                        <i class="material-icons mdc-list-item__graphic" aria-hidden="true">login</i>
-                        Login
-                    </a>       
+					
+					{% if not user %}
+						<a class="mdc-list-item mdc-list-item--activated" href="/login">
+							<i class="material-icons mdc-list-item__graphic" aria-hidden="true">login</i>
+							Login
+						</a>       
+					{% endif %}
+					{% if user %}
+						<a class="mdc-list-item mdc-list-item--activated" href="/logout">
+							<i class="material-icons mdc-list-item__graphic" aria-hidden="true">logout</i>
+							Logout
+						</a>    						
+					{% endif %}
+					
 					<a class="mdc-list-item mdc-list-item--activated" href="/info">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">info</i>
                         Results
@@ -63,7 +73,6 @@
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
                     <a href="/" class="material-icons mdc-top-app-bar__action-item" aria-label="Download" alt="Download">home</a>
                 </section>
-				
             </div>
         </header>
         {% endblock navbar %}
