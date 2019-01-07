@@ -107,6 +107,14 @@ class Contest(db.Model):
     date = db.Column(db.Date(), nullable=False)
     question_count = db.Column(db.Integer, nullable=False)
     division_id = db.Column(db.Integer, db.ForeignKey('divisions.id'), nullable=False)
+	
+    def __init__(id, name, date, question_count, division_id):
+        self.name = name
+        self.date = date
+        self.question_count = 6
+        self.division_id=division_id
+        db.session.add(self)
+        db.session.commit()
 
     division = db.relationship('Division', back_populates='contests')
 
