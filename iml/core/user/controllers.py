@@ -10,7 +10,7 @@ answers = ["8", "21"]
 index = 0
 
 user = Blueprint("user", __name__)
-login = False
+logged_in = False
 
 @user.route("/login", methods=["GET", "POST"])
 @login_forbidden()
@@ -130,7 +130,7 @@ competition = [
     },
     {
         'name' : 'Alex Lu',
-        'score' : '0'
+        'score' : '6'
     },
     {
         'name' : 'Andrew Chen',
@@ -152,6 +152,6 @@ def info():
 @user.route('/')
 @user.route('/index')
 def index():
-    if(login == False):
+    if(logged_in):
         return render_template('index.html',X=request.remote_addr)
     return render_template('index.html', X=request.remote_addr, user = user)
