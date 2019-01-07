@@ -56,11 +56,21 @@ class Student(db.Model):
     # returns a list of ({0,1}) integers with information on whether they got the questions right
     def getScores(self, contest=None):
         if contest is None:
-            scores_query = Score.query.filter_by(is_correct=1)
+            scores_query = Score.query.filter_by(student_id=self.id)
         else:
-            scores_query = Score.query.filter_by(is_correct=1,contest=contest)
+            scores_query = Score.query.filter_by(contest=contest, student_id=self.id)
+        if contest:
+            length = contest.question_count
+            scores_list = [0]*length
+            # 0 INDEX
+            for score in scores_query:
+                scores_list[score.question_num] = score.is_correct
+        else:
+            # TODO - order things properly
+            scores_list = [score.is_correct for score in scores_query]
         # TODO -  turn this into the list, because its an unordered query list
         # sort by -- date of contest, question number
+        return scores_list
 
     # returns actual final score
     def getFinalContestScore(self, contest):
