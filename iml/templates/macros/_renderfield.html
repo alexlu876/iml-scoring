@@ -1,8 +1,11 @@
 {% macro render_field(field) %}
     {# casework #}
     {% if field.type in ["DateTimeField", "IntegerField", "StringField", "PasswordField", "SelectField", "EmailField"] %}
-                {{ field.label }}
-                {{ field(class="full-width")|safe }}
+            <div class="mdc-text-field">
+                {{ field( id=field.id, class="mdc-text-field__input")|safe }}
+                {{ field.label(class="mdc-floating-label", for=field.id) }}
+            </div>
+            <div class="mdc-line-ripple"></div>
             {% if (field.errors|length) != 0 %}
                 <ul class="error-list">
                     {% for error in field.errors %}

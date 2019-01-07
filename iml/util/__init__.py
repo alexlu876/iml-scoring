@@ -1,5 +1,6 @@
 import flask
 from iml.models import User
+from iml.util.constants import IS_NOT_LOGGED_IN
 
 session = flask.session
 
@@ -11,7 +12,7 @@ def get_user(user_id):
 # MUST be run within app context
 def render_custom_template(*args, **kwargs):
     # not logged in
-    status = 0
+    status = IS_NOT_LOGGED_IN
     user = None
     userdata = session.get("userdata")
     if session.get("userdata"):
