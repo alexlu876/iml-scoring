@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField
 from wtforms import validators
 
 
@@ -44,3 +44,10 @@ class StudentForm(FlaskForm):
     submit = SubmitField("Login")
 
     # school taken from coaches' session
+
+class ContestForm(FlaskForm):
+    name = StringField("name", [validators.DataRequired()])
+    #date
+    question_count = IntegerField("question count (its prolly 6)")
+    division_id = StringField("division (put sra or srb or jr or sf)", [validators.DataRequired()])
+    submit = SubmitField("J")

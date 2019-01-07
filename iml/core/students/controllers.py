@@ -3,6 +3,7 @@ from iml.database import db
 from iml.models import User, Student
 from iml.forms import StudentForm
 from iml.core.user.wrappers import login_required
+from iml.util import render_custom_template
 
 students = Blueprint("students", __name__)
 
@@ -28,8 +29,16 @@ def addStudents():
         else:
             flash("username already taken!")
 
-        return redirect('/add_students')
-    return render_template("core/students/addStudents.html",
+        return redirect('/add_student')
+    return render_custom_template("core/students/addStudents.html",
                            title="Add a student",
                            studentForm = studentForm
                            )
+						   
+@students.route('/show_students', methods = ["GET"])
+def show_students():
+	allStudents = Student.query.all()
+	return render_custom_template("core/students/show_students.html", allStudents = allStudents)
+
+
+

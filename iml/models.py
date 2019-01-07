@@ -108,7 +108,7 @@ class Contest(db.Model):
     question_count = db.Column(db.Integer, nullable=False)
     division_id = db.Column(db.Integer, db.ForeignKey('divisions.id'), nullable=False)
 	
-    def __init__(id, name, date, question_count, division_id):
+    def __init__(self, name, date, question_count, division_id):
         self.name = name
         self.date = date
         self.question_count = 6
