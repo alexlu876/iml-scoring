@@ -123,7 +123,24 @@ competition = [
 #competition results display
 @user.route('/info')
 def info():
-    return render_custom_template('data.html', competition = competition, user = user)
+    return render_custom_template('results.html')
+
+@user.route('/info/sf')
+def info_sf():
+    return render_custom_template('results_sf.html')
+
+@user.route('/info/jr')
+def info_jr():
+    return render_custom_template('results_jr.html')
+
+@user.route('/info/sra')
+def info_sra():
+    return render_custom_template('results_sra.html')
+
+@user.route('/info/srb')
+def info_srb():
+    return render_custom_template('results_srb.html')
+
 
 @user.route('/')
 @user.route('/index')
