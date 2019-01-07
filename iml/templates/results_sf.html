@@ -1,0 +1,28 @@
+<!-- card example -->
+
+{% extends "_base.html" %}
+
+{% block content %}
+<div class="mdc-card" style="width:500px; margin-left: calc(50% - 250px);">
+
+
+  <div class="mdc-card__media"></div>
+  <div class="mdc-card__media"></div>
+  <a class="mdc-list-item mdc-list-item--activated" href="/info/sf"
+    > Soph-Frosh </a
+  >
+  <a class="mdc-list-item mdc-list-item--activated" href="/info/jr"> Junior </a>
+
+  <a class="mdc-list-item mdc-list-item--activated" href="/info/sra"
+    >Senior A</a
+  >
+
+  <a class="mdc-list-item mdc-list-item--activated" href="/info/srb"> Senior B </a>
+</div>
+
+<h1> Soph-Frosh Results</h1> 
+<body>
+    Alex Lu 6 5 6 4 5 | 26 <br>
+    Andrew X. Chen 1 2 1 0 0 | 4
+</body>
+{% endblock %}
