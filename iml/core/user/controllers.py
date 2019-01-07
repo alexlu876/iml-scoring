@@ -141,7 +141,7 @@ competition = [
         'score' : '0'
     },
     {
-        'name' : 'Haiyao Uil',
+        'name' : 'Haiyao Uiliu',
         'score' : '0'
     }
 ]
