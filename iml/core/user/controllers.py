@@ -5,10 +5,6 @@ from iml.forms import LoginForm, RegisterForm
 from iml.core.user.wrappers import login_required, login_forbidden
 
 
-questions = ["what is 3 + 5?", "what is 9 + 10?"]
-answers = ["8", "21"]
-index = 0
-
 user = Blueprint("user", __name__)
 logged_in = False
 
@@ -80,30 +76,6 @@ def register():
                            registerForm = registerForm,
                            )
 
-@user.route('/questions')
-def question():
-    return render_template("question.html",
-                           number=index+1,
-                           content=questions[index])
-
-
-@user.route('/main', methods = ['POST'])
-def main():
-    global index
-    # if right answer
-    if (request.form["answer"] == answers[index]):
-        index = index + 1
-        print('next question')
-        # if no more question
-        if (index == len(answers)):
-            return redirect('/end')
-    return redirect('/questions')
-
-
-@user.route('/end')
-def end():
-    return render_template('end.html')
-
 
 @user.route('/session_info')
 def get_session():
@@ -122,6 +94,7 @@ def logout():
     login = False
     return redirect('/login')
 
+#data for one competition, displayed in /results
 competition = [
     {
         'name' : 'Datian Zhang',
@@ -145,6 +118,8 @@ competition = [
         'score' : '0'
     }
 ]
+
+#competition results display
 @user.route('/info')
 def info():
     return render_template('data.html', competition = competition, user = user)
