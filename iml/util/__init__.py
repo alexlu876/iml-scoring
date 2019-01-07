@@ -11,11 +11,17 @@ def get_user(user_id):
 # MUST be run within app context
 def render_custom_template(*args, **kwargs):
     # not logged in
-    kwargs["status"] = 0
-    # no user
-    kwargs["user"] = None
-    kwargs["userdata"] = session.get("userdata")
+    status = 0
+    user = None
+    userdata = session.get("userdata")
     if session.get("userdata"):
-        kwargs["user"] = User.query.filter_by(id=session["userdata"]["id"]).first()
-        kwargs["status"] = session["status"]
+        user = get_user(session["userdata"]["id"])
+        status = session["status"]
+
+    if "status" not in kwargs:
+        kwargs["status"] = status
+    if "user" not in kwargs:
+        kwargs["user"] = user
+    if "userdata" not in kwargs:
+        kwargs["userdata"] = userdata
     return flask.render_template(*args, **kwargs)
