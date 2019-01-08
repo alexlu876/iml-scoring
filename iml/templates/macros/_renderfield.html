@@ -1,7 +1,7 @@
 {% macro render_field(field) %}
     {# casework #}
     {% if field.type in ["DateTimeField", "IntegerField", "StringField", "PasswordField", "SelectField", "EmailField"] %}
-            <div class="mdc-text-field">
+            <div class="mdc-text-field standard-textfield-spacing">
                 {{ field( id=field.id, class="mdc-text-field__input")|safe }}
                 {{ field.label(class="mdc-floating-label", for=field.id) }}
             </div>

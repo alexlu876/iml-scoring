@@ -14,6 +14,7 @@
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'vendor/mdc.css')}}">
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'vendor/normalize.css')}}">
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'css/mdc-theme.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'css/forms.css')}}">
 
         <link href="https://fonts.googleapis.com/css?family=Merriweather|Noto+Serif+SC" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
@@ -28,35 +29,38 @@
     <body>
         <aside class="mdc-drawer mdc-drawer--modal">
             <div class="mdc-drawer__header" style="margin-bottom: 25px;">
-                <h3 class="mdc-drawer__title">IML Scores</h3>
+                {% if user %}
+                <h3 class="mdc-drawer__title">{{user.first}} {{user.last}}</h3>
+                <h6 class="mdc-drawer__subtitle">{{user.email}}</h6>
+                {% else %}
+                <h3 class="mdc-drawer__title">Guest</h3>
+                {% endif %}
             </div>
 
             <div class="mdc-drawer__content">
                 <nav class="mdc-list">
                     <hr class="mdc-list-divider">
-					<!-- sidebar items go here -->
-                    <a class="mdc-list-item mdc-list-item--activated" href="/">
+                    <a class="mdc-list-item mdc-list-item--activated mdc-theme--secondary" href="/" aria-selected="true">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">home</i>
                         Home
-                    </a>     
-					
-					{% if not user %}
-						<a class="mdc-list-item mdc-list-item--activated" href="/login">
-							<i class="material-icons mdc-list-item__graphic" aria-hidden="true">login</i>
-							Login
-						</a>       
-					{% endif %}
-					{% if user %}
-						<a class="mdc-list-item mdc-list-item--activated" href="/logout">
-							<i class="material-icons mdc-list-item__graphic" aria-hidden="true">logout</i>
-							Logout
-						</a>    						
-					{% endif %}
-					
-					<a class="mdc-list-item mdc-list-item--activated" href="/info">
+                    </a> 
+                    {% if user %}
+                    <a class="mdc-list-item" href="/">
+                        <i class="material-icons mdc-list-item__graphic" aria-hidden="true">exit_to_app</i>
+                        Sign Out
+                    </a> 
+                    {% else %}
+                    <a class="mdc-list-item" href="/">
+                        <i class="material-icons mdc-list-item__graphic" aria-hidden="true">exit_to_app</i>
+                        Sign In
+                    </a>
+                    {% endif %}
+                    <hr class="mdc-list-divider">
+                    <a class="mdc-list-item" href="/info">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">info</i>
-                        Results
+                        View Scores
                     </a>         					
+
                 </nav>
             </div>
         </aside> 
