@@ -36,7 +36,7 @@ class RegisterForm(FlaskForm):
 
     new_school = StringField("School (If not in Dropdown)")
     submit = SubmitField("Register")
-	
+
 class StudentForm(FlaskForm):
     first = StringField("First Name:", [validators.DataRequired()])
     last = StringField("Last Name:", [validators.DataRequired()])
@@ -49,5 +49,5 @@ class ContestForm(FlaskForm):
     name = StringField("name", [validators.DataRequired()])
     #date
     question_count = IntegerField("question count (its prolly 6)")
-    division_id = StringField("division (put sra or srb or jr or sf)", [validators.DataRequired()])
-    submit = SubmitField("J")
+    division = StringField("Division", [validators.DataRequired()])
+    submit = SubmitField("Submit")

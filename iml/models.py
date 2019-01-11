@@ -29,8 +29,6 @@ class User(db.Model):
         self.is_admin = is_admin
         self.username = username
         self.setPassword(password)
-        db.session.add(self)
-        db.session.commit()
 
     def setPassword(self, newpass):
         self.password = bcrypt.hashpw(newpass.encode("utf-8"),
@@ -107,14 +105,11 @@ class Contest(db.Model):
     date = db.Column(db.Date(), nullable=False)
     question_count = db.Column(db.Integer, nullable=False)
     division_id = db.Column(db.Integer, db.ForeignKey('divisions.id'), nullable=False)
-	
-    def __init__(self, name, date, question_count, division_id):
+
+    def __init__(self, name, date, question_count):
         self.name = name
         self.date = date
         self.question_count = 6
-        self.division_id=division_id
-        db.session.add(self)
-        db.session.commit()
 
     division = db.relationship('Division', back_populates='contests')
 
@@ -164,6 +159,11 @@ class Division(db.Model):
     __tablename__ = 'divisions'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
+    url = db.Column(db.String(64), nullable=False)
 
     teams = db.relationship('Team', back_populates = 'division')
     contests = db.relationship('Contest', back_populates = 'division')
+
+    def __init__(self, name, url):
+        self.name = name
+        self.url = url

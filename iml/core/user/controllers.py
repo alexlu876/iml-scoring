@@ -4,6 +4,7 @@ from iml.models import User, School
 from iml.forms import LoginForm, RegisterForm
 from iml.core.user.wrappers import login_required, login_forbidden
 from iml.util import render_custom_template
+from iml.util.constants import IS_SITE_ADMIN, IS_LOGGED_IN
 
 
 user = Blueprint("user", __name__)
@@ -14,7 +15,7 @@ logged_in = False
 def login():
     user = None
     loginForm = LoginForm()
-	
+
     if loginForm.validate_on_submit() and loginForm.submit.data:
         user = User.query.filter_by(
             email=loginForm.email.data) \
@@ -22,13 +23,15 @@ def login():
 
         if user is not None:
             if user.checkPassword(loginForm.password.data):
-                session["status"] = 1
+                session["status"] = IS_LOGGED_IN
                 session["userdata"] = {
                     "id": user.id,
                     "first": user.first,
                     "last": user.last,
                     "email": user.email,
                 }
+                if user.is_admin:
+                    session["status"] = IS_SITE_ADMIN
                 session.permanent = True
                 flash("Login Successful!", "success")
                 return redirect('/')

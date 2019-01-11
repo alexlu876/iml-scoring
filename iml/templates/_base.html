@@ -13,6 +13,7 @@
         <!-- css -->
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'vendor/mdc.css')}}">
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'vendor/normalize.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'vendor/mdc-table.css')}}">
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'css/mdc-theme.css')}}">
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'css/forms.css')}}">
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'css/everything.css')}}">
@@ -56,6 +57,33 @@
                         Login
                     </a>
                     {% endif %}
+
+                    {% if user and user.is_admin %}
+                    <hr class="mdc-list-divider">
+                    <h6 class="mdc-list-group__subheader">Admin</h6>
+                    <a class="mdc-list-item" href="/admin/divisions">
+                        <i class="material-icons mdc-list-item__graphic" aria-hidden="true">book</i>
+                        Divisions
+                    </a>
+                    <a class="mdc-list-item" href="/admin/add_contest">
+                        <i class="material-icons mdc-list-item__graphic" aria-hidden="true">add</i>
+                        Add Contest
+                    </a>
+                    
+                    {% endif %}
+                    {% if user and user.school %}
+                    <hr class="mdc-list-divider">
+                    <h6 class="mdc-list-group__subheader">{{user.school.name}}</h6>
+                    <a class="mdc-list-item" href="/">
+                        <i class="material-icons mdc-list-item__graphic" aria-hidden="true">book</i>
+                        Enter Scores
+                    </a>
+                    <a class="mdc-list-item" href="/">
+                        <i class="material-icons mdc-list-item__graphic" aria-hidden="true">book</i>
+                        Manage Teams
+                    </a>
+                    {% endif %}
+
                     <hr class="mdc-list-divider">
                     <a class="mdc-list-item" href="/info">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">info</i>

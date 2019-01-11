@@ -13,6 +13,7 @@ from iml.core.user.controllers import user
 from iml.core.students.controllers import students
 
 from iml.models import User
+from iml.util.generate_db import generate_nyc_divisions
 
 import os
 
@@ -70,7 +71,9 @@ with app.app_context():
         db.session.add(sampleAdmin)
         db.session.commit()
 
-### TEMPORARY ROUTER CHECKER ###
+# temp division adder
+
+generate_nyc_divisions(app, db)
 
 app.register_blueprint(user, url_prefix="")
 app.register_blueprint(students, url_prefix="/students")
