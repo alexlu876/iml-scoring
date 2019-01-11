@@ -1,11 +1,21 @@
-{% macro render_field(field) %}
+{% macro render_field(field, standard_space = True) %}
     {# casework #}
+    {% if standard_space %}
+    <div class="field_wrapper form-standard-spacing">
+    {% else %}
+    <div class="field_wrapper">
+    {% endif %} 
     {% if field.type in ["DateTimeField", "IntegerField", "StringField", "PasswordField", "SelectField", "EmailField"] %}
-            <div class="mdc-text-field standard-textfield-spacing">
+            <div class="mdc-text-field mdc-text-field--outlined standard-textfield-size">
                 {{ field( id=field.id, class="mdc-text-field__input")|safe }}
-                {{ field.label(class="mdc-floating-label", for=field.id) }}
+                <div class="mdc-notched-outline">
+                    <div class="mdc-notched-outline__leading"></div>
+                    <div class="mdc-notched-outline__notch">
+                        {{ field.label(class="mdc-floating-label", for=field.id) }}
+                    </div>
+                    <div class="mdc-notched-outline__trailing"></div>
+                </div>
             </div>
-            <div class="mdc-line-ripple"></div>
             {% if (field.errors|length) != 0 %}
                 <ul class="error-list">
                     {% for error in field.errors %}
@@ -57,4 +67,5 @@
             {% endif %}
     {% endif %}
     <br>
+    </div>
 {% endmacro %}

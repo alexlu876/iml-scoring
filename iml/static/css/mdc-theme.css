@@ -23,3 +23,7 @@
 .mdc-sub-list {
     display: none;
 }
+
+html, body {
+    height: 100%;
+}

@@ -15,6 +15,7 @@
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'vendor/normalize.css')}}">
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'css/mdc-theme.css')}}">
         <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'css/forms.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename= 'css/everything.css')}}">
 
         <link href="https://fonts.googleapis.com/css?family=Merriweather|Noto+Serif+SC" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
@@ -40,19 +41,19 @@
             <div class="mdc-drawer__content">
                 <nav class="mdc-list">
                     <hr class="mdc-list-divider">
-                    <a class="mdc-list-item mdc-list-item--activated mdc-theme--secondary" href="/" aria-selected="true">
+                    <a class="mdc-list-item mdc-list-item--activated" href="/" aria-selected="true">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">home</i>
                         Home
                     </a> 
                     {% if user %}
-                    <a class="mdc-list-item" href="/">
+                    <a class="mdc-list-item" href="/logout">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">exit_to_app</i>
                         Sign Out
                     </a> 
                     {% else %}
-                    <a class="mdc-list-item" href="/">
+                    <a class="mdc-list-item" href="/login">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">exit_to_app</i>
-                        Sign In
+                        Login
                     </a>
                     {% endif %}
                     <hr class="mdc-list-divider">
@@ -67,35 +68,47 @@
         <div class="mdc-drawer-scrim"></div>
 
         {% block navbar %}
-        <header class="mdc-top-app-bar" id="app-bar">
-            <div class="mdc-top-app-bar__row">
+        <header class="mdc-top-app-bar secondary-nav" id="app-bar">
+            <div class="mdc-top-app-bar__row secondary-nav">
 				<!-- topbar items -->
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                    <a href="#" class="material-icons mdc-top-app-bar__navigation-icon">menu</a>
+                    <a href="#" class="material-icons mdc-top-app-bar__navigation-icon" style="color:rgba(0,0,0,.87)!important">menu</a>
                     <span class="mdc-top-app-bar__title">IML Scores</span>
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-                    <a href="/" class="material-icons mdc-top-app-bar__action-item" aria-label="Download" alt="Download">home</a>
+                    <a href="/" class="material-icons mdc-top-app-bar__action-item " aria-label="Download" alt="Download" style="color:rgba(0,0,0,.87)!important">home</a>
                 </section>
             </div>
         </header>
         {% endblock navbar %}
     <main>
         <div style="padding-top:100px"></div>
-        <!-- Unformatted Flashes -->
-        {% with flashes = get_flashed_messages(with_categories=True) %}
-            {% if flashes %}
-                {% for category, message in flashes %}
-                <div>{{message}}</div>
-                <br>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
         {% block below_nav %}
         {% endblock below_nav %}
         <div>
             {% block content %}
             {% endblock content%}
+        </div>
+        <div class="snackbars">
+        <!-- Very naive Flashes -->
+        {% with flashes = get_flashed_messages(with_categories=True) %}
+            {% if flashes %}
+            <div class="mdc-snackbar mdc-snackbar--stacked">
+                <div class="mdc-snackbar__surface">
+                    <div class="mdc-snackbar__label"
+                         role="status"
+                         aria-live="polite">
+                        {% for category, message in flashes %}
+                        <div>{{message}}</div>
+                        <br>
+                        {% endfor %}
+                    </div>
+                    <div class="mdc-snackbar__actions">
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endwith %}
         </div>
     </main>
 
