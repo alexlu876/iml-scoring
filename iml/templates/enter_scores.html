@@ -1,0 +1,25 @@
+<!-- card example -->
+
+{% extends "_base.html" %}
+
+{% from "macros/_renderfield.html" import render_field %}
+
+{% block content %}
+<div class="mdc-card centered-single-card" style="width:500px;">
+    <div class="mdc-card__media"></div>
+    <center>
+    <h1>enter_scores</h1>
+    <br>
+    <form method="POST" action="/enter_scores" id="enter_scores-form">
+        {{ ScoresForm.hidden_tag() }}
+        {{ ScoresForm.csrf_token() }}
+        {{ render_field(ScoresForm.students) }}
+        {{ render_field(ScoresForm.students) }}
+        {{ render_field(ScoresForm.students) }}
+        {{ render_field(ScoresForm.students) }}
+        {{ render_field(ScoresForm.students) }}
+        {{ render_field(ScoresForm.submit) }}
+    </center>
+    </form>
+</div>
+{% endblock %}
