@@ -51,3 +51,10 @@ class ContestForm(FlaskForm):
     question_count = IntegerField("question count (its prolly 6)")
     division = StringField("Division", [validators.DataRequired()])
     submit = SubmitField("Submit")
+
+class ScoresForm(FlaskForm):
+    dropdown_students = [('aryan', 'bhatt'), ('andrew', 'chen')]
+    team = StringField("team:", [validators.DataRequired()])
+    students = SelectField("J",  choices=dropdown_students)
+    score = StringField("score:", [validators.DataRequired()])
+    submit = SubmitField("submitttt")

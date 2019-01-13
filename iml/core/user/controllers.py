@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
 from iml.database import db
 from iml.models import User, School, Student, Contest, Score, Team
-from iml.forms import LoginForm, RegisterForm
+from iml.forms import LoginForm, RegisterForm, ScoresForm
 from iml.core.user.wrappers import login_required, login_forbidden
 from iml.util import render_custom_template
 from iml.util.constants import IS_SITE_ADMIN, IS_LOGGED_IN
@@ -170,6 +170,12 @@ def info_srb():
 def info_debug():
     return render_custom_template('debug.html')
 
+@user.route('/enter_scores', methods=["GET", "POST"])
+def enter_scores():
+    scoresForm = ScoresForm()
+    return render_custom_template("enter_scores.html",
+    ScoresForm=scoresForm,
+    )
 
 @user.route('/')
 @user.route('/index')
