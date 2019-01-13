@@ -11,9 +11,12 @@
     <h1>enter_scores</h1>
     <br>
     <form method="POST" action="/enter_scores" id="enter_scores-form">
-        {{ form.students.choices }}
+        {# form.students.choices #}
         {{ render_field(form.students) }}
+        {{ render_field(form.questionNum) }}
+        {{ render_field(form.score) }}
         {{ render_field(form.submit) }}
+
     </center>
     </form>
 </div>
