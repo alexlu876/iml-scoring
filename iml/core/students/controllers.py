@@ -34,11 +34,8 @@ def addStudents():
                            title="Add a student",
                            studentForm = studentForm
                            )
-						   
+
 @students.route('/show_students', methods = ["GET"])
 def show_students():
 	allStudents = Student.query.all()
 	return render_custom_template("core/students/show_students.html", allStudents = allStudents)
-
-
-

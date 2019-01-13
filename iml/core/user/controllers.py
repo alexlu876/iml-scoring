@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
 from iml.database import db
-from iml.models import User, School
+from iml.models import User, School, Student, Contest, Score, Team
 from iml.forms import LoginForm, RegisterForm
 from iml.core.user.wrappers import login_required, login_forbidden
 from iml.util import render_custom_template
@@ -8,7 +8,6 @@ from iml.util.constants import IS_SITE_ADMIN, IS_LOGGED_IN
 
 
 user = Blueprint("user", __name__)
-logged_in = False
 
 @user.route("/login", methods=["GET", "POST"])
 @login_forbidden()
@@ -92,10 +91,8 @@ def get_session():
 
 @user.route('/logout')
 def logout():
-    global login
     session.clear()
     flash("You have been logged out!", "message")
-    login = False
     return redirect('/login')
 
 
@@ -104,9 +101,59 @@ def logout():
 def info():
     return render_custom_template('results.html')
 
+@user.route('/info/tests')
+def testing():
+
+    #school1 = School(name="stuyvesant")
+
+    # student1 = Student(
+    #     first = "Alex",
+    #     last = "Lu",
+    #     username = "gote876",
+    #     school_id = "1"
+    # )
+
+    # db.session.add(student1)
+    # db.session.commit()
+
+    # db.session.add(school1)
+    # db.session.commit()
+
+    studentDB = Student.query.all()
+    contests = Contest.query.all()
+    users = User.query.all()
+    teams = Team.query.all()
+    score1 = Score(
+        question_num = 1,
+        is_correct = 1,
+        contest_id = 2, #quiz bowl
+        student_id = 1, #student alex gote876
+        coach_id = 2, # student.id (Gilvir)
+        team_id = 1
+    )
+    return render_custom_template('tests.html',
+                                  studentDB=studentDB,
+                                  contests = contests,
+                                  users = users,
+                                  teams = teams )
 @user.route('/info/sf')
 def info_sf():
-    return render_custom_template('results_sf.html')
+
+    students = [
+        {
+        'name': "Alex Lu",
+        'scores': "1 2 3 4 5 6",
+        'total': "26",
+        },
+        {
+        'name': "Andrew X. Chen",
+        'scores': "1 2 1 0 0",
+        'total': "4",
+        }
+    ]
+
+    return render_custom_template('results_sf.html',
+                                  students = students)
 
 @user.route('/info/jr')
 def info_jr():
@@ -119,6 +166,9 @@ def info_sra():
 @user.route('/info/srb')
 def info_srb():
     return render_custom_template('results_srb.html')
+@user.route('/info/debug')
+def info_debug():
+    return render_custom_template('debug.html')
 
 
 @user.route('/')
