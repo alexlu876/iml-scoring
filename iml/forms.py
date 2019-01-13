@@ -53,9 +53,7 @@ class ContestForm(FlaskForm):
 
 class ScoresForm(Form):
     #dropdown_students = [('aryan', 'bhatt'), ('andrew', 'chen')]
-    students = SelectField("Students",  choices=[], coerce = int)
     #team = StringField("team:", [validators.DataRequired()])
-    questionNum = IntegerField("Question num:", [validators.NumberRange(1, 6,
-                                        "question num out of range!")])
-    score = IntegerField("Score:", [validators.DataRequired()])
+    students = SelectField("Students",  choices=[], coerce = int)
+    #score = StringField("score:", [validators.DataRequired()])
     submit = SubmitField("Submit")

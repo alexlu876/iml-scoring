@@ -41,4 +41,3 @@ def add_contest():
         else:
             flash("That division does not exist!")
     return render_custom_template("core/admin/add_contest.html", contestForm=contestForm)
-

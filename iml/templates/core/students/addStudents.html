@@ -10,7 +10,7 @@
     <div class="mdc-card__media"></div>
     <h2>Add a student</h2>
 
-    <form method="POST" action="/add_student" id="student-form">
+    <form method="POST" action="/students/add_student" id="student-form">
         {{ studentForm.hidden_tag() }}
         {{ studentForm.csrf_token() }}
 
