@@ -11,14 +11,9 @@
     <h1>enter_scores</h1>
     <br>
     <form method="POST" action="/enter_scores" id="enter_scores-form">
-        {{ ScoresForm.hidden_tag() }}
-        {{ ScoresForm.csrf_token() }}
-        {{ render_field(ScoresForm.students) }}
-        {{ render_field(ScoresForm.students) }}
-        {{ render_field(ScoresForm.students) }}
-        {{ render_field(ScoresForm.students) }}
-        {{ render_field(ScoresForm.students) }}
-        {{ render_field(ScoresForm.submit) }}
+        {{ form.students.choices }}
+        {{ render_field(form.students) }}
+        {{ render_field(form.submit) }}
     </center>
     </form>
 </div>

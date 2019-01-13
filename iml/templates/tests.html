@@ -12,7 +12,7 @@
 <body>
     Students (pulled from database): <br>
     {% for student in studentDB %}
-        {{student.first}} {{student.scores_list}} id: {{student.id}}<br>
+        {{student.first}} {{student.scores}} id: {{student.id}}<br>
     {% endfor %}
 
     Contests:
@@ -33,6 +33,9 @@
         {{team.name}} id: {{team.id}}<br>
     {% endfor %}
 
-
-</body>
+    {{ user.school}}
+    Students that match school of coach/user : <br>
+    {% for student in studentDB %}
+        {{student.first}} {{student.scores}} id: {{student.id}}<br>
+    {% endfor %}</body>
 {% endblock %}

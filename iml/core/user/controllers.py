@@ -5,7 +5,7 @@ from iml.forms import LoginForm, RegisterForm, ScoresForm
 from iml.core.user.wrappers import login_required, login_forbidden
 from iml.util import render_custom_template
 from iml.util.constants import IS_SITE_ADMIN, IS_LOGGED_IN
-
+from datetime import datetime
 
 user = Blueprint("user", __name__)
 
@@ -129,13 +129,19 @@ def testing():
         contest_id = 2, #quiz bowl
         student_id = 1, #student alex gote876
         coach_id = 2, # student.id (Gilvir)
-        team_id = 1
+        team_id = 1,
+        timestamp = datetime.utcnow()
     )
+    db.session.add(score1)
+    db.session.commit()
+    students = Student.query.filter_by(school_id = User.school_id)
+
     return render_custom_template('tests.html',
                                   studentDB=studentDB,
                                   contests = contests,
                                   users = users,
-                                  teams = teams )
+                                  teams = teams,
+                                  students = students )
 @user.route('/info/sf')
 def info_sf():
 
@@ -166,17 +172,19 @@ def info_sra():
 @user.route('/info/srb')
 def info_srb():
     return render_custom_template('results_srb.html')
-@user.route('/info/debug')
-def info_debug():
-    return render_custom_template('debug.html')
 
 @user.route('/enter_scores', methods=["GET", "POST"])
+@login_required()
 def enter_scores():
-    scoresForm = ScoresForm()
+    form = ScoresForm(request.form)
+    students = [(c.id, c.username) for c in Student.query.filter_by(school_id = User.school_id).all()]
+    form.students.choices = students
     return render_custom_template("enter_scores.html",
-    ScoresForm=scoresForm,
+    form=form,
     )
-
+@user.route('/select_student')
+def select_student():
+    return " "
 @user.route('/')
 @user.route('/index')
 def index():

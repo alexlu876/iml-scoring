@@ -1,0 +1,8 @@
+<select name = "student">
+    {% for student in students %}
+    <option value={{student.id}}> {{student.username}} </option>
+    {% endfor %}
+    <input type="number" name="numPlayers" min = 0 max= 1<br>
+
+
+</select>

@@ -1,7 +1,6 @@
 from iml.database import db
 import bcrypt
 
-
 class User(db.Model):
     __tablename__ = 'users'
 

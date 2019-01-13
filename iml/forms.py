@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField
-from wtforms import validators
-
+from wtforms import Form, validators
 
 # for wtforms
 
@@ -52,9 +51,9 @@ class ContestForm(FlaskForm):
     division = StringField("Division", [validators.DataRequired()])
     submit = SubmitField("Submit")
 
-class ScoresForm(FlaskForm):
-    dropdown_students = [('aryan', 'bhatt'), ('andrew', 'chen')]
-    team = StringField("team:", [validators.DataRequired()])
-    students = SelectField("J",  choices=dropdown_students)
-    score = StringField("score:", [validators.DataRequired()])
-    submit = SubmitField("submitttt")
+class ScoresForm(Form):
+    #dropdown_students = [('aryan', 'bhatt'), ('andrew', 'chen')]
+    #team = StringField("team:", [validators.DataRequired()])
+    students = SelectField("Students",  choices=[], coerce = int)
+    #score = StringField("score:", [validators.DataRequired()])
+    submit = SubmitField("Submit")
