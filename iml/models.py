@@ -176,8 +176,6 @@ class Team(db.Model):
         self.division_id = division_id
 
 
-
-
 class Division(db.Model):
     __tablename__ = 'divisions'
     id = db.Column(db.Integer, primary_key=True)

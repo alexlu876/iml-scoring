@@ -184,7 +184,7 @@ def enter_scores():
 
 
     user = User.query.filter_by(id = session["userdata"]["id"]).first()
-    teams_query = Team.query.filter_by(school = user.school)
+    teams_query = user.school.teams
     team_choices = [(team.id, team.name) for team in teams_query]
     form.team.choices = team_choices
 
