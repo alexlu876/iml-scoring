@@ -170,6 +170,11 @@ class Team(db.Model):
         self.school_id = school_id
         self.division_id = division_id
 
+    def __init__(self, name, school_id, division_id):
+        self.name = name
+        self.school_id = school_id
+        self.division_id = division_id
+
 
 
 
