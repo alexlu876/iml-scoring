@@ -32,7 +32,7 @@ def generate_nyc_users(app, db):
                 db.session.add(user_obj)
                 db.session.commit()
                 if user[0] == "ashy":
-                    user_obj.school = 1
+                    user_obj.school_id = 1
     return True
 
 def generate_nyc_divisions(app, db):
