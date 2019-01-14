@@ -1,6 +1,12 @@
 from iml.database import db
 import bcrypt
 
+
+# relationships
+
+
+
+
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -45,9 +51,17 @@ class Student(db.Model):
     last = db.Column(db.String(32), nullable=False)
     username = db.Column(db.String(32), nullable=False)
     school_id = db.Column(db.Integer, db.ForeignKey('schools.id'),nullable=False)
+    # divis
+    division_id = db.Column(db.Integer, db.ForeignKey('division.id'),
+                            nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'),
+                        nullable=True)
 
     school = db.relationship('School', back_populates='students')
     scores = db.relationship('Score', back_populates='student')
+    division = db.relationship('Division', back_populates='students')
+    # if team is null, then they are an alternate
+    team = db.relationship('Team', back_populates='students')
 
 
     # returns a list of ({0,1}) integers with information on whether they got the questions right
@@ -150,6 +164,11 @@ class Team(db.Model):
     division = db.relationship('Division', back_populates = 'teams')
 
     scores = db.relationship('Score', back_populates = 'team')
+    students = db.relationship('Score', back_populates = 'team')
+    def __init__(self, name, school_id, division_id):
+        self.name = name
+        self.school_id = school_id
+        self.division_id = division_id
 
     def __init__(self, name, school_id, division_id):
         self.name = name
@@ -166,6 +185,7 @@ class Division(db.Model):
     url = db.Column(db.String(64), nullable=False)
 
     teams = db.relationship('Team', back_populates = 'division')
+    students = db.relationship('Student', back_populates='division')
     contests = db.relationship('Contest', back_populates = 'division')
 
     def __init__(self, name, url):

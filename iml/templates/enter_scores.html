@@ -8,15 +8,20 @@
 <div class="mdc-card centered-single-card" style="width:500px;">
     <div class="mdc-card__media"></div>
     <center>
-    <h1>enter_scores</h1>
+    <h1>what team do u wanna enter scores dc</h1>
     <br>
-    <form method="POST" action="/enter_scores" id="enter_scores-form">
-        {# form.students.choices #}
-        {{ render_field(form.students) }}
-        {{ render_field(form.questionNum) }}
-        {{ render_field(form.score) }}
-        {{ render_field(form.submit) }}
 
+
+
+
+
+
+    <form method="POST" action="/enter_scores" id="enter_scores-form">
+      
+
+        {{ render_field(form.division) }}
+        {{ render_field(form.team) }}
+        {{ render_field(form.submit) }}
     </center>
     </form>
 </div>
