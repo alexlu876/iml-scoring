@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
 from iml.database import db
-from iml.models import User, School, Student, Contest, Score, Team
+from iml.models import User, School, Student, Contest, Score, Team, Division
 from iml.forms import LoginForm, RegisterForm, ScoresForm
 from iml.core.user.wrappers import login_required, login_forbidden
 from iml.util import render_custom_template
@@ -177,8 +177,20 @@ def info_srb():
 @login_required()
 def enter_scores():
     form = ScoresForm(request.form)
-    students = [(c.id, c.username) for c in Student.query.filter_by(school_id = User.school_id).all()]
-    form.students.choices = students
+
+    divisions_query = Division.query.all()
+    div_choices = [(div.name, div.name) for div in divisions_query]
+    form.division.choices = div_choices
+
+
+    user = User.query.filter_by(id = session["userdata"]["id"]).first()
+    teams_query = Team.query.filter_by(school = user.school)
+    team_choices = [(team.id, team.name) for team in teams_query]
+    form.team.choices = team_choices
+
+
+    #students = [(c.id, c.username) for c in Student.query.filter_by(school_id = User.school_id).all()]
+    #form.students.choices = students
     return render_custom_template("enter_scores.html",
     form=form,
     )
