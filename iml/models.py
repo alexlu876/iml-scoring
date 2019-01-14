@@ -151,6 +151,11 @@ class Team(db.Model):
 
     scores = db.relationship('Score', back_populates = 'team')
 
+    def __init__(self, name, school_id, division_id):
+        self.name = name
+        self.school_id = school_id
+        self.division_id = division_id
+
 
 
 
