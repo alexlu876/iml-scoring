@@ -101,14 +101,14 @@ class Contest(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
-    date = db.Column(db.Date(), nullable=False)
+    start_time = db.Column(db.DateTime(), nullable=False)
     question_count = db.Column(db.Integer, nullable=False)
     division_id = db.Column(db.Integer, db.ForeignKey('divisions.id'), nullable=False)
 
-    def __init__(self, name, date, question_count):
+    def __init__(self, name, start_time, question_count):
         self.name = name
-        self.date = date
-        self.question_count = 6
+        self.start_time = start_time
+        self.question_count = question_count
 
     division = db.relationship('Division', back_populates='contests')
 

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
 from iml.database import db
 from iml.models import User, Student, Division, Contest
-from iml.forms import StudentForm, ContestForm
+from iml.forms import StudentForm, NewContestForm
 from iml.core.user.wrappers import login_required
 from iml.core.admin.wrappers import admin_required
 from iml.util import render_custom_template
@@ -27,12 +27,16 @@ def list_contests(div_url):
 @admin.route("/add_contest", methods=["GET", "POST"])
 @admin_required()
 def add_contest():
-    contestForm = ContestForm()
+    contestForm = NewContestForm()
+    divisions_query = Division.query.all()
+    choices = [(div.name, div.name) for div in divisions_query]
+    contestForm.division.choices = choices
+
     if contestForm.validate_on_submit() and contestForm.submit.data:
         division = Division.query.filter_by(name=contestForm.division.data).first()
         if division:
             contest = Contest(name=contestForm.name.data,
-                              date=datetime.date.today(),
+                              start_time=contestForm.start_time.data,
                               question_count=contestForm.question_count.data)
             contest.division = division
             db.session.add(contest)

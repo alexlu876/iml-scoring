@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField, DateTimeField
 from wtforms import Form, validators
 
 # for wtforms
@@ -44,11 +44,13 @@ class StudentForm(FlaskForm):
 
     # school taken from coaches' session
 
-class ContestForm(FlaskForm):
-    name = StringField("name", [validators.DataRequired()])
+class NewContestForm(FlaskForm):
+    name = StringField("Contest Name", [validators.DataRequired()])
     #date
-    question_count = IntegerField("question count (its prolly 6)")
-    division = StringField("Division", [validators.DataRequired()])
+    question_count = IntegerField("Question Count (Likely 6)")
+    division = SelectField("Division",  choices=[])
+    # %Y-%m-%d %H:%M:%S'
+    start_time = DateTimeField("Time", [validators.DataRequired()], format='%Y-%m-%d %H:%M')
     submit = SubmitField("Submit")
 
 class ScoresForm(Form):
