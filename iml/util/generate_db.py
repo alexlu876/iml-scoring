@@ -7,8 +7,10 @@ def generate_nyc_teams(app, db):
             team_obj = Team.query.filter_by(name=team[0]).first()
             if not team_obj:
                 team_obj = Team(team[0], team[1], team[2])
+                team_obj.school_id = 1
                 db.session.add(team_obj)
                 db.session.commit()
+
     return True
 
 def generate_nyc_schools(app, db):
