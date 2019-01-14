@@ -7,12 +7,23 @@
 {% block content %}
 <div class="mdc-card" style="width:500px; margin-left: calc(50% - 250px);">
     <div style="width:100%;height:32px;background-color:#00b894;opacity: 1.0;"></div>
-    <div class="mdc-card__media"></div>
     <h2> u can see all the students here. its lit </h2>
-	<ul>  
-		{% for student in allStudents %}
-		<li>{{student.first}}{{student.last}}</li>
-		{% endfor%}
-	</ul>
-</div>
-{% endblock %}
+    <div class="mdc-card-table"></div>
+      <table class="mdc-data-table__content">
+        <thead>
+          <tr class="mdc-data-table__row">
+              <th class="mdc-data-table__column">username</th>
+              <th class="mdc-data-table__column">name</th>
+              <th class="mdc-data-table__column">team</th>
+          </tr>
+          {% for student in allStudents %}
+          <tr class="mdc-data-table__row">
+              <th class="mdc-data-table__column">{{student.username}}</th>
+              <th class="mdc-data-table__column">{{student.first + student.last}}</th>
+              <th class="mdc-data-table__column">bofa B</th>
+          </tr>
+          {% endfor %}
+        </thead>
+      </table>
+    </div>
+{%endblock%}
