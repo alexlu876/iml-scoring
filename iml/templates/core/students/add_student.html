@@ -1,0 +1,24 @@
+<!-- card example -->
+
+{% extends "_base.html" %}
+
+{% from "macros/_renderfield.html" import render_field %}
+
+{% block content %}
+<div>
+    <center>
+    <h2>Add a student</h2>
+
+    <form method="POST" action="/students/add_student" id="student-form">
+        {{ studentForm.hidden_tag() }}
+        {{ studentForm.csrf_token() }}
+        {{ render_field(studentForm.first)}}
+        {{ render_field(studentForm.last)}}
+        {{ render_field(studentForm.team) }}
+        {{ render_field(studentForm.submit) }}
+            </div>
+        </div>
+    </form>
+    </center>
+</div>
+{% endblock %}

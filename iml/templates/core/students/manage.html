@@ -1,0 +1,29 @@
+<!-- card example -->
+
+{% extends "_base.html" %}
+
+{% from "macros/_renderfield.html" import render_field %}
+
+{% block content %}
+<center>
+    <h2> Students at {{user.school.name}} </h2>
+</center>
+      <table class="mdc-data-table__content">
+        <thead>
+          <tr class="mdc-data-table__row">
+              <th class="mdc-data-table__column">Student</th>
+              <th class="mdc-data-table__column">Full Name</th>
+              <th class="mdc-data-table__column">Team</th>
+              <th class="mdc-data-table__column">Division</th>
+          </tr>
+          {% for student in students %}
+          <tr class="mdc-data-table__row">
+              <th class="mdc-data-table__column">{{student.username}}</th>
+              <th class="mdc-data-table__column">{{student.first}} {{student.last}}</th>
+              <th class="mdc-data-table__column">{% if student.team %} {{student.team.name}} {% else %} (Alternate) {% endif %}</th>
+              <th class="mdc-data-table__column">{{student.division.name}}</th>
+          </tr>
+          {% endfor %}
+        </thead>
+      </table>
+{%endblock%}

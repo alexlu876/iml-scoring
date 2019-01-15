@@ -36,13 +36,13 @@ class RegisterForm(FlaskForm):
     new_school = StringField("School (If not in Dropdown)")
     submit = SubmitField("Register")
 
-class StudentForm(FlaskForm):
-    first = StringField("First Name:", [validators.DataRequired()])
-    last = StringField("Last Name:", [validators.DataRequired()])
-    username = StringField("Username", [validators.DataRequired()])
-    submit = SubmitField("Login")
 
-    # school taken from coaches' session
+class NewStudentForm(FlaskForm):
+    first = StringField("First Name", [validators.DataRequired()])
+    last = StringField("Last Name", [validators.DataRequired()])
+    # REQUIRES coerce as a result of using integer ids
+    team = SelectField("Default Team", [validators.DataRequired()], choices=[], coerce=int)
+    submit = SubmitField("Add Student")
 
 class NewContestForm(FlaskForm):
     name = StringField("Contest Name", [validators.DataRequired()])

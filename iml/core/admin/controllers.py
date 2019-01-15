@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
 from iml.database import db
 from iml.models import User, Student, Division, Contest
-from iml.forms import StudentForm, NewContestForm
+from iml.forms import NewContestForm
 from iml.core.user.wrappers import login_required
 from iml.core.admin.wrappers import admin_required
 from iml.util import render_custom_template

@@ -150,6 +150,15 @@ class School(db.Model):
     def __init__(self, name):
         self.name = name
 
+    # TODO - sqlify this method
+    def getDivisionsList(self):
+        schools_divisions = []
+        for team in self.teams:
+            division = team.division
+            if division not in schools_divisions:
+                schools_divisions.append(division)
+        return schools_divisions
+
 
 class Team(db.Model):
     __tablename__ = 'teams'
@@ -165,11 +174,6 @@ class Team(db.Model):
 
     scores = db.relationship('Score', back_populates = 'team')
     students = db.relationship('Student', back_populates = 'team')
-    def __init__(self, name, school_id, division_id):
-        self.name = name
-        self.school_id = school_id
-        self.division_id = division_id
-
     def __init__(self, name, school_id, division_id):
         self.name = name
         self.school_id = school_id

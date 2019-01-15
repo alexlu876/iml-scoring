@@ -11,6 +11,9 @@ from iml.database import db
 from iml.core.admin.controllers import admin
 from iml.core.user.controllers import user
 from iml.core.students.controllers import students
+from iml.core.scores.controllers import scores
+from iml.api.private.controllers import private_api
+from iml.api.public.controllers import public_api
 
 from iml.models import User
 from iml.util.generate_db import generate_nyc_divisions, generate_nyc_users, generate_nyc_schools, generate_nyc_teams
@@ -81,3 +84,6 @@ generate_nyc_teams(app, db)
 app.register_blueprint(user, url_prefix="")
 app.register_blueprint(students, url_prefix="/students")
 app.register_blueprint(admin, url_prefix="/admin")
+app.register_blueprint(private_api, url_prefix="/api/private")
+app.register_blueprint(public_api, url_prefix="/api/public")
+app.register_blueprint(scores, url_prefix="/scores")

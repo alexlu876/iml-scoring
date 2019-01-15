@@ -1,13 +1,12 @@
 from iml.models import Division, User, School, Team
 
 def generate_nyc_teams(app, db):
-    teams = [("andrew's gotes", 1, 2), ("gilvir's gills", 2, 2)]
+    teams = [("andrew's gotes", 1, 2), ("gilvir's gills", 1, 3)]
     with app.app_context():
         for team in teams:
             team_obj = Team.query.filter_by(name=team[0]).first()
             if not team_obj:
-                team_obj = Team(team[0], team[1], team[2])
-                team_obj.school_id = 1
+                team_obj = Team(name=team[0], school_id=team[1],division_id=team[2])
                 db.session.add(team_obj)
                 db.session.commit()
 
@@ -31,10 +30,10 @@ def generate_nyc_users(app, db):
             user_obj = User.query.filter_by(first=user[0]).first()
             if not user_obj:
                 user_obj = User(user[0], user[1], user[2], user[3], user[4], user[5], user[6])
-                db.session.add(user_obj)
-                db.session.commit()
                 if user[0] == "ashy":
                     user_obj.school_id = 1
+                db.session.add(user_obj)
+                db.session.commit()
     return True
 
 def generate_nyc_divisions(app, db):
