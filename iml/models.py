@@ -73,12 +73,12 @@ class Student(db.Model):
         if contest:
             length = contest.question_count
             scores_list = [0]*length
-            # 0 INDEX
+            # 1 INDEX data -> 0 INDEX list
             for score in scores_query:
-                scores_list[score.question_num] = score.is_correct
+                scores_list[score.question_num-1] = score.points_awarded
         else:
             # TODO - order things properly
-            scores_list = [score.is_correct for score in scores_query]
+            scores_list = [score.points_awarded for score in scores_query]
         # TODO -  turn this into the list, because its an unordered query list
         # sort by -- date of contest, question number
         return scores_list
@@ -95,7 +95,9 @@ class Score(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     # ASSERT: {0,1}
     question_num = db.Column(db.Integer, nullable=False)
-    is_correct = db.Column(db.Integer, nullable=False)
+    question_value = db.Column(db.Integer, default=1,nullable=False)
+    points_awarded = db.Column(db.Integer, nullable=False)
+
     contest_id = db.Column(db.Integer,db.ForeignKey('contests.id'), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     coach_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -109,6 +111,16 @@ class Score(db.Model):
     coach = db.relationship('User', back_populates = 'scores')
     team = db.relationship('Team', back_populates = 'scores')
 
+    # returns max points. currently stored locally, might change to be stored in a seperate table.
+    def getMaxPoints(self):
+        return self.question_value
+    def getValue(self):
+        return self.points_awarded
+    def setValue(self, value):
+        self.points_awarded = value
+    def getQuestionNum(self):
+        return self.question_num
+
 
 class Contest(db.Model):
     __tablename__ = 'contests'
@@ -117,6 +129,8 @@ class Contest(db.Model):
     name = db.Column(db.String(32), nullable=False)
     start_time = db.Column(db.DateTime(), nullable=False)
     question_count = db.Column(db.Integer, nullable=False)
+    team_size = db.Column(db.Integer, nullable=False,
+                          default=5)
     division_id = db.Column(db.Integer, db.ForeignKey('divisions.id'), nullable=False)
 
     def __init__(self, name, start_time, question_count):
@@ -128,6 +142,10 @@ class Contest(db.Model):
 
     scores = db.relationship('Score', back_populates='contest')
 
+    def getQuestionCount(self):
+        return self.question_count
+    def getTeamSize(self):
+        return self.team_size
     def getScores(self):
         return self.scores
 
