@@ -21,7 +21,7 @@
         <link href="https://fonts.googleapis.com/css?family=Merriweather|Noto+Serif+SC" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        
+
         {% block css_imports %}
         {% endblock css_imports %}
         <!-- end css -->
@@ -45,12 +45,12 @@
                     <a class="mdc-list-item mdc-list-item--activated" href="/" aria-selected="true">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">home</i>
                         Home
-                    </a> 
+                    </a>
                     {% if user %}
                     <a class="mdc-list-item" href="/logout">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">exit_to_app</i>
                         Sign Out
-                    </a> 
+                    </a>
                     {% else %}
                     <a class="mdc-list-item" href="/login">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">exit_to_app</i>
@@ -69,16 +69,16 @@
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">add</i>
                         Add Contest
                     </a>
-                    
+
                     {% endif %}
                     {% if user and user.school %}
                     <hr class="mdc-list-divider">
                     <h6 class="mdc-list-group__subheader">{{user.school.name}}</h6>
-                    <a class="mdc-list-item" href="/">
+                    <a class="mdc-list-item" href="/enter_scores">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">book</i>
                         Enter Scores
                     </a>
-                    <a class="mdc-list-item" href="/">
+                    <a class="mdc-list-item" href="/students/add_student">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">book</i>
                         Manage Teams
                     </a>
@@ -88,11 +88,11 @@
                     <a class="mdc-list-item" href="/info">
                         <i class="material-icons mdc-list-item__graphic" aria-hidden="true">info</i>
                         View Scores
-                    </a>         					
+                    </a>
 
                 </nav>
             </div>
-        </aside> 
+        </aside>
         <div class="mdc-drawer-scrim"></div>
 
         {% block navbar %}
