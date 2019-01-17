@@ -103,6 +103,12 @@ def view_score():
     studentName = request.args.get('student_display_name')
     Scores = Score.query.filter_by(contest_id =contestID, student_id=studentName)
     scoreDict = {}
-    for score in Scores:
-        scoreDict[score.getQuestionCount()] = score.getScores()
+    if contestID is None or studentName is None:
+        Scores = Score.query.all()
+        for score in Scores:
+            scoreDict[score.getQuestionNum()] = score.getValue()
+    else:
+        for score in Scores:
+            scoreDict[score.getQuestionCount()] = score.getScores()
+
     return jsonify(scoreDict)
