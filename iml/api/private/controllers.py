@@ -96,19 +96,39 @@ def add_score():
 
     response_data["status"] = 1
     return json_response(response_data, 200)
-@private_api.route("/scores/view", methods=['GET'])
+
+@private_api.route("/students/query/contest")
+@login_required()
+def list_students():
+    contest_id = request.args.get('contest_id')
+    team_id = request.args.get('team_id')
+
+    user = get_user(session["userdata"]["id"])
+    school = user.school
+    contest = Contest.query.filter_by(id=contest_id).first()
+    team = Team.query.filter_by(id=team_id).first()
+    if not (contest and user and team) or (team.school != school) or (contest.division != team.division):
+        return json_response(0, 400)
+
+    studentsQuery = Student.query.filter_by(school_id=school.id,division_id=contest.division.id)
+    student_usernames = [student.username for student in studentsQuery
+                if student.isValidParticipant(contest=contest, team=team)]
+    return json_response(student_usernames, 200)
+
+
+@private_api.route("/scores/query/contest", methods=['GET'])
 @login_required()
 def view_score():
-    contestID = request.args.get('contest_id')
-    studentName = request.args.get('student_display_name')
-    Scores = Score.query.filter_by(contest_id =contestID, student_id=studentName)
-    scoreDict = {}
-    if contestID is None or studentName is None:
-        Scores = Score.query.all()
-        for score in Scores:
-            scoreDict[score.getQuestionNum()] = score.getValue()
-    else:
-        for score in Scores:
-            scoreDict[score.getQuestionCount()] = score.getScores()
+    contest_id = request.args.get('contest_id')
+    student_display_name = request.args.get('student_display_name')
+    #team_id = request.args.get('team_id')
 
-    return jsonify(scoreDict)
+    contest = Contest.query.filter_by(id=contest_id).first()
+    student = Student.query.filter_by(username=student_display_name).first()
+
+    if contest and student:
+        scoreDict = student.getScores(contest)
+        return json_response(scoreDict, 200)
+    else:
+        scoreDict = {}
+        return json_response(scoreDict,400)

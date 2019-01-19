@@ -2,7 +2,70 @@
 
 {% block content %}
 <center>
-    Ayylmao
+    <h2> Scores for {{team.name}} at {{contest.name}}</h2>
+    <div class="mdc-data-table">
+        <table class="mdc-data-table__content">
+            <thead>
+                <tr class="mdc-data-table__row">
+                    <th class="mdc-data-table__column">Student</th>
+                    {% for n in range(1,contest.getQuestionCount()+1) %}
+                    <th class=mdc-data-table__column>{{n}}</th>
+                    {% endfor %}
+                    <th class="mdc-data-table__column">Update</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for student in students %}
+            <tr class="mdc-data-table__row">
+                <td class="mdc-data-table__cell">{{student.username}}</td>
+                    {% for n in range(1,contest.getQuestionCount()+1) %}
+                    <td class=mdc-data-table__cell>
+                        <div class="mdc-checkbox">
+                            <input type="checkbox"
+                                   class="mdc-checkbox__native-control"
+                                   id="checkbox-{{student.username}}-{{n}}"/>
+                            <div class="mdc-checkbox__background">
+                                <svg class="mdc-checkbox__checkmark"
+                                     viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path"
+                                          fill="none"
+                                          d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                                </svg>
+                                <div class="mdc-checkbox__mixedmark"></div>
+                            </div>
+                        </div>
+                    </td>
+                    {% endfor %}
+                    <td class="mdc-data-table__cell">
+                        <button class="mdc-icon-button material-icons">forward</button>
+                    </td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
 </center>
 
+
+
 {% endblock content %} 
+
+{% block js_imports %}
+{{super()}}
+<script>
+var students = [{% for student in students %}"{{student.username}}", {% endfor %}];
+var contest_id = {{contest.id}};
+var team_id = {{team.id}};
+const scores = {};
+for (i in students) {
+    student_name = students[i];
+    $.getJSON("/api/private/scores/query/contest", {"contest_id": contest_id, "student_display_name": students[i]}).done(function(data) {
+        console.log(data);
+        scores[student_name] = data;
+    });
+};
+</script>
+
+{% endblock js_imports %}

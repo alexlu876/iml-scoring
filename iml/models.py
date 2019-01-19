@@ -64,30 +64,54 @@ class Student(db.Model):
     team = db.relationship('Team', back_populates='students')
 
 
-    # returns a list of ({0,1}) integers with information on whether they got the questions right
-    def getScores(self, contest=None):
-        if contest is None:
-            scores_query = Score.query.filter_by(student_id=self.id)
-        else:
-            scores_query = Score.query.filter_by(contest=contest, student_id=self.id)
-        if contest:
-            length = contest.question_count
-            scores_list = [0]*length
-            # 1 INDEX data -> 0 INDEX list
-            for score in scores_query:
-                scores_list[score.question_num-1] = score.points_awarded
-        else:
-            # TODO - order things properly
-            scores_list = [score.points_awarded for score in scores_query]
-        # TODO -  turn this into the list, because its an unordered query list
-        # sort by -- date of contest, question number
-        return scores_list
+    # returns whether the person participated in this contest for the specified team
+    def isParticipant(self,contest,team=None):
+        scoresQuery = Score.query.filter_by(contest_id=contest.id,
+                                            student_id=self.id)
+        if team:
+            scoresQuery = scoresQuery.filter_by(team_id=team.id)
+        return scoresQuery.count() == contest.getQuestionCount()
+    # participant is valid if they don't have scores for another team or are on the team
+    # ie they are on the team or they're not on a team AND them being a participant implies they participated for that team. Essetially serves as a
+    # check that they have not already had scores entered for another team
+    def isValidParticipant(self, contest, team):
+        return (self.team == team) or (self.team is None and
+                                       (not(self.isParticipant(contest)) or
+                                        self.isParticipant(contest, team)))
 
+    # returns score in a dictionary
+    def getScores(self, contest, division=None, team=None):
+        if contest is None:
+            return {}
+        else:
+            scoresQuery = Score.query.filter_by(contest_id=contest.id,
+                                                student_id=self.id)
+            if division:
+                scoresQuery = scoresQuery.filter_by(division_id=division.id)
+            if team:
+                scoresQuery = scoresQuery.filter_by(team_id=team.id)
+            scoresDict = {}
+            for scoreObj in scoresQuery:
+                scoresDict[scoreObj.getQuestionNum()] = scoreObj.getValue()
+            return scoresDict
+
+    def getAllScores(self, division=None,team = None):
+        contestsQuery = Contest.query.all()
+        if division:
+            contestsQuery = contestsQuery.filter_by(division_id=division.id)
+        if team:
+            contestsQuery = contestsQuery.filter_by(team_id=team.id)
+        scores = []
+        for contest in contestsQuery:
+            contestScores = self.getScores(contest)
+            if contestScores == {}:
+                scores.append(contestScores)
+        return scores
     # returns actual final score
     def getFinalContestScore(self, contest):
-        return sum(self.getScores(contest))
+        return sum(self.getScores(contest).values())
     def getFinalScore(self):
-        return sum(self.getScores())
+        return sum(self.getAllScores().values())
 
 
 class Score(db.Model):
