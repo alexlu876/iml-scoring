@@ -20,10 +20,11 @@
                 <td class="mdc-data-table__cell">{{student.username}}</td>
                     {% for n in range(1,contest.getQuestionCount()+1) %}
                     <td class=mdc-data-table__cell>
-                        <div class="mdc-checkbox">
+                        <div class="mdc-checkbox"
+                             id="checkbox-{{student.username.replace(' ', '_')}}-{{n}}"
+                            >
                             <input type="checkbox"
-                                   class="mdc-checkbox__native-control"
-                                   id="checkbox-{{student.username}}-{{n}}"/>
+                                   class="mdc-checkbox__native-control"/>
                             <div class="mdc-checkbox__background">
                                 <svg class="mdc-checkbox__checkmark"
                                      viewBox="0 0 24 24">
@@ -58,14 +59,44 @@
 var students = [{% for student in students %}"{{student.username}}", {% endfor %}];
 var contest_id = {{contest.id}};
 var team_id = {{team.id}};
-const scores = {};
-for (i in students) {
-    student_name = students[i];
-    $.getJSON("/api/private/scores/query/contest", {"contest_id": contest_id, "student_display_name": students[i]}).done(function(data) {
-        console.log(data);
-        scores[student_name] = data;
-    });
-};
+var question_count = {{contest.getQuestionCount()}};
+var scores = {};
+const MDCCheckbox = mdc.checkbox.MDCCheckbox;
+
+promise = $.getJSON("/api/private/scores/query/contest", {"contest_id": contest_id, "student_display_names": students.join()});
+
+promise.done(function(data) {
+    console.log(data);
+    scores = data;
+    checkboxes = {};
+    for (var i=0; i < students.length; i++) {
+        checkboxes[students[i]] = {}
+        for (var j=1; j <= question_count; j++) {
+            div_id_string = "#checkbox-"+students[i].replace(" ","_")+"-"+j;
+            console.log(div_id_string);
+            new_checkbox = new MDCCheckbox(document.querySelector(div_id_string));
+            checkboxes[students[i]][j] = new_checkbox;
+        }
+    }
+
+    for (student in checkboxes) {
+        console.log(scores[student]);
+        if ($.isEmptyObject(scores[student]) ) {
+            for (key in checkboxes[student]) {
+                console.log(checkboxes[student][key]);
+                checkboxes[student][key].disabled = true;
+            }
+        }
+        else {
+            for (question_num in checkboxes[student]) {
+                if (scores[student][question_num] == 1) {
+                    checkboxes[student][question_num].checked = true;
+                }
+            }
+        }
+    }
+});
+
 </script>
 
 {% endblock js_imports %}

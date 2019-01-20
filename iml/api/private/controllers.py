@@ -120,15 +120,20 @@ def list_students():
 @login_required()
 def view_score():
     contest_id = request.args.get('contest_id')
-    student_display_name = request.args.get('student_display_name')
-    #team_id = request.args.get('team_id')
-
-    contest = Contest.query.filter_by(id=contest_id).first()
-    student = Student.query.filter_by(username=student_display_name).first()
-
-    if contest and student:
-        scoreDict = student.getScores(contest)
-        return json_response(scoreDict, 200)
+    students_requested = request.args.get('student_display_names')
+    if students_requested:
+        students_requested = students_requested.split(',')
     else:
-        scoreDict = {}
-        return json_response(scoreDict,400)
+        return json_response({}, 400)
+    scoreDict = {}
+    for student_display_name in students_requested:
+        #team_id = request.args.get('team_id')
+
+        contest = Contest.query.filter_by(id=contest_id).first()
+        student = Student.query.filter_by(username=student_display_name).first()
+
+        if contest and student:
+            scoreDict[student_display_name] = student.getScores(contest)
+        else:
+            return json_response(scoreDict, 400)
+    return json_response(scoreDict, 200)
