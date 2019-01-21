@@ -17,7 +17,26 @@
             <tbody>
             {% for student in students %}
             <tr class="mdc-data-table__row">
-                <td class="mdc-data-table__cell">{{student.username}}</td>
+                <td class="mdc-data-table__cell">
+                    <div class="mdc-form-field">
+                        <div class="mdc-checkbox"
+                             id="toggleCheckbox-{{student.username.replace(' ', '_')}}"
+                             >
+                             <input type="checkbox"
+                                    class="mdc-checkbox__native-control"/>
+                             <div class="mdc-checkbox__background">
+                                 <svg class="mdc-checkbox__checkmark"
+                                      viewBox="0 0 24 24">
+                                     <path class="mdc-checkbox__checkmark-path"
+                                           fill="none"
+                                           d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                                 </svg>
+                            <div class="mdc-checkbox__mixedmark"></div>
+                             </div>
+                        </div>
+                        <label for="toggleCheckbox-{{student.username.replace(' ', '_')}}">{{student.username}}</label>
+                    </div>
+                </td>
                     {% for n in range(1,contest.getQuestionCount()+1) %}
                     <td class=mdc-data-table__cell>
                         <div class="mdc-checkbox"
@@ -38,7 +57,7 @@
                     </td>
                     {% endfor %}
                     <td class="mdc-data-table__cell">
-                        <button class="mdc-icon-button material-icons">forward</button>
+                        <button id="uploadButton-{{student.username.replace(' ', '_') }}"onclick="uploadScores('{{student.username}}')" class="mdc-icon-button material-icons">forward</button>
                     </td>
 
             </tr>
@@ -56,46 +75,174 @@
 {% block js_imports %}
 {{super()}}
 <script>
+
+const MDCCheckbox = mdc.checkbox.MDCCheckbox;
 var students = [{% for student in students %}"{{student.username}}", {% endfor %}];
 var contest_id = {{contest.id}};
 var team_id = {{team.id}};
+var max_team_size = {{contest.team_size}};
+
 var question_count = {{contest.getQuestionCount()}};
 var scores = {};
-const MDCCheckbox = mdc.checkbox.MDCCheckbox;
+var checkboxes = {};
+var upload_buttons = {};
+var row_toggles = {};
+
+for (var i =0; i < students.length; i++) {
+    div_id_string = "#uploadButton-"+students[i].replace(" ","_");
+    upload_buttons[students[i]] = document.querySelector(div_id_string);
+    div_id_string = "#toggleCheckbox-"+students[i].replace(" ","_");
+    new_row_checkbox = new MDCCheckbox(document.querySelector(div_id_string));
+    row_toggles[students[i]] = new_row_checkbox;
+}
+
+for (var i=0; i < students.length; i++) {
+    checkboxes[students[i]] = {}
+    for (var j=1; j <= question_count; j++) {
+        div_id_string = "#checkbox-"+students[i].replace(" ","_")+"-"+j;
+        console.log(div_id_string);
+        new_checkbox = new MDCCheckbox(document.querySelector(div_id_string));
+        checkboxes[students[i]][j] = new_checkbox;
+    }
+}
+
 
 promise = $.getJSON("/api/private/scores/query/contest", {"contest_id": contest_id, "student_display_names": students.join()});
 
+// retrieve current state and update checkmarks accordingly
 promise.done(function(data) {
     console.log(data);
     scores = data;
-    checkboxes = {};
-    for (var i=0; i < students.length; i++) {
-        checkboxes[students[i]] = {}
-        for (var j=1; j <= question_count; j++) {
-            div_id_string = "#checkbox-"+students[i].replace(" ","_")+"-"+j;
-            console.log(div_id_string);
-            new_checkbox = new MDCCheckbox(document.querySelector(div_id_string));
-            checkboxes[students[i]][j] = new_checkbox;
-        }
-    }
 
     for (student in checkboxes) {
         console.log(scores[student]);
         if ($.isEmptyObject(scores[student]) ) {
-            for (key in checkboxes[student]) {
-                console.log(checkboxes[student][key]);
-                checkboxes[student][key].disabled = true;
-            }
+            setChecksDisabled(student, true);
         }
         else {
+            row_toggles[student].checked = true;
             for (question_num in checkboxes[student]) {
                 if (scores[student][question_num] == 1) {
                     checkboxes[student][question_num].checked = true;
                 }
             }
         }
+
     }
+
 });
+
+//set the listeners:
+for (var i =0; i < students.length; i++) {
+    $(row_toggles[students[i]].root_).change( function() {
+        // find the student name associated with this button
+        foo = $(this).prop('id');
+        student = students.filter(function(s) {
+            return row_toggles[s].root_.id == foo;
+        }).pop();
+        console.log(student);
+        if (row_toggles[student].checked) {
+            setChecksDisabled(student,false);
+        }
+
+        //if unchecked: 
+        else {
+            uncheckRow(student);
+            setChecksDisabled(student,true);
+            // post deletion request
+        }
+
+        // frontend closing:
+        if (getEnabledRowsCount() >= max_team_size) {
+            disableUncheckedToggles();
+        }
+        else {
+            enableUncheckedToggles();
+        }
+
+    });
+}
+
+
+function uncheckRow(student) {
+    for (var i=1; i <= question_count; i++) {
+        checkboxes[student][i].checked = false;
+    }
+}
+
+function disableUncheckedToggles() {
+    for (student in row_toggles) {
+        if (!row_toggles[student].checked) {
+            row_toggles[student].disabled = true;
+        }
+    }
+}
+
+function enableUncheckedToggles() {
+    for (student in row_toggles) {
+        row_toggles[student].disabled = false;
+    }
+}
+
+function getEnabledRowsCount() {
+    var counter = 0;
+    for (student in row_toggles) {
+        if (row_toggles[student].checked) {
+            counter += 1;
+        }
+    }
+    return counter;
+}
+
+
+function setChecksDisabled(username, bool=true) {
+    for (var i = 1; i <= question_count; i++) {
+        checkboxes[student][i].disabled = bool;
+    }
+    $(upload_buttons[username]).prop("disabled",bool);
+}
+
+function isChecksDisabled(username) {
+    return $(upload_buttons[username]).prop("disabled");
+}
+
+function uploadScores(username) {
+    local_scores = scores[username];
+    updateScores(username);
+    data = {
+        "contest_id": contest_id,
+        "team_id" : team_id,
+        "student_display_name": username,
+        "scores" : local_scores,
+    };
+
+    var promise = $.ajax({
+        url:"/api/private/scores/add",
+        type: 'POST',
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        error: function ( request, status, error) {
+            console.log(error);
+        }
+    });
+
+}
+
+
+function updateScores(username) {
+    // update physical scores dictionary
+    local_scores = scores[username];
+    for (var i = 1; i <= question_count; i++) {
+        if (checkboxes[username][i].checked) {
+            local_scores[i] = 1;
+        }
+        else {
+            local_scores[i] = 0;
+        }
+    }
+}
+
 
 </script>
 
