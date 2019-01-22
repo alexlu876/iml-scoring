@@ -150,6 +150,9 @@ for (var i =0; i < students.length; i++) {
             uncheckRow(student);
             setChecksDisabled(student,true);
             // post deletion request
+            var delete_promise = $.ajax({
+                url: "/api/private/scores/delete/student/"+student+"/contest/"+contest_id,
+                type: "DELETE"});
         }
 
         // frontend closing:

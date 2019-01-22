@@ -137,3 +137,20 @@ def view_score():
         else:
             return json_response(scoreDict, 400)
     return json_response(scoreDict, 200)
+
+
+@private_api.route("/scores/delete/student/<student_username>/contest/<contest_id>",
+                   methods=['DELETE'])
+@login_required()
+def delete_score(student_username, contest_id):
+    user = get_user(session["userdata"]["id"])
+    student = Student.query.filter_by(username=student_username).first()
+    contest = Contest.query.get(contest_id)
+
+    if not contest or (user.school != student.school):
+        return json_response({}, 400)
+    scores = Score.query.filter_by(student_id=student.id,
+                                   contest_id=contest.id)
+    scores.delete()
+    db.session.commit()
+    return json_response({}, 200)
