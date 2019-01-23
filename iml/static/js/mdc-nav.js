@@ -36,7 +36,7 @@ $(".drawer-haschild").on("click",function(){
 
 // snackbar for flashes
 // VERY TEMPORARY SOLUTION, MUST BE REWORKED
-const flashes = [].map.call(document.querySelectorAll('.mdc-snackbar'), function(e) {
+const flashes = [].map.call(document.querySelectorAll('#static-flash'), function(e) {
     return new MDCSnackbar(e);
 });
 

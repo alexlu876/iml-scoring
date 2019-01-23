@@ -58,7 +58,8 @@ class Student(db.Model):
                         nullable=True)
 
     school = db.relationship('School', back_populates='students')
-    scores = db.relationship('Score', back_populates='student')
+    scores = db.relationship('Score', back_populates='student',
+                             )
     division = db.relationship('Division', back_populates='students')
     # if team is null, then they are an alternate
     team = db.relationship('Team', back_populates='students')
@@ -107,6 +108,11 @@ class Student(db.Model):
             if contestScores == {}:
                 scores.append(contestScores)
         return scores
+    def getTeam(self, contest):
+        score_sample = Score.query.filter_by(contest_id=contest.id, student_id=self.id).first()
+        if score_sample:
+            return score_sample.team
+        return None
     # returns actual final score
     def getFinalContestScore(self, contest):
         return sum(self.getScores(contest).values())
@@ -175,8 +181,8 @@ class Contest(db.Model):
 
     # returns a list of students who have scores for a contest
     def getAttendees(self):
-        pass
-
+        contest_id = self.id
+        return Student.query.filter(Student.scores.any(Score.contest_id == contest_id))
 
 class School(db.Model):
     __tablename__ = 'schools'

@@ -29,3 +29,12 @@ def update_scores(contest_id, team_id):
                                   students=students,
                                   team=team)
 
+@scores.route('/view/contest/<contest_id>')
+def view_contest_scores(contest_id):
+    contest = Contest.query.get(contest_id)
+    if not contest:
+        return redirect('/view')
+    # TODO - come up wikth less redundant element gathering for template
+    return render_custom_template("core/scores/view_contest.html",
+                                  contest = contest,
+                                  students = contest.getAttendees().order_by(Student.school_id))

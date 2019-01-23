@@ -1,0 +1,112 @@
+{% extends "core/scores/_view_base.html" %}
+
+{% block panel %}
+
+<center>
+    <h2>Scores for {{contest.name}}</h2>
+
+    <div class="mdc-data-table">
+        <table class="mdc-data-table__content">
+            <thead>
+                <tr class="mdc-data-table__row">
+                    <th class="mdc-data-table__column">
+                        Student
+                    </th>
+                {% for n in range(1,
+                contest.getQuestionCount()+1) %}
+                <th class="mdc-data-table__column">{{n}}</th>
+                {% endfor %}
+                <th class="mdc-data-table__column">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    {% set student_scores = student.getScores(contest)%}
+                <tr class="mdc-data-table__row">
+                    <td class="mdc-data-table__cell">
+                        {{student.first}} {{student.last}}
+                        ({{student.getTeam(contest).name}} ({{student.school.name}}))
+                    </td>
+                    {% for n in range(1, contest.getQuestionCount()+1) %}
+                    <td class="mdc-data-table__cell">
+                        {{ student_scores[n] }}/1
+                    </td>
+                    {% endfor %}
+                    <td class="mdc-data-table__cell">
+                        {{ student.getFinalContestScore(
+                        contest)}}/6
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <br>
+    <h2>Question Breakdown</h2>
+    <br>
+</center>
+
+<br>
+<div id="chart">
+    <svg style="height: 500px"></svg>
+</div>
+{% endblock panel %}
+
+{% block css_imports %}
+{{super()}}
+<link rel="stylesheet" href="https://cdn.rawgit.com/novus/nvd3/v1.8.1/build/nv.d3.css">
+{% endblock %}
+
+{% block js_imports %}
+{{super()}}
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://cdn.rawgit.com/novus/nvd3/v1.8.1/build/nv.d3.min.js"></script>
+
+<script>
+var contest_id= {{contest.id}};
+var students = [{% for student in students %}"{{student.username}}", {% endfor %}];
+var questionCount = {{contest.getQuestionCount()}};
+var scores = {};
+
+promise = $.getJSON("/api/private/scores/query/contest",        {"contest_id": contest_id, "student_display_names": students.join()});
+
+promise.done(function(data) {
+    scores = data;
+    nv.addGraph(function() {
+        var chart = nv.models.discreteBarChart()
+            .x(function(d) { return d.label})
+            .y(function(d) { return d.value})
+            .tooltips(false)
+            .showValues(true);
+        d3.select('#chart svg')
+            .datum(formatQuestionBreakdown(data))
+            .call(chart);
+        nv.utils.windowResize(chart.update);
+        return chart;
+    });
+});
+function formatQuestionBreakdown(data) {
+    values = []
+    console.log(data);
+    for (var i=1; i <= questionCount; i++) {
+        question_sum = 0;
+        for (j in students) {
+            question_sum += data[students[j]][i];
+        }
+        values.push({
+            "label" : "Question "+i,
+            "value" : question_sum,
+        });
+    }
+    return [
+        {
+            key: "Values",
+            values : values,
+        }
+    ];
+}
+</script>
+{% endblock js_imports %}
+
