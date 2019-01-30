@@ -38,3 +38,20 @@ def view_contest_scores(contest_id):
     return render_custom_template("core/scores/view_contest.html",
                                   contest = contest,
                                   students = contest.getAttendees().order_by(Student.school_id))
+
+
+@scores.route('/view/division/<division_url>')
+def view_division(division_url):
+    division = Division.query.filter_by(url=division_url).first()
+    if not division:
+        return redirect('/view')
+    return render_custom_template("core/scores/view_division.html",
+                                  division = division,
+                                  students = division.getParticipants().order_by(Student.school_id))
+
+@scores.route('/view')
+def view_scores_homepage():
+    divisions = Division.query.all()
+    return render_custom_template("core/scores/view_all.html",
+                                  divisions=divisions)
+

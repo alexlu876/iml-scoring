@@ -4,6 +4,12 @@ from wtforms import Form, validators
 
 # for wtforms
 
+# custom string field that only allows spaces, underscores, etc.
+RE_STRING = r'^[\w\s+-]+$'
+
+def processName(string):
+    return string and string.strip()
+
 class LoginForm(FlaskForm):
     email = StringField("Email: ",
                         [validators.DataRequired(),
@@ -19,8 +25,18 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    first = StringField("First Name:", [validators.DataRequired()])
-    last = StringField("Last Name:", [validators.DataRequired()])
+    first = StringField("First Name:",
+                        [validators.DataRequired(),
+                         validators.Regexp(RE_STRING)
+                         ],
+                        filters=[processName]
+                        )
+    last = StringField("Last Name:",
+                        [validators.DataRequired(),
+                         validators.Regexp(RE_STRING)
+                         ],
+                        filters=[processName]
+                        )
     password = PasswordField("Password: ",
                              [validators.DataRequired(),
                               validators.Length(min=3,
@@ -38,8 +54,18 @@ class RegisterForm(FlaskForm):
 
 
 class NewStudentForm(FlaskForm):
-    first = StringField("First Name", [validators.DataRequired()])
-    last = StringField("Last Name", [validators.DataRequired()])
+    first = StringField("First Name:",
+                        [validators.DataRequired(),
+                         validators.Regexp(RE_STRING)
+                         ],
+                        filters=[processName]
+                        )
+    last = StringField("Last Name:",
+                        [validators.DataRequired(),
+                         validators.Regexp(RE_STRING)
+                         ],
+                        filters=[processName]
+                        )
     # REQUIRES coerce as a result of using integer ids
     team = SelectField("Default Team", [validators.DataRequired()], choices=[], coerce=int)
     submit = SubmitField("Add Student")

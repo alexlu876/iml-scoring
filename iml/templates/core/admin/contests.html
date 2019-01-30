@@ -9,7 +9,9 @@
             <div class="mdc-card">
                 <div class="mdc-card__primary-action">
                     <h2>{{contest.name}}</h2>
-                    {{contest.start_time}}
+                    <strong>{{contest.division.name}}</strong>
+                    <br>
+                    {{contest.start_time.date()}}
                     <br>
                     Question Count: {{contest.question_count}}
                     <br>
@@ -18,15 +20,12 @@
                 <div class="mdc-card__actions">
                     <div class="mdc-card__action-buttons">
                         <button class="mdc-button mdc-card__action mdc-card__action--button">
-                            <span class="mdc-button__label">Action 1</span>
-                        </button>
-                        <button class="mdc-button mdc-card__action mdc-card__action--button">
-                            <span class="mdc-button__label">Action 2</span>
+                            <span class="mdc-button__label">View Scores</span>
                         </button>
                     </div>
-                    <div class="mdc-card__action-icons">
-                        <button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon" title="More options">more_vert</button>
-                    </div>
+                    <!-- <div class="mdc-card__action-icons"> -->
+                    <!--     <button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon" title="More options">more_vert</button> -->
+                    <!-- </div> -->
                 </div>
             </div>
     </div>

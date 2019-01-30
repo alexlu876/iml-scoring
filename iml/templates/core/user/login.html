@@ -10,7 +10,7 @@
     <center>
     <h1>Login</h1>
     <br>
-    <form method="POST" action="/login" id="login-form">
+    <form method="POST" action="{{ url_for('user.login', next=request.args.get('next')) }}" id="login-form">
         {{ loginForm.hidden_tag() }}
         {{ loginForm.csrf_token() }}
         {{ render_field(loginForm.email) }}

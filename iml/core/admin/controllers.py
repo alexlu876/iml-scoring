@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
 from iml.database import db
-from iml.models import User, Student, Division, Contest
+from iml.models import User, Student, Division, Contest, Question
 from iml.forms import NewContestForm
 from iml.core.user.wrappers import login_required
 from iml.core.admin.wrappers import admin_required
@@ -35,12 +35,21 @@ def add_contest():
     if contestForm.validate_on_submit() and contestForm.submit.data:
         division = Division.query.filter_by(name=contestForm.division.data).first()
         if division:
+            question_count = contestForm.question_count.data
             contest = Contest(name=contestForm.name.data,
                               start_time=contestForm.start_time.data,
-                              question_count=contestForm.question_count.data)
+                              question_count=question_count)
             contest.division = division
             db.session.add(contest)
             db.session.commit()
+            for question_num in range(1,question_count+1):
+                newQuestion =  Question(contest_id=contest.id,
+                                        question_num=question_num,
+                                        question_value=1,
+                                        question_string=None)
+                db.session.add(newQuestion)
+                db.session.commit()
+            # commit first to assign key
             flash("Contest successfully added!")
         else:
             flash("That division does not exist!")

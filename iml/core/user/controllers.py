@@ -33,7 +33,8 @@ def login():
                     session["status"] = IS_SITE_ADMIN
                 session.permanent = True
                 flash("Login Successful!", "success")
-                return redirect('/')
+                dest_url = request.args.get('next') or '/'
+                return redirect(dest_url)
             else:
                 flash("Email and password do not match!", "error")
         else:
@@ -96,110 +97,7 @@ def logout():
     return redirect('/login')
 
 
-#competition results display
-@user.route('/info')
-def info():
-    return render_custom_template('results.html')
-
-@user.route('/info/tests')
-def testing():
-
-    #school1 = School(name="stuyvesant")
-
-    # student1 = Student(
-    #     first = "Alex",
-    #     last = "Lu",
-    #     username = "gote876",
-    #     school_id = "1"
-    # )
-
-    # db.session.add(student1)
-    # db.session.commit()
-
-    # db.session.add(school1)
-    # db.session.commit()
-
-    studentDB = Student.query.all()
-    contests = Contest.query.all()
-    users = User.query.all()
-    teams = Team.query.all()
-    score1 = Score(
-        question_num = 1,
-        is_correct = 1,
-        contest_id = 2, #quiz bowl
-        student_id = 1, #student alex gote876
-        coach_id = 2, # student.id (Gilvir)
-        team_id = 1,
-        timestamp = datetime.utcnow()
-    )
-    db.session.add(score1)
-    db.session.commit()
-    students = Student.query.filter_by(school_id = User.school_id)
-
-    return render_custom_template('tests.html',
-                                  studentDB=studentDB,
-                                  contests = contests,
-                                  users = users,
-                                  teams = teams,
-                                  students = students )
-@user.route('/info/sf')
-def info_sf():
-
-    students = [
-        {
-        'name': "Alex Lu",
-        'scores': "1 2 3 4 5 6",
-        'total': "26",
-        },
-        {
-        'name': "Andrew X. Chen",
-        'scores': "1 2 1 0 0",
-        'total': "4",
-        }
-    ]
-
-    return render_custom_template('results_sf.html',
-                                  students = students)
-
-@user.route('/info/jr')
-def info_jr():
-    return render_custom_template('results_jr.html')
-
-@user.route('/info/sra')
-def info_sra():
-    return render_custom_template('results_sra.html')
-
-@user.route('/info/srb')
-def info_srb():
-    return render_custom_template('results_srb.html')
-
-@user.route('/enter_scores', methods=["GET", "POST"])
-@login_required()
-def enter_scores():
-    form = ScoresForm(request.form)
-
-    divisions_query = Division.query.all()
-    div_choices = [(div.name, div.name) for div in divisions_query]
-    form.division.choices = div_choices
-
-
-    user = User.query.filter_by(id = session["userdata"]["id"]).first()
-    teams_query = user.school.teams
-    team_choices = [(team.id, team.name) for team in teams_query]
-    form.team.choices = team_choices
-
-
-    #students = [(c.id, c.username) for c in Student.query.filter_by(school_id = User.school_id).all()]
-    #form.students.choices = students
-    return render_custom_template("enter_scores.html",
-    form=form,
-    )
-@user.route('/select_student')
-def select_student():
-    return " "
 @user.route('/')
 @user.route('/index')
 def index():
-    if(user):
-        return render_custom_template('index.html',X=request.remote_addr)
     return render_custom_template('index.html', X=request.remote_addr)

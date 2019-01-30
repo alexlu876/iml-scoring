@@ -28,7 +28,7 @@ def addStudents():
     if studentForm.validate_on_submit() and studentForm.submit.data:
         team_id = studentForm.team.data
         username_base = '{}_{}'.format(studentForm.first.data[:16],
-                                       studentForm.last.data[:16])
+                                       studentForm.last.data[:16]).replace(' ','_')
         username_num = Student.query.filter(Student.username.contains(username_base)).count()+1
         username = '{}{}'.format(username_base,
                                  username_num).lower()

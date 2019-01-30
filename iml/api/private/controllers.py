@@ -117,7 +117,6 @@ def list_students():
 
 
 @private_api.route("/scores/query/contest", methods=['GET'])
-@login_required()
 def view_score():
     contest_id = request.args.get('contest_id')
     students_requested = request.args.get('student_display_names')
