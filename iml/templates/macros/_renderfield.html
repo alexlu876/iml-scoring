@@ -25,8 +25,17 @@
             {% endif %}
     {% endif %}
     {% if field.type == "TextAreaField" %}
-                {{ field.label }}
-                {{ field(class="u-full-width")|safe }}
+    <div class="mdc-text-field mdc-text-field--textarea">
+                {{ field(class="mdc-text-field__input", rows="8", cols="40")|safe }}
+  <div class="mdc-notched-outline">
+    <div class="mdc-notched-outline__leading"></div>
+    <div class="mdc-notched-outline__notch">
+                {{ field.label(class="mdc-floating-label") }}
+    </div>
+    <div class="mdc-notched-outline__trailing"></div>
+  </div>
+</div>
+
             {% if (field.errors|length) != 0 %}
                 <ul class="error-list">
                     {% for error in field.errors %}

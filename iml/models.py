@@ -5,8 +5,6 @@ import bcrypt
 # relationships
 
 
-
-
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -50,7 +48,9 @@ class Student(db.Model):
     first = db.Column(db.String(32), nullable=False)
     last = db.Column(db.String(32), nullable=False)
     username = db.Column(db.String(32), nullable=False)
-    school_id = db.Column(db.Integer, db.ForeignKey('schools.id'),nullable=False)
+    school_id = db.Column(db.Integer, db.ForeignKey(
+        'schools.id'),
+        nullable=False)
     # divis
     division_id = db.Column(db.Integer, db.ForeignKey('divisions.id'),
                             nullable=False)
@@ -118,6 +118,11 @@ class Student(db.Model):
         return sum(self.getScores(contest).values())
     def getFinalScore(self):
         return sum(self.getAllScores().values())
+    def getUserId(self):
+        return self.id
+    def get_user_id(self):
+        return self.getUserId()
+
 
 # TODO - unredundify
 class Question(db.Model):

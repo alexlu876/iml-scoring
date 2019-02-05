@@ -1,0 +1,20 @@
+<!-- card example -->
+
+{% extends "_base.html" %}
+
+{% from "macros/_renderfield.html" import render_field %}
+
+{% block content %}
+<div class="mdc-card centered-single-card" style="width:500px;">
+    <div class="mdc-card__media"></div>
+    <center>
+    <h1>Authorize {{ grant.request.scope }} for {{grant.client.client_name}}</h1>
+    <br>
+    <form method="POST" action="/oauth2/authorize" id="oauth-form">
+        {{ clientForm.hidden_tag() }}
+        {{ clientForm.csrf_token() }}
+        {{ render_field(authForm.submit) }}
+    </center>
+    </form>
+</div>
+{% endblock %}

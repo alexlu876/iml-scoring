@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField, DateTimeField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerField, DateField, DateTimeField, TextAreaField
 from wtforms import Form, validators
 
 # for wtforms
@@ -81,9 +81,33 @@ class NewContestForm(FlaskForm):
 
 class ScoresForm(Form):
     #dropdown_students = [('aryan', 'bhatt'), ('andrew', 'chen')]
-    division = SelectField("div:", [validators.DataRequired()], choices = [])
-    team = SelectField("team:", [validators.DataRequired()], choices = [])
+    division = SelectField("div:", [validators.DataRequired()], choices=[])
+    team = SelectField("team:", [validators.DataRequired()], choices=[])
     #students = SelectField("Students",  choices=[], coerce = int)
     #score = StringField("score:", [validators.DataRequired()])
     submit = SubmitField("Submit")
     #questionNum = IntegerField("nums of quest", [validators.DataRequired()])
+
+class OAuth2AuthForm(FlaskForm):
+    submit = SubmitField("Submit")
+
+class OAuth2ClientCreationForm(FlaskForm):
+    client_name = StringField("Client Name")
+    client_uri = StringField("Client URI")
+    # account, account.readonly, scores
+    scope = SelectField("Scopes", [validators.DataRequired()],
+                        choices=[
+                            ("account", "account"),
+                            ("account.readonly", "account.readonly"),
+                        ])
+    redirect_uri = TextAreaField("Redirect URIs")
+    grant_type = TextAreaField("Allowed Grant Types")
+    response_type = TextAreaField("Allowed Response Types")
+    token_endpoint_auth_method = \
+        SelectField(
+            "Token Endpoint Auth Method",
+            [validators.DataRequired()],
+            choices=[("client_secret_basic", "client_secret_basic"),
+                     ("client_secret_post", "client_secret_post"),
+                     ("none", "none")])
+    submit = SubmitField("Submit")
