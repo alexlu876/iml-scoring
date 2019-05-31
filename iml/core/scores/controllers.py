@@ -18,7 +18,7 @@ def update_scores(contest_id, team_id):
     contest = Contest.query.filter_by(id=contest_id).first()
     team = Team.query.filter_by(id=team_id).first()
     if not (contest and user and team) or (team.school != school) or (contest.division != team.division):
-        flash("Unspecified Error (Tell the admin to finish the application)")
+        flash("Unspecified Error (Tell the admin to fix the application the application)")
         return redirect("/")
     studentsQuery = Student.query.filter_by(school_id=school.id,division_id=contest.division.id)
     students = [student for student in studentsQuery

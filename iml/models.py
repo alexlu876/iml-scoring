@@ -233,6 +233,11 @@ class Contest(db.Model):
             filter_by(contest_id=self.id,
                       question_num=number). \
             first()
+    def getHighestPossibleScore(self):
+        total = 0
+        for i in range(1,self.question_count+1):
+            total+=self.getQuestion(i).getMaxScore()
+        return total
 
 
 class School(db.Model):
