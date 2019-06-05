@@ -1,0 +1,5 @@
+.centered-single-card {
+    width:500px;
+    margin-left: calc(50% - 250px);
+    margin-top: calc(12.5%);
+}

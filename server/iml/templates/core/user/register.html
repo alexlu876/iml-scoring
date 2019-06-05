@@ -1,0 +1,29 @@
+<!-- card example -->
+
+{% extends "_base.html" %}
+
+{% from "macros/_renderfield.html" import render_field %}
+
+{% block content %}
+<div class="mdc-card centered-single-card">
+    <div class="mdc-card__media"></div>
+    <center>
+    <h2>Register</h2>
+
+    <form method="POST" action="/register" id="register-form">
+        {{ registerForm.hidden_tag() }}
+        {{ registerForm.csrf_token() }}
+        {{ render_field(registerForm.first)}}
+        {{ render_field(registerForm.last)}}
+        {{ render_field(registerForm.phone_num)}}
+        {{ render_field(registerForm.email) }}
+        {{ render_field(registerForm.password) }}
+        {{ render_field(registerForm.new_school) }}
+        {{ render_field(registerForm.submit) }}
+    </form>
+    </center>
+</div>
+{% endblock %}
+
+
+

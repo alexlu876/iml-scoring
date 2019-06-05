@@ -1,0 +1,29 @@
+.mdc-top-app-bar__title {
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+}
+
+
+/* Sidebar theming */
+.mdc-drawer__title, .mdc-drawer__subtitle {
+    font-size: 1rem;
+}
+.mdc-drawer__header {
+    margin-bottom: 100px;
+}
+.mdc-drawer .mdc-list-item {
+    font-size: 1.0rem;
+}
+.mdc-drawer .mdc-list-group__subheader {
+    font-size: 1.0rem;
+}
+.mdc-sub-list .mdc-list-item {
+    padding: 0 25px;
+}
+.mdc-sub-list {
+    display: none;
+}
+
+html, body {
+    height: 100%;
+}

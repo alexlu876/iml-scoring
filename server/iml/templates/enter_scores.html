@@ -1,0 +1,22 @@
+<!-- card example -->
+
+{% extends "_base.html" %}
+
+{% from "macros/_renderfield.html" import render_field %}
+
+{% block content %}
+<div class="mdc-card centered-single-card" style="width:500px;">
+    <div class="mdc-card__media"></div>
+    <center>
+    <h1>what team do u wanna enter scores dc</h1>
+    <br>
+
+
+    <form method="POST" action="/enter_scores" id="enter_scores-form">
+        {{ render_field(form.division) }}
+        {{ render_field(form.team) }}
+        {{ render_field(form.submit) }}
+    </center>
+    </form>
+</div>
+{% endblock %}
