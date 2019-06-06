@@ -1,5 +1,5 @@
 import flask
-from iml.models import User
+from iml.models.user import User
 from iml.util.constants import IS_NOT_LOGGED_IN
 
 session = flask.session

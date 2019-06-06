@@ -1,12 +1,10 @@
 from flask import Blueprint, request, session, flash
-from flask import render_template, redirect, jsonify
+from flask import redirect, jsonify
 from authlib.flask.oauth2 import current_token
-from authlib.specs.rfc6749 import OAuth2Error
 
 from werkzeug.security import gen_salt
 
 from iml.database import db
-from iml.models import User
 from iml.util import get_user, render_custom_template
 from iml.oauth2 import OAuth2Client, authorization, require_oauth
 from iml.forms import OAuth2ClientCreationForm, OAuth2AuthForm

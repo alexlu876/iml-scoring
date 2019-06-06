@@ -1,6 +1,4 @@
 from flask import Flask
-from flask import render_template
-from flask import request
 from flask_session import Session
 from flask_migrate import Migrate
 
@@ -17,7 +15,7 @@ from iml.api.private.controllers import private_api
 from iml.api.public.controllers import public_api
 from iml.oauth2.controllers import oauth2
 
-from iml.models import User
+from iml.models.user import User
 from iml.util.generate_db import generate_nyc_divisions, generate_nyc_users, generate_nyc_schools, generate_nyc_teams
 
 import os

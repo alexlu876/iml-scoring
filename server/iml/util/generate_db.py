@@ -1,4 +1,8 @@
-from iml.models import Division, User, School, Team
+from iml.models.division import Division
+from iml.models.team import Team
+from iml.models.school import School
+from iml import User
+
 
 def generate_nyc_teams(app, db):
     teams = [("andrew's gotes", 1, 2), ("gilvir's gills", 1, 3)]

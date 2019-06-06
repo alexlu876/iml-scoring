@@ -1,11 +1,10 @@
-from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
+from flask import Blueprint, flash
 from iml.database import db
-from iml.models import User, Student, Division, Contest, Question
+from iml.models.division import Division
+from iml.models import Question, Contest
 from iml.forms import NewContestForm
-from iml.core.user.wrappers import login_required
 from iml.core.admin.wrappers import admin_required
 from iml.util import render_custom_template
-import datetime
 
 admin = Blueprint("admin", __name__)
 

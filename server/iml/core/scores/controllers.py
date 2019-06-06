@@ -2,8 +2,9 @@ from flask import Blueprint, session, redirect, flash
 
 from iml.core.user.wrappers import login_required
 
-from iml.database import db
-from iml.models import User, Team, Score, Division, Contest, Student
+from iml.models.division import Division
+from iml.models.team import Team
+from iml.models import Student, Contest
 from iml.util import get_user, render_custom_template
 
 

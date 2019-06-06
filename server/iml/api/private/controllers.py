@@ -1,11 +1,12 @@
-from flask import Blueprint, session, redirect, flash, request
-from flask import jsonify,json, make_response
+from flask import Blueprint, session, request
+from flask import jsonify, make_response
 from datetime import datetime
 
-from iml.util import render_custom_template, get_user
+from iml.util import get_user
 
 from iml.database import db
-from iml.models import Contest, Score, User, Team, Student
+from iml.models.team import Team
+from iml.models import Student, Score, Contest
 
 from iml.core.user.wrappers import login_required
 
@@ -132,7 +133,7 @@ def view_score():
         student = Student.query.filter_by(username=student_display_name).first()
 
         if contest and student:
-            scoreDict[student_display_name] = student.getScores(contest)
+            scoreDict[student_display_name] = student.getScoresDict(contest)
         else:
             return json_response(scoreDict, 400)
     return json_response(scoreDict, 200)

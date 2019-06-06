@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from iml.database import db
-from iml.models import User
+from iml.models.user import User
 
 from iml.util import get_user
 

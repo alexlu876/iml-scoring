@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
+from flask import Blueprint, session, redirect, flash
 from iml.database import db
-from iml.models import User, Student, Team
+from iml.models.team import Team
+from iml.models import Student
 from iml.forms import NewStudentForm
 from iml.core.user.wrappers import login_required
 from iml.util import get_user, render_custom_template

@@ -1,11 +1,11 @@
-from flask import Blueprint, render_template, session, request, redirect, flash, jsonify
+from flask import Blueprint, session, request, redirect, flash, jsonify
 from iml.database import db
-from iml.models import User, School, Student, Contest, Score, Team, Division
-from iml.forms import LoginForm, RegisterForm, ScoresForm
-from iml.core.user.wrappers import login_required, login_forbidden
+from iml.models.school import School
+from iml.models import User
+from iml.forms import LoginForm, RegisterForm
+from iml.core.user.wrappers import login_forbidden
 from iml.util import render_custom_template
 from iml.util.constants import IS_SITE_ADMIN, IS_LOGGED_IN
-from datetime import datetime
 
 user = Blueprint("user", __name__)
 
