@@ -1,10 +1,10 @@
 from iml import db
 
-import iml.models.score as score
+#import iml.models.score as score
 # the name contest was used!
-import iml.models.contest as contestModule
+#import iml.models.contest as contestModule
 
-Score = score.Score
+#Score = score.Score
 
 class Student(db.Model):
 
@@ -31,6 +31,10 @@ class Student(db.Model):
 
     # returns whether the person participated in this contest for the specified team
     def isParticipant(self,contest,team=None):
+        import iml.models.score as score
+        # the name contest was used!
+
+        Score = score.Score
         scoresQuery = Score.query.filter_by(contest_id=contest.id,
                                             student_id=self.id)
         if team:
@@ -48,6 +52,11 @@ class Student(db.Model):
 
     # returns score in a dictionary
     def getScoresDict(self, contest, division=None, team=None):
+        import iml.models.contest as contestModule
+        import iml.models.score as score
+        # the name contest was used!
+
+        Score = score.Score
         if contest is None:
             return {}
         else:

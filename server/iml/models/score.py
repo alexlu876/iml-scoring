@@ -1,6 +1,6 @@
 from iml import db
 
-import iml.models.question as questionModule
+#import iml.models.question as questionModule
 
 class Score(db.Model):
     __tablename__ = 'scores'
@@ -32,6 +32,7 @@ class Score(db.Model):
         return self.question_num
 
     def getQuestion(self):
+        import iml.models.question as questionModule
         Question = questionModule.Question
         return Question.query.filter_by(contest_id=self.contest.id,
                                         question_num=self.question_num).first()

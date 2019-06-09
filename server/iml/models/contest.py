@@ -1,12 +1,12 @@
 from iml import db
-import iml.models.student as student
-import iml.models.question as question
-import iml.models.score as score
+#import iml.models.student as student
+#import iml.models.question as question
+#import iml.models.score as score
 
 
-Student = student.Student
-Question = question.Question
-Score = score.Score
+#Student = student.Student
+#Question = question.Question
+#Score = score.Score
 
 
 class Contest(db.Model):
@@ -47,6 +47,14 @@ class Contest(db.Model):
 
     # returns a list of students who have scores for a contest
     def getAttendees(self):
+        import iml.models.student as student
+        import iml.models.question as question
+        import iml.models.score as score
+
+
+        Student = student.Student
+        Question = question.Question
+        Score = score.Score
         contest_id = self.id
         return Student.query.filter(Student.scores.any(Score.contest_id == contest_id))
 

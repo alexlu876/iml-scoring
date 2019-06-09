@@ -1,8 +1,8 @@
 from iml import db
 
-import iml.models.student as studentModule
-import iml.models.score as scoreModule
-import iml.models.contest as contestModule
+#import iml.models.student as studentModule
+#import iml.models.score as scoreModule
+#import iml.models.contest as contestModule
 
 class Division(db.Model):
 
@@ -21,6 +21,9 @@ class Division(db.Model):
 
     # only returns students who have scores
     def getParticipants(self):
+        import iml.models.student as studentModule
+        import iml.models.score as scoreModule
+        import iml.models.contest as contestModule
         Student = studentModule.Student
         Score = scoreModule.Score
         Contest = contestModule.Contest
