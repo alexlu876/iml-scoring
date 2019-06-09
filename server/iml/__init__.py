@@ -2,6 +2,9 @@ from flask import Flask
 from flask_session import Session
 from flask_migrate import Migrate
 
+
+from flask_graphql import GraphQLView
+
 from iml.config import DATABASE_TYPE, SQLITE_FILE_NAME
 from iml.config import SQLALCHEMY_TRACK_MODIFICATIONS, APP_SECRET_KEY, SESSION_TYPE
 from iml.database import db
@@ -14,6 +17,8 @@ from iml.core.scores.controllers import scores
 from iml.api.private.controllers import private_api
 from iml.api.public.controllers import public_api
 from iml.oauth2.controllers import oauth2
+
+from iml.api.graphql.schemas import gql_schema
 
 from iml.models.user import User
 from iml.util.generate_db import generate_nyc_divisions, generate_nyc_users, generate_nyc_schools, generate_nyc_teams
@@ -90,3 +95,14 @@ app.register_blueprint(private_api, url_prefix="/api/private")
 app.register_blueprint(public_api, url_prefix="/api/public")
 app.register_blueprint(scores, url_prefix="/scores")
 app.register_blueprint(oauth2, url_prefix="/oauth2")
+
+
+
+app.add_url_rule(
+        '/graphql',
+        view_func=GraphQLView.as_view(
+            name='graphql',
+            schema = gql_schema,
+            graphiql=True
+            )
+        )
