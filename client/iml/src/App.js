@@ -11,6 +11,9 @@ const Navbar = () => {
                     <Typography variant="title" color="inherit">
                             React & Material-UI Sample Application
                     </Typography>
+                    <Typography variant="subtitle">
+                            <a href='http://nyan.cat'> jjjj andrew wuz here </a>
+                    </Typography>
                 </Toolbar>
             </AppBar>
         </div>
