@@ -85,6 +85,11 @@ class Student(db.Model):
         return scores
 
     def getTeam(self, contest):
+        import iml.models.contest as contestModule
+        import iml.models.score as score
+        Score = score.Score
+
+
         score_sample = Score.query.filter_by(contest_id=contest.id, student_id=self.id).first()
         if score_sample:
             return score_sample.team

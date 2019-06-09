@@ -21,7 +21,7 @@
             </thead>
             <tbody>
                 {% for student in students %}
-                    {% set student_scores = student.getScores(contest)%}
+                    {% set student_scores = student.getScoresDict(contest)%}
                 <tr class="mdc-data-table__row">
                     <td class="mdc-data-table__cell">
                         {{student.first}} {{student.last}}

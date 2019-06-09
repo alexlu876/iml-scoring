@@ -65,6 +65,8 @@ class Contest(db.Model):
         return self.start_time.date()
 
     def getQuestion(self, number):
+        import iml.models.question as questionModule
+        Question = questionModule.Question
         return Question.query. \
             filter_by(contest_id=self.id,
                       question_num=number). \
