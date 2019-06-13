@@ -5,7 +5,9 @@ from iml import db
 class Score(db.Model):
     __tablename__ = 'scores'
     id = db.Column(db.Integer, primary_key=True)
-    question_num = db.Column(db.Integer, nullable=False)
+    question_num = db.Column(db.Integer,
+            db.ForeignKey('questions.question_num'),
+            nullable=False)
     points_awarded = db.Column(db.Integer,
                                nullable=False)
     contest_id = db.Column(db.Integer,db.ForeignKey('contests.id'), nullable=False)
@@ -19,6 +21,11 @@ class Score(db.Model):
     student = db.relationship('Student', back_populates = 'scores')
     coach = db.relationship('User', back_populates = 'scores')
     team = db.relationship('Team', back_populates = 'scores')
+
+    question = db.relationship('Question',
+            primaryjoin=
+            'and_(Question.question_num==Score.question_num,Question.contest_id==Score.contest_id)',
+            backref='scores')
 
 
 

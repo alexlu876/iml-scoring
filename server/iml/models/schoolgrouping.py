@@ -6,7 +6,7 @@ class SchoolGrouping(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
 
-    schools = db.relationship('schools', back_populates='school_groupings')
+    schools = db.relationship('School', back_populates='school_grouping')
 
     def __init__(self, name):
         self.name = name
