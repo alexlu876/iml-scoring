@@ -3,6 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import ApolloClient from "apollo-boost";
+import { gql } from "apollo-boost";
+
+const client = new ApolloClient({
+    uri: "http://localhost:5000/graphql"
+});
+
+client.query({
+    query: gql`
+    {
+    users {
+    id
+    }
+    }
+    `
+}).then(result => console.log(result));
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

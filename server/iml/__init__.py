@@ -9,6 +9,7 @@ from iml.config import DATABASE_TYPE, SQLITE_FILE_NAME
 from iml.config import SQLALCHEMY_TRACK_MODIFICATIONS, APP_SECRET_KEY, SESSION_TYPE
 from iml.database import db
 from iml.oauth2 import config_oauth
+from flask_cors import CORS
 
 from iml.core.admin.controllers import admin
 from iml.core.user.controllers import user
@@ -35,6 +36,7 @@ STATIC_DIR = os.path.join(os.path.dirname(
 app = Flask(__name__,
             template_folder=TEMPLATE_DIR,
             static_folder=STATIC_DIR)
+
 
 
 # Config
@@ -106,3 +108,5 @@ app.add_url_rule(
             graphiql=True
             )
         )
+
+CORS(app)

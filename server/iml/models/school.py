@@ -7,7 +7,8 @@ class School(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     school_grouping_id = db.Column(db.Integer,
-     db.ForeignKey('school_groupings.id')
+     db.ForeignKey('school_groupings.id'),
+     nullable=False
      )
     # teams, schools, students, coaches
     teams = db.relationship('Team', back_populates='school')
@@ -17,8 +18,9 @@ class School(db.Model):
     school_grouping = db.relationship('SchoolGrouping', back_populates='schools')
 
 
-    def __init__(self, name):
+    def __init__(self, name, groupId):
         self.name = name
+        self.school_grouping_id = groupId
 
     # TODO - sqlify this method
     def getDivisionsList(self):

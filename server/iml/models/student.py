@@ -12,8 +12,10 @@ class Student(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     first = db.Column(db.String(32), nullable=False)
-    last = db.Column(db.String(32), nullable=False)
-    username = db.Column(db.String(32), nullable=False)
+    last = db.Column(db.String(64), nullable=False)
+    username = db.Column(db.String(64), nullable=False)
+    nickname = db.Column(db.String(32), nullable=True)
+
     school_id = db.Column(db.Integer, db.ForeignKey(
         'schools.id'),
         nullable=False)
@@ -72,6 +74,7 @@ class Student(db.Model):
             return scoresDict
 
     def getAllScoresDict(self, division=None, team = None):
+        import iml.models.contest as contestModule
         contestsQuery = contestModule.Contest.query.all()
         if division:
             contestsQuery = contestsQuery.filter_by(division_id=division.id)
