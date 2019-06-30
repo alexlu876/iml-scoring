@@ -37,3 +37,9 @@ class User(db.Model):
 
     def checkPassword(self, password):
         return bcrypt.checkpw(password.encode("utf-8"), self.password)
+
+    def isAdmin(self):
+        return self.is_admin
+
+    def isApproved(self):
+        return self.isAdmin() or self.approval_status > 0

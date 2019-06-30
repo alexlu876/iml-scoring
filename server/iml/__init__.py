@@ -4,12 +4,13 @@ from flask_migrate import Migrate
 
 
 from flask_graphql import GraphQLView
+from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 
 from iml.config import DATABASE_TYPE, SQLITE_FILE_NAME
 from iml.config import SQLALCHEMY_TRACK_MODIFICATIONS, APP_SECRET_KEY, SESSION_TYPE
 from iml.database import db
 from iml.oauth2 import config_oauth
-from flask_cors import CORS
 
 from iml.core.admin.controllers import admin
 from iml.core.user.controllers import user
@@ -98,7 +99,24 @@ app.register_blueprint(public_api, url_prefix="/api/public")
 app.register_blueprint(scores, url_prefix="/scores")
 app.register_blueprint(oauth2, url_prefix="/oauth2")
 
+jwt = JWTManager(app)
 
+@jwt.user_loader_callback_loader
+def user_loader_callback(identity):
+    return User.query.filter_by(email=identity).first() or None
+
+@jwt.user_claims_loader
+def add_claims_to_access_token(identity):
+    user = User.query.filter_by(email=identity).first()
+    if not user:
+        return {}
+    return {
+        'role': 'admin' if user.isAdmin() else 'user',
+    }
+
+
+app.config["JWT_SECRET_KEY"] = "CHANGETHISFROMPUBLICREPO"
+app.config["JWT_TOKEN_LOCATION"] = [ 'headers']
 
 app.add_url_rule(
         '/graphql',
