@@ -1,72 +1,39 @@
 import graphene
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
-
+from graphql import GraphQLError
 from flask_jwt_extended import (
         create_access_token, create_refresh_token,
         jwt_refresh_token_required, get_jwt_identity,
         jwt_required, get_current_user
         )
-from iml.models import User, Student, Team, School, Division, Contest, Question, Score
+from iml.models import Contest, Question, Score
+from iml.api.graphql.user.types import User
+from iml.api.graphql.user.mutations import AdminCreationMutation, UserRegisterMutation
+from iml.api.graphql.student.types import Student, Team, School, Division
+from iml.api.graphql.score.types import Score, Question, Contest
 
-
-class UserGQL(SQLAlchemyObjectType):
-    class Meta:
-        model = User
-        exclude_fields=("password",)
-
-class StudentGQL(SQLAlchemyObjectType):
-    class Meta:
-        model = Student
-
-class TeamGQL(SQLAlchemyObjectType):
-    class Meta:
-        model = Team
-
-
-class SchoolGQL(SQLAlchemyObjectType):
-    class Meta:
-        model = School
-
-class DivisionGQL(SQLAlchemyObjectType):
-    class Meta:
-        model = Division
-
-
-class ContestGQL(SQLAlchemyObjectType):
-    class Meta:
-        model = Contest
-
-
-class QuestionGQL(SQLAlchemyObjectType):
-    class Meta:
-        model = Question
-
-
-class ScoreGQL(SQLAlchemyObjectType):
-    class Meta:
-        model = Score
 
 
 class Query(graphene.ObjectType):
-    users = graphene.List(UserGQL)
-    user = graphene.Field(lambda: UserGQL, id = graphene.Int())
-    viewer = graphene.Field(lambda: UserGQL)
+    users = graphene.List(User)
+    user = graphene.Field(lambda: User, id = graphene.Int())
+    viewer = graphene.Field(lambda: User)
 
-    schools = graphene.List(SchoolGQL)
-    school = graphene.Field(lambda:SchoolGQL, id = graphene.Int())
+    schools = graphene.List(School)
+    school = graphene.Field(lambda:School, id = graphene.Int())
 
     def resolve_users(self, info, **kwargs):
-        query = UserGQL.get_query(info)
+        query = User.get_query(info)
         return query.filter_by(**kwargs)
 
     def resolve_schools(self,info, **kwargs):
-        query = SchoolGQL.get_query(info)
+        query = School.get_query(info)
         return query.filter_by(**kwargs)
 
     def resolve_user(root, info, id):
-        query = UserGQL.get_query(info)
-        return query.filter(User.id == id).first()
+        query = User.get_query(info)
+        return query.filter_by(id=id).first()
 
     @jwt_required
     def resolve_viewer(root, info):
@@ -82,7 +49,8 @@ class AuthMutation(graphene.Mutation):
 
     @classmethod
     def mutate(cls, root, info, email, password):
-        user = User.query.filter_by(email=email).first()
+        query = User.get_query(info)
+        user = query.filter_by(email=email).first()
         if (user and user.checkPassword(password)):
             return AuthMutation(
                     accessToken = create_access_token(email),
@@ -103,8 +71,12 @@ class RefreshMutation(graphene.Mutation):
                 newAccessToken = create_access_token(user_identity)
                 )
 
+
+
 class Mutation(graphene.ObjectType):
     auth = AuthMutation.Field()
     refresh = RefreshMutation.Field()
+    createAdmin = AdminCreationMutation.Field()
+    register = UserRegisterMutation.Field()
 
 gql_schema = graphene.Schema(query=Query, mutation=Mutation)

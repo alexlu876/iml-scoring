@@ -86,10 +86,10 @@ with app.app_context():
 
 # temp division adder
 
-generate_nyc_divisions(app, db)
-generate_nyc_schools(app, db)
-generate_nyc_users(app, db)
-generate_nyc_teams(app, db)
+# generate_nyc_divisions(app, db)
+# generate_nyc_schools(app, db)
+# generate_nyc_users(app, db)
+# generate_nyc_teams(app, db)
 
 app.register_blueprint(user, url_prefix="")
 app.register_blueprint(students, url_prefix="/students")

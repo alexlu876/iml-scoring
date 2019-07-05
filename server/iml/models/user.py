@@ -11,7 +11,7 @@ class User(db.Model):
     first = db.Column(db.String(32), nullable=False)
     last = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), nullable=False)
-    phone_num = db.Column(db.String(32), nullable=False)
+    phone_num = db.Column(db.String(32), nullable=True)
     username = db.Column(db.String(32), nullable=False)
     password = db.Column(db.Binary(60), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False)
