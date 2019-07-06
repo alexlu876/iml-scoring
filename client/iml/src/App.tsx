@@ -6,14 +6,26 @@ import {InMemoryCache} from 'apollo-cache-inmemory';
 import {ApolloClient} from 'apollo-client';
 import {ApolloProvider} from 'react-apollo';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import { setContext } from 'apollo-link-context';
 
 
 const httpLink = createHttpLink({
-    uri: 'localhost:5000/graphql',
+    uri: 'http://localhost:5000/graphql',
+});
+
+const authLink = setContext( 
+    (_ : any, { headers } : any) => {
+    const token = localStorage.getItem('authToken');
+    return {
+        headers: {
+            ...headers,
+            authorization: token ? `Bearer ${token}` : ""
+         },
+    };
 });
 
 const client = new ApolloClient({
-    link: httpLink,
+    link: authLink.concat(httpLink),
     cache: new InMemoryCache()
 });
 

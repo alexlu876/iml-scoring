@@ -19,16 +19,6 @@ const useStyles = makeStyles({
   },
 });
 
-export class HeaderDrawerObj extends React.Component {
-    render() {
-        return (
-            <div>
-            </div>
-        )
-    }
-
-
-}
 export default function HeaderDrawer() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);

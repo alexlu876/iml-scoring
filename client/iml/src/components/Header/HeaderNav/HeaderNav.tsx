@@ -12,6 +12,18 @@ import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 
+import gql from 'graphql-tag';
+import { Query } from 'react-apollo'
+
+const PROFILE_QUERY = gql`
+query CurrentUserForLayout {
+    viewer {
+        first
+        last
+    }
+}
+`;
+
 const useStyles = makeStyles(
     (theme: Theme) => 
     createStyles({
@@ -62,7 +74,20 @@ export default function HeaderNav() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
-                            Photos
+                        <Query query={PROFILE_QUERY}>
+                                { ({loading,
+                                    error,
+                                    data} : any) => {
+                                        if (loading) return 'Loading...';
+                                        if (error) console.log(error);
+                                        if (error) return 'Error';
+                                        console.log(data)
+                                        const userData = data.viewer;
+                                        if (userData)
+                                        return userData.first;
+                                        return 'Error';
+                                }}
+                        </Query>
                     </Typography>
                         {auth && (
                             <div>
