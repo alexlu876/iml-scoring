@@ -1,11 +1,11 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_session import Session
 from flask_migrate import Migrate
 
 
 from flask_graphql import GraphQLView
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_optional, get_current_user, jwt_refresh_token_required
 
 from iml.config import DATABASE_TYPE, SQLITE_FILE_NAME
 from iml.config import SQLALCHEMY_TRACK_MODIFICATIONS, APP_SECRET_KEY, SESSION_TYPE
@@ -113,6 +113,21 @@ def add_claims_to_access_token(identity):
     return {
         'role': 'admin' if user.isAdmin() else 'user',
     }
+
+@app.route('/jwt_verify_refresh', methods=['GET'])
+@jwt_refresh_token_required
+def jwt_refresh_verify():
+    return jwt_verify()
+@app.route('/jwt_verify_access', methods=['GET'])
+@jwt_optional
+def jwt_verify():
+    user = get_current_user()
+    if user is None:
+        return jsonify({"valid": False})
+    return jsonify({
+            "valid": True
+            })
+
 
 
 app.config["JWT_SECRET_KEY"] = "CHANGETHISFROMPUBLICREPO"

@@ -8,34 +8,40 @@ import green from '@material-ui/core/colors/green';
 
 const outerTheme = createMuiTheme({
   palette: {
-      primary: green,
+      primary : {
+          light: green['A100'],
+          main: green['A100'],
+          dark: green[100],
+      },
       secondary:red,
   },
 });
 
-function ThemeNestingExtend() {
-  return (
-    <ThemeProvider theme={outerTheme}>
-      <Checkbox defaultChecked />
-      <ThemeProvider
-        theme={theme =>
-          createMuiTheme({
-            ...theme,
-            palette: {
-              ...theme.palette,
-              primary: {
-                main: green[500],
-              },
-            },
-          })
-        }
-      >
-        <Checkbox defaultChecked color="primary" />
-        <Checkbox defaultChecked color="secondary" />
-      </ThemeProvider>
-    </ThemeProvider>
-  );
-}
+export default outerTheme
 
-export default ThemeNestingExtend;
+// function ThemeNestingExtend() {
+//   return (
+//     <ThemeProvider theme={outerTheme}>
+//       <Checkbox defaultChecked />
+//       <ThemeProvider
+//         theme={theme =>
+//           createMuiTheme({
+//             ...theme,
+//             palette: {
+//               ...theme.palette,
+//               primary: {
+//                 main: green[500],
+//               },
+//             },
+//           })
+//         }
+//       >
+//         <Checkbox defaultChecked color="primary" />
+//         <Checkbox defaultChecked color="secondary" />
+//       </ThemeProvider>
+//     </ThemeProvider>
+//   );
+// }
+
+// export default ThemeNestingExtend;
 

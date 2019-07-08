@@ -53,7 +53,8 @@ class AuthMutation(graphene.Mutation):
         user = query.filter_by(email=email).first()
         if (user and user.checkPassword(password)):
             return AuthMutation(
-                    accessToken = create_access_token(email),
+                    accessToken = create_access_token(
+                        identity=email, fresh=True),
                     refreshToken= create_refresh_token(email)
                     )
         return None
@@ -68,7 +69,9 @@ class RefreshMutation(graphene.Mutation):
         if not user_identity:
             return None
         return RefreshMutation(
-                newAccessToken = create_access_token(user_identity)
+                newAccessToken = create_access_token(
+                    identity=user_identity,
+                    fresh=False)
                 )
 
 
