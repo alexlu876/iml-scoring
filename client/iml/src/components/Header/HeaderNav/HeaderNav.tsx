@@ -40,7 +40,7 @@ const useStyles = makeStyles(
     })
 );
 
-export default function HeaderNav() {
+export default function HeaderNav({toggleDrawer} : any) {
     const classes = useStyles();
     const [auth, setAuth] = React.useState(true);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -70,6 +70,7 @@ export default function HeaderNav() {
                 <Toolbar>
                     <IconButton edge="start"
                         className = {classes.menuButton}
+                        onClick = {toggleDrawer}
                         color="inherit" aria-label="Menu">
                         <MenuIcon />
                     </IconButton>

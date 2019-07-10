@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 
 import {createHttpLink} from 'apollo-link-http';
 import {InMemoryCache} from 'apollo-cache-inmemory';
@@ -10,6 +10,11 @@ import { setContext } from 'apollo-link-context';
 import NavHeader from './components/Header/HeaderNav/HeaderNav';
 import HeaderDrawer from './components/Header/HeaderDrawer/HeaderDrawer';
 import outerTheme from './themes/Theme';
+import MainStore from './MainStore';
+import {observer} from 'mobx-react';
+
+
+
 const httpLink = createHttpLink({
     uri: 'http://localhost:5000/graphql',
 });
@@ -39,16 +44,18 @@ const Navbar = () => {
     );
 }
 
-class App extends React.Component {
-    public render() {
-        return (
-            <ApolloProvider client={client}>
-                <MuiThemeProvider theme={outerTheme}>
-                    <Navbar />
-                </MuiThemeProvider>
-            </ApolloProvider>
-        );
-    }
-}
-
+const App = observer(() => {
+    const store = useContext(MainStore);
+    return (
+        <ApolloProvider client={client}>
+            <MuiThemeProvider theme={outerTheme}>
+                <div>
+                    <NavHeader toggleDrawer = {store.toggleDrawer} />
+                    <HeaderDrawer open= {store.drawerToggled}
+                    setOpen = {store.setDrawer}/>
+                </div>
+        </MuiThemeProvider>
+    </ApolloProvider>
+    );
+});
 export default App;

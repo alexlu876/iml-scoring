@@ -19,9 +19,8 @@ const useStyles = makeStyles({
   },
 });
 
-export default function HeaderDrawer() {
+export default function HeaderDrawer({open, setOpen} : any) {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
 
     function handleDrawerOpen() {
         return (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -39,9 +38,32 @@ export default function HeaderDrawer() {
             className={classes.list}
             anchor="left"
             open={open}
-            onClose={handleDrawerOpen()}
-            onOpen={handleDrawerClose()}
+            onClose={handleDrawerClose()}
+            onOpen={handleDrawerOpen()}
         >
+            <div
+                onClick={handleDrawerClose()}
+                role="presentation"
+                className={classes.list}
+            >
+                <List>
+                        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+                            <ListItem button key={text}>
+                                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                                <ListItemText primary={text} />
+                            </ListItem>
+                        ))}
+        </List>
+        <Divider />
+        <List>
+                {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                    <ListItem button key={text}>
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                        <ListItemText primary={text} />
+                    </ListItem>
+                ))}
+        </List>
+    </div>
         </SwipeableDrawer>
     );
 }
