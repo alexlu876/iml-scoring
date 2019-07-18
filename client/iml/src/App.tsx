@@ -1,5 +1,7 @@
 import React, {useContext} from 'react';
 
+import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom';
+
 import {createHttpLink} from 'apollo-link-http';
 import {InMemoryCache} from 'apollo-cache-inmemory';
 import {ApolloClient} from 'apollo-client';
@@ -9,6 +11,7 @@ import { setContext } from 'apollo-link-context';
 
 import NavHeader from './components/Header/HeaderNav/HeaderNav';
 import HeaderDrawer from './components/Header/HeaderDrawer/HeaderDrawer';
+import Register from './components/Register/Register'
 import outerTheme from './themes/Theme';
 import MainStore from './MainStore';
 import {observer} from 'mobx-react';
@@ -54,6 +57,13 @@ const App = observer(() => {
                     <HeaderDrawer open= {store.drawerToggled}
                     setOpen = {store.setDrawer}/>
                 </div>
+
+                
+                <Router>
+                    <Route 
+                        exact path="/signup"
+                        component={Register} />
+                </Router>
         </MuiThemeProvider>
     </ApolloProvider>
     );
