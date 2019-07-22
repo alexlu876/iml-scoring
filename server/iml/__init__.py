@@ -5,8 +5,7 @@ from flask_migrate import Migrate
 
 from flask_graphql import GraphQLView
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, jwt_optional, get_current_user, jwt_refresh_token_required
-
+from flask_jwt_extended import JWTManager, jwt_optional, get_current_user, jwt_refresh_token_required, get_jwt_identity, create_access_token
 from iml.config import DATABASE_TYPE, SQLITE_FILE_NAME
 from iml.config import SQLALCHEMY_TRACK_MODIFICATIONS, APP_SECRET_KEY, SESSION_TYPE
 from iml.database import db
@@ -101,6 +100,9 @@ app.register_blueprint(oauth2, url_prefix="/oauth2")
 
 jwt = JWTManager(app)
 
+app.config["JWT_SECRET_KEY"] = "CHANGETHISFROMPUBLICREPO"
+app.config["JWT_TOKEN_LOCATION"] = [ 'headers']
+
 @jwt.user_loader_callback_loader
 def user_loader_callback(identity):
     return User.query.filter_by(email=identity).first() or None
@@ -128,10 +130,21 @@ def jwt_verify():
             "valid": True
             })
 
+# pure GET refresh
+@app.route('/jwt_refresh', methods=['GET'])
+@jwt_refresh_token_required
+def jwt_refresh():
+    identity= get_jwt_identity()
+    if not identity:
+        return jsonify({});
+    newAccessToken = create_access_token(
+            identity=identity,
+            fresh=False)
+    return jsonify(
+            {'accessToken': newAccessToken}
+            )
 
 
-app.config["JWT_SECRET_KEY"] = "CHANGETHISFROMPUBLICREPO"
-app.config["JWT_TOKEN_LOCATION"] = [ 'headers']
 
 app.add_url_rule(
         '/graphql',

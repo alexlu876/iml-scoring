@@ -5,7 +5,7 @@ from graphql import GraphQLError
 from flask_jwt_extended import (
         create_access_token, create_refresh_token,
         jwt_refresh_token_required, get_jwt_identity,
-        jwt_required, get_current_user
+        jwt_required, jwt_optional, get_current_user
         )
 from iml.models import Contest, Question, Score
 from iml.api.graphql.user.types import User
@@ -35,7 +35,7 @@ class Query(graphene.ObjectType):
         query = User.get_query(info)
         return query.filter_by(id=id).first()
 
-    @jwt_required
+    @jwt_optional
     def resolve_viewer(root, info):
         return get_current_user()
 

@@ -2,7 +2,9 @@ import React, {useContext} from 'react';
 
 import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom';
 
+import {ApolloLink} from 'apollo-link';
 import {createHttpLink} from 'apollo-link-http';
+import {TokenRefreshLink} from 'apollo-link-token-refresh';
 import {InMemoryCache} from 'apollo-cache-inmemory';
 import {ApolloClient} from 'apollo-client';
 import {ApolloProvider} from 'react-apollo';
@@ -15,26 +17,59 @@ import Register from './components/Register/Register'
 import outerTheme from './themes/Theme';
 import MainStore from './MainStore';
 import {observer} from 'mobx-react';
-
+import {getLocalAccessToken, getLocalRefreshToken, isTokenValid, setLocalAccessToken, setLocalTokenFreshness, isLoggedIn} from './Auth';
 
 
 const httpLink = createHttpLink({
     uri: 'http://localhost:5000/graphql',
 });
 
+const refreshLink = new TokenRefreshLink(
+    {
+        accessTokenField: 'accessToken',
+        isTokenValidOrUndefined: () => {
+            var authToken = getLocalAccessToken();
+            console.log(authToken);
+            if (!authToken) return true;
+            return isTokenValid(authToken);
+        },
+        fetchAccessToken: (args: any[]) => {
+            console.log("BRUH2");
+            var token = getLocalRefreshToken();
+            return fetch('http://localhost:5000/jwt_refresh', {
+                method: 'GET',
+                headers: {
+                    Authorization: token ? `Bearer ${token}` : ""
+                }
+            })
+        },
+        handleFetch: (token : string ) => {
+            setLocalAccessToken(token);
+            setLocalTokenFreshness(false);
+        },
+    }
+);
+
 const authLink = setContext( 
     (_ : any, { headers } : any) => {
-    const token = localStorage.getItem('authToken');
-    return {
-        headers: {
-            ...headers,
-            Authorization: token ? `Bearer ${token}` : ""
-         },
-    };
-});
+    const token = localStorage.getItem('accessToken');
+        if (isLoggedIn())
+        return {
+            headers: {
+                ...headers,
+                Authorization: token ? `Bearer ${token}` : ""
+            },
+        };
+        return headers;
+    });
 
+const link = ApolloLink.from([
+    refreshLink,
+    authLink,
+    httpLink
+]);
 const client = new ApolloClient({
-    link: authLink.concat(httpLink),
+    link: link,
     cache: new InMemoryCache()
 });
 
