@@ -15,6 +15,7 @@ class Student(db.Model):
     last = db.Column(db.String(64), nullable=False)
     username = db.Column(db.String(64), nullable=False)
     nickname = db.Column(db.String(32), nullable=True)
+    graduation_year = db.Column(db.Integer, nullable=False)
 
     school_id = db.Column(db.Integer, db.ForeignKey(
         'schools.id'),
@@ -30,6 +31,18 @@ class Student(db.Model):
     division = db.relationship('Division', back_populates='students')
     # if team is null, then they are an alternate
     team = db.relationship('Team', back_populates='students')
+
+
+    def __init__(self, first, last, graduation_year, nickname=None):
+        self.first = first
+        self.last = last
+        self.graduation_year = graduation_year
+        self.nickname = nickname
+        username_base = '{}_{}'.format(first[:16],
+                last[:16]).replace(' ','_')
+        username_num = Student.query.filter(Student.username.contains(username_base)).count()+1
+        self.username = '{}{}'.format(username_base,
+                username_num).lower()
 
     # returns whether the person participated in this contest for the specified team
     def isParticipant(self,contest,team=None):

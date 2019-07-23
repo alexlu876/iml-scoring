@@ -5,6 +5,7 @@ from iml.models import (
         Division as DivisionModel,
         )
 from graphene_sqlalchemy import SQLAlchemyObjectType
+import graphene
 
 class Student(SQLAlchemyObjectType):
     class Meta:
@@ -18,6 +19,10 @@ class Team(SQLAlchemyObjectType):
 class School(SQLAlchemyObjectType):
     class Meta:
         model = SchoolModel
+        interfaces = (graphene.relay.Node,)
+class SchoolRelayConnection(graphene.relay.Connection):
+    class Meta:
+        node = School
 
 class Division(SQLAlchemyObjectType):
     class Meta:

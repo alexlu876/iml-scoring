@@ -16,7 +16,9 @@ class Contest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
     start_time = db.Column(db.DateTime(), nullable=False)
-    question_count = db.Column(db.Integer, nullable=False)
+    question_count = db.Column(db.Integer,
+            nullable=False,
+            default=6)
     team_size = db.Column(db.Integer, nullable=False,
                           default=5)
     # determines whether competition is active.

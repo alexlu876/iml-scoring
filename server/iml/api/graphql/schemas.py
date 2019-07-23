@@ -8,31 +8,30 @@ from flask_jwt_extended import (
         jwt_required, jwt_optional, get_current_user
         )
 from iml.models import Contest, Question, Score
-from iml.api.graphql.user.types import User
+from iml.api.graphql.user.types import User, UserRelayConnection
 from iml.api.graphql.user.mutations import AdminCreationMutation, UserRegisterMutation
-from iml.api.graphql.student.types import Student, Team, School, Division
+from iml.api.graphql.student.types import Student, Team, School, Division, SchoolRelayConnection
 from iml.api.graphql.score.types import Score, Question, Contest
 
 
 
 class Query(graphene.ObjectType):
-    users = graphene.List(User)
+    node = relay.Node.Field()
+
+    users = SQLAlchemyConnectionField(UserRelayConnection)
     user = graphene.Field(lambda: User, id = graphene.Int())
     viewer = graphene.Field(lambda: User)
 
     schools = graphene.List(School)
+    schools = SQLAlchemyConnectionField(SchoolRelayConnection)
     school = graphene.Field(lambda:School, id = graphene.Int())
-
-    def resolve_users(self, info, **kwargs):
-        query = User.get_query(info)
-        return query.filter_by(**kwargs)
-
-    def resolve_schools(self,info, **kwargs):
-        query = School.get_query(info)
-        return query.filter_by(**kwargs)
 
     def resolve_user(root, info, id):
         query = User.get_query(info)
+        return query.filter_by(id=id).first()
+
+    def resolve_school(root, info, id):
+        query = School.get_query(info)
         return query.filter_by(id=id).first()
 
     @jwt_optional

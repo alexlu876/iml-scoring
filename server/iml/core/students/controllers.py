@@ -28,12 +28,6 @@ def addStudents():
 
     if studentForm.validate_on_submit() and studentForm.submit.data:
         team_id = studentForm.team.data
-        username_base = '{}_{}'.format(studentForm.first.data[:16],
-                                       studentForm.last.data[:16]).replace(' ','_')
-        username_num = Student.query.filter(Student.username.contains(username_base)).count()+1
-        username = '{}{}'.format(username_base,
-                                 username_num).lower()
-
         newStudentTeamId = None
         newStudentDivisionId = None
         if team_id < 0:
@@ -47,7 +41,7 @@ def addStudents():
 
         newStudent = Student(first=studentForm.first.data,
                              last= studentForm.last.data,
-                             username=username,
+                             graduation_year=2023
                              )
         newStudent.school = school
         newStudent.division_id = newStudentDivisionId
