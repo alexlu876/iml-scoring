@@ -10,7 +10,9 @@ from flask_jwt_extended import (
 from iml.models import Contest, Question, Score
 from iml.api.graphql.user.types import User, UserRelayConnection
 from iml.api.graphql.user.mutations import AdminCreationMutation, UserRegisterMutation
+
 from iml.api.graphql.student.types import Student, Team, School, Division, SchoolRelayConnection
+from iml.api.graphql.student.mutations import CreateStudentMutation
 from iml.api.graphql.score.types import Score, Question, Contest
 
 
@@ -81,4 +83,5 @@ class Mutation(graphene.ObjectType):
     createAdmin = AdminCreationMutation.Field()
     register = UserRegisterMutation.Field()
 
+    createStudent = CreateStudentMutation.Field()
 gql_schema = graphene.Schema(query=Query, mutation=Mutation)

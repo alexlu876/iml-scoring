@@ -1,5 +1,7 @@
 from iml import db
 
+import datetime
+
 #import iml.models.score as score
 # the name contest was used!
 #import iml.models.contest as contestModule
@@ -16,13 +18,14 @@ class Student(db.Model):
     username = db.Column(db.String(64), nullable=False)
     nickname = db.Column(db.String(32), nullable=True)
     graduation_year = db.Column(db.Integer, nullable=False)
+    creation_timestamp = db.Column(db.DateTime(), nullable=False)
 
     school_id = db.Column(db.Integer, db.ForeignKey(
         'schools.id'),
         nullable=False)
     # divis
     division_id = db.Column(db.Integer, db.ForeignKey('divisions.id'),
-                            nullable=False)
+                            nullable=True)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.id'),
                         nullable=True)
 
@@ -33,7 +36,7 @@ class Student(db.Model):
     team = db.relationship('Team', back_populates='students')
 
 
-    def __init__(self, first, last, graduation_year, nickname=None):
+    def __init__(self, first, last, graduation_year,school_id, nickname=None, team_id=None):
         self.first = first
         self.last = last
         self.graduation_year = graduation_year
@@ -43,6 +46,10 @@ class Student(db.Model):
         username_num = Student.query.filter(Student.username.contains(username_base)).count()+1
         self.username = '{}{}'.format(username_base,
                 username_num).lower()
+        self.school_id = school_id
+        self.team_id = team_id
+        self.creation_timestamp = datetime.datetime.utcnow()
+
 
     # returns whether the person participated in this contest for the specified team
     def isParticipant(self,contest,team=None):
