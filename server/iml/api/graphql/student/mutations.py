@@ -1,6 +1,6 @@
 import graphene
 from iml.api.graphql.student.types import Student
-from iml.api.graphql.utils import clean_input
+from iml.api.graphql.utils import clean_input, localize_id, update_model_with_dict
 
 from iml.database import db
 from iml.models import Student as StudentModel
@@ -23,7 +23,6 @@ class StudentCreationInput(graphene.InputObjectType):
     team_id = graphene.ID(required = False, description = "Permanent Team ID")
 
 
-
 class CreateStudentMutation(graphene.Mutation):
     class Arguments:
         studentInfo = StudentCreationInput(required=True)
@@ -33,7 +32,9 @@ class CreateStudentMutation(graphene.Mutation):
     #TODO - verification
     @classmethod
     def mutate(cls, root, info, studentInfo):
+        print(studentInfo)
         studentInfo = clean_input(studentInfo)
+        print(studentInfo)
         student = StudentModel(**studentInfo)
         db.session.add(student)
         db.session.commit()
@@ -42,12 +43,24 @@ class CreateStudentMutation(graphene.Mutation):
 
 class UpdateStudentMutation(graphene.Mutation):
     class Arguments:
-        studentInfo = StudentUpdateInput
+        studentInfo = StudentUpdateInput(required=True)
+        id = graphene.ID(required=True)
 
     student = graphene.Field(lambda:Student)
 
     @classmethod
-    def mutate(cls, root, info, studentInfo):
+    def mutate(cls, root, info, studentInfo, id):
+        query = Student.get_query(info)
         studentInfo = clean_input(studentInfo)
-        print(studentInfo)
-        return None
+        id = localize_id(id)
+        studentToModify = query.get(id)
+        if len(studentInfo) != 0:
+            update_model_with_dict(studentToModify,studentInfo)
+            db.session.commit()
+        #confirmation
+        studentToModify = query.get(id)
+        return UpdateStudentMutation(student=studentToModify)
+
+
+
+
