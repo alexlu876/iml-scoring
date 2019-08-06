@@ -1,7 +1,9 @@
 import React, {useContext} from 'react';
 import { Home, Notifications, AccountCircle } from '@material-ui/icons';
-import Dc from './components/Dc/Dc';
+import Dc from './components/SmallComponents/Dc';
+import View from './components/SmallComponents/View'
 import Register from './components/Register/Register';
+
 
 //^a template for other shit
 
@@ -14,7 +16,7 @@ const Routes = [
     component: () => <div> bruh </div>,},
   {
     path: '/dc',
-    sidebarName: 'bruh',
+    sidebarName: 'owodc',
     navbarName: 'dc',
     icon: Home,
     component: Dc },
@@ -24,6 +26,12 @@ const Routes = [
     navbarName: 'register',
     icon: AccountCircle,
     component: Register },
+  {
+    path: '/view',
+    sidebarName: 'view data lmao',
+    navbarName: 'bruh.',
+    icon: AccountCircle,
+    component: View },
 ];
 
 export default Routes;

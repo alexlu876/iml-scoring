@@ -19,6 +19,7 @@
     "jwt-decode": "^2.2.0",
     "mobx": "^5.11.0",
     "mobx-react": "^6.1.1",
+    "package.json": "^2.0.1",
     "react": "^16.8.6",
     "react-apollo": "^2.5.8",
     "react-dom": "^16.8.6",

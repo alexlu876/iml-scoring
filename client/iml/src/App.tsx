@@ -19,6 +19,7 @@ import MainStore from './MainStore';
 import {observer} from 'mobx-react';
 import {getLocalAccessToken, getLocalRefreshToken, isTokenValid, setLocalAccessToken, setLocalTokenFreshness, isLoggedIn} from './Auth';
 
+import Routes from './routes'
 
 const httpLink = createHttpLink({
     uri: 'http://localhost:5000/graphql',
@@ -50,7 +51,7 @@ const refreshLink = new TokenRefreshLink(
     }
 );
 
-const authLink = setContext( 
+const authLink = setContext(
     (_ : any, { headers } : any) => {
     const token = localStorage.getItem('accessToken');
         if (isLoggedIn())
@@ -82,25 +83,22 @@ const Navbar = () => {
     );
 }
 
+
 const App = observer(() => {
     const store = useContext(MainStore);
     return (
         <ApolloProvider client={client}>
-            <MuiThemeProvider theme={outerTheme}>
-                <div>
-                    <NavHeader toggleDrawer = {store.toggleDrawer} />
-                    <HeaderDrawer open= {store.drawerToggled}
-                    setOpen = {store.setDrawer}/>
-                </div>
-
-                
-                <Router>
-                    <Route 
-                        exact path="/signup"
-                        component={Register} />
-                </Router>
-        </MuiThemeProvider>
-    </ApolloProvider>
+          <Router>
+                <MuiThemeProvider theme={outerTheme}>
+                    <div>
+                        <NavHeader toggleDrawer = {store.toggleDrawer} />
+                        <HeaderDrawer open= {store.drawerToggled}
+                        setOpen = {store.setDrawer}/>
+                    </div>
+                    </MuiThemeProvider>
+            {Routes.map((prop, key) => <Route exact path={prop.path} key={key} component={prop.component} /> )}
+        </Router>
+      </ApolloProvider>
     );
 });
 export default App;
