@@ -2,13 +2,11 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import {List, ListItemIcon, ListItemText, Divider, IconButton, MenuList, MenuItem, Drawer } from '@material-ui/core';
+import Routes from '../../../routes';
+import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom';
 
 const useStyles = makeStyles({
   list: {
@@ -41,29 +39,25 @@ export default function HeaderDrawer({open, setOpen} : any) {
             onClose={handleDrawerClose()}
             onOpen={handleDrawerOpen()}
         >
-            <div
-                onClick={handleDrawerClose()}
-                role="presentation"
-                className={classes.list}
-            >
-                <List>
-                        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                            <ListItem button key={text}>
-                                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        ))}
-        </List>
-        <Divider />
-        <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
-        </List>
-    </div>
+        <div
+            onClick={handleDrawerClose()}
+            role="presentation"
+            className={classes.list} >
+                <MenuList>
+                {Routes.map((prop, key) => {
+                  return (
+                    <Link to={prop.path} style={{ textDecoration: 'none' }} key={key}>
+                      <MenuItem>
+                        <ListItemIcon>
+                          <prop.icon />
+                        </ListItemIcon>
+                        <ListItemText primary={prop.sidebarName} />
+                      </MenuItem>
+                    </Link>
+                  )})}
+              </MenuList>
+            <Divider />
+        </div>
         </SwipeableDrawer>
     );
 }
