@@ -1,6 +1,9 @@
 from iml import db
 
+from sqlalchemy.ext.hybrid import hybrid_property
+
 import datetime
+from typing import Dict, List
 
 #import iml.models.score as score
 # the name contest was used!
@@ -35,8 +38,7 @@ class Student(db.Model):
     # if team is null, then they are an alternate
     team = db.relationship('Team', back_populates='students')
 
-
-    def __init__(self, first, last, graduation_year,school_id, nickname=None, team_id=None):
+    def __init__(self, first, last, graduation_year, school_id, division_id, nickname=None, team_id=None,):
         self.first = first
         self.last = last
         self.graduation_year = graduation_year
@@ -48,11 +50,12 @@ class Student(db.Model):
                 username_num).lower()
         self.school_id = school_id
         self.team_id = team_id
+        self.division_id = division_id
         self.creation_timestamp = datetime.datetime.utcnow()
 
 
     # returns whether the person participated in this contest for the specified team
-    def isParticipant(self,contest,team=None):
+    def isParticipant(self,contest,team=None) -> bool:
         import iml.models.score as score
         # the name contest was used!
 
@@ -67,13 +70,13 @@ class Student(db.Model):
     # ie they are on the team or they're not on a team
     # AND them being a participant implies they participated for that team. Essetially serves as a
     # check that they have not already had scores entered for another team
-    def isValidParticipant(self, contest, team):
+    def isValidParticipant(self, contest, team) -> bool:
         return (self.team == team) or (self.team is None and
                                        (not(self.isParticipant(contest)) or
                                         self.isParticipant(contest, team)))
 
     # returns score in a dictionary
-    def getScoresDict(self, contest, division=None, team=None):
+    def getScoresDict(self, contest, division=None, team=None) -> Dict[int, int]:
         import iml.models.contest as contestModule
         import iml.models.score as score
         # the name contest was used!
@@ -93,7 +96,7 @@ class Student(db.Model):
                 scoresDict[scoreObj.getQuestionNum()] = scoreObj.getValue()
             return scoresDict
 
-    def getAllScoresDict(self, division=None, team = None):
+    def getAllScoresDict(self, division=None, team = None) -> List[Dict[int, int]]:
         import iml.models.contest as contestModule
         contestsQuery = contestModule.Contest.query.all()
         if division:
@@ -130,3 +133,8 @@ class Student(db.Model):
 
     def get_user_id(self):
         return self.getUserId()
+
+
+    @hybrid_property
+    def current_score(self) -> int:
+        return self.getFinalScore()

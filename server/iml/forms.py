@@ -16,7 +16,7 @@ class LoginForm(FlaskForm):
                          validators.Length(min=3,
                                            max=25),
                          validators.Email()]
-                       )
+                        )
     password = PasswordField("Password: ",
                              [validators.DataRequired(),
                               validators.Length(min=3,

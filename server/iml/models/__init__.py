@@ -8,6 +8,7 @@ from iml.models.schoolgrouping import SchoolGrouping
 from iml.models.school import School
 from iml.models.user import User
 from iml.models.team import Team
+from iml.models.season import Season
 
 
 

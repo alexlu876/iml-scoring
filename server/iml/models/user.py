@@ -21,6 +21,14 @@ class User(db.Model):
     school = db.relationship('School', back_populates='coaches')
     scores = db.relationship('Score', back_populates='coach')
 
+    students = db.relationship(
+        'Student',
+        secondary='schools',
+        secondaryjoin='School.id==Student.school_id',
+        primaryjoin='School.id==User.school_id',
+        backref='coaches'
+    )
+
     def __init__(self, first, last, email, phone_num,
                  username, password, is_admin):
         self.first = first

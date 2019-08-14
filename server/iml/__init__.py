@@ -127,8 +127,8 @@ def jwt_verify():
     if user is None:
         return jsonify({"valid": False})
     return jsonify({
-            "valid": True
-            })
+        "valid": True
+    })
 
 # pure GET refresh
 @app.route('/jwt_refresh', methods=['GET'])
@@ -138,21 +138,21 @@ def jwt_refresh():
     if not identity:
         return jsonify({});
     newAccessToken = create_access_token(
-            identity=identity,
-            fresh=False)
+        identity=identity,
+        fresh=False)
     return jsonify(
-            {'accessToken': newAccessToken}
-            )
+        {'accessToken': newAccessToken}
+    )
 
 
 
 app.add_url_rule(
-        '/graphql',
-        view_func=GraphQLView.as_view(
-            name='graphql',
-            schema = gql_schema,
-            graphiql=True
-            )
-        )
+    '/graphql',
+    view_func=GraphQLView.as_view(
+        name='graphql',
+        schema = gql_schema,
+        graphiql=True
+    )
+)
 
 CORS(app)

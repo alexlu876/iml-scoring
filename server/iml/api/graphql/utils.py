@@ -15,6 +15,7 @@ def localize_id(grapheneID):
         grapheneID = int(grapheneID)
     except ValueError:
         grapheneID = from_global_id(grapheneID)
+        grapheneID = int(grapheneID[1])
     return grapheneID
 
 

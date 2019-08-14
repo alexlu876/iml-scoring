@@ -22,11 +22,11 @@ class Score(db.Model):
     coach = db.relationship('User', back_populates = 'scores')
     team = db.relationship('Team', back_populates = 'scores')
 
-    question = db.relationship('Question',
-            primaryjoin=
-            'and_(Question.question_num==Score.question_num,Question.contest_id==Score.contest_id)',
-            backref='scores')
-
+    question = db.relationship(
+        'Question',
+        primaryjoin=
+        'and_(Question.question_num==Score.question_num,Question.contest_id==Score.contest_id)',
+        backref='scores')
 
 
     def getValue(self):
@@ -39,9 +39,10 @@ class Score(db.Model):
         return self.question_num
 
     def getQuestion(self):
-        import iml.models.question as questionModule
-        Question = questionModule.Question
-        return Question.query.filter_by(contest_id=self.contest.id,
-                                        question_num=self.question_num).first()
+        return question
+        # import iml.models.question as questionModule
+        # Question = questionModule.Question
+        # return Question.query.filter_by(contest_id=self.contest.id,
+        #                                 question_num=self.question_num).first()
     def getMaxPoints(self):
         return self.getQuestion().getMaxScore()

@@ -15,7 +15,7 @@ class Question(db.Model):
                                nullable=False,
                                default=1)
 
-    #scores relationship backref'd
+    # scores relationship backref'd
 
     def __init__(self, contest_id, question_num,
                  question_string=None,
