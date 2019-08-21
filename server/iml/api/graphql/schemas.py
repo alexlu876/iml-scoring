@@ -23,7 +23,10 @@ from iml.api.graphql.user.mutations import (
 from iml.api.graphql.admin.types import (
     SchoolGrouping,
     Division,
-    Season
+    Season,
+    SchoolGroupingRelayConnection,
+    DivisionRelayConnection,
+    SeasonRelayConnection
 )
 from iml.api.graphql.student.types import (
     Student,
@@ -33,12 +36,17 @@ from iml.api.graphql.student.types import (
     TeamRelayConnection,
     SchoolRelayConnection
 )
+from iml.api.graphql.score.types import (
+    Score, Question, Contest
+)
 
 from iml.api.graphql.student.mutations import (
     CreateStudentMutation, UpdateStudentMutation
 )
-from iml.api.graphql.score.types import (
-    Score, Question, Contest
+from iml.api.graphql.admin.mutations import (
+    CreateSeasonMutation,
+    CreateDivisionMutation,
+    CreateSchoolGroupingMutation
 )
 
 
@@ -57,6 +65,9 @@ class Query(graphene.ObjectType):
     students = SQLAlchemyConnectionField(StudentRelayConnection)
     student = graphene.Field(lambda: Student, id=graphene.ID(required=True))
 
+    divisions = SQLAlchemyConnectionField(DivisionRelayConnection)
+    division = graphene.Field(lambda: Division, id=graphene.ID(required=True))
+
     def resolve_user(root, info, id):
         query = User.get_query(info)
         return query.get(localize_id(id))
@@ -67,6 +78,10 @@ class Query(graphene.ObjectType):
 
     def resolve_student(root, info, id):
         query = Student.get_query(info)
+        return query.get(localize_id(id))
+
+    def resolve_division(root, info, id):
+        query = Division.get_query(info)
         return query.get(localize_id(id))
 
     @jwt_optional
@@ -119,6 +134,8 @@ class Mutation(graphene.ObjectType):
 
     createStudent = CreateStudentMutation.Field()
     updateStudent = UpdateStudentMutation.Field()
+
+    createDivision = CreateDivisionMutation.Field()
 
 
 gql_schema = graphene.Schema(query=Query, mutation=Mutation)

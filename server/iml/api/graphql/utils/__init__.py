@@ -1,6 +1,7 @@
 import graphene
 from graphql_relay.node.node import from_global_id
 
+
 def clean_input(graphene_scalar_fields):
     d = {}
     for key, value in graphene_scalar_fields.items():
@@ -9,6 +10,7 @@ def clean_input(graphene_scalar_fields):
         else:
             d[key] = value
     return d
+
 
 def localize_id(grapheneID):
     try:
@@ -23,8 +25,6 @@ def update_model_with_dict(obj, props):
     for key, value in props.items():
         try:
             if getattr(obj, key):
-                setattr(obj,key,value)
+                setattr(obj, key, value)
         except AttributeError:
             pass
-
-

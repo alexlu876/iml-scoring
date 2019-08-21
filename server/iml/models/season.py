@@ -1,5 +1,6 @@
 from iml import db
 
+
 class Season(db.Model):
 
     __tablename__ = 'seasons'
@@ -17,7 +18,6 @@ class Season(db.Model):
 
     divisions = db.relationship('Division',
                                 back_populates='season')
-
 
     def __init__(self, name, url, start_date, end_date):
         self.name = name

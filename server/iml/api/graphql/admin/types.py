@@ -42,3 +42,4 @@ class SeasonRelayConnection(graphene.relay.Connection):
     class Meta:
         node = Season
         interfaces = (graphene.relay.Node,)
+

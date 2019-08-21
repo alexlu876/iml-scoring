@@ -9,6 +9,7 @@ from iml.util.constants import IS_SITE_ADMIN, IS_LOGGED_IN
 
 user = Blueprint("user", __name__)
 
+
 @user.route("/login", methods=["GET", "POST"])
 @login_forbidden()
 def login():
@@ -41,10 +42,12 @@ def login():
             flash("Your email is not in our system!", "error")
 
     return render_custom_template("core/user/login.html",
-                           user=user,
-                           title="IML Scoring | Login",
-                           loginForm = loginForm,
-                           )
+                                  user=user,
+                                  title="IML Scoring | Login",
+                                  loginForm=loginForm,
+                                  )
+
+
 @user.route('/register', methods=["GET", "POST"])
 @login_forbidden()
 def register():
@@ -73,12 +76,12 @@ def register():
         flash("succ cess", "success")
         return redirect('/login')
 
-
-    return render_custom_template("core/user/register.html",
-                           user=user,
-                           title="IML Scoring | Register",
-                           registerForm = registerForm,
-                           )
+    return render_custom_template(
+        "core/user/register.html",
+        user=user,
+        title="IML Scoring | Register",
+        registerForm=registerForm,
+    )
 
 
 @user.route('/session_info')
@@ -86,9 +89,10 @@ def get_session():
     if session.get("userdata") and session.get("status"):
         return jsonify(
             {"userdata": session["userdata"],
-             "status" : session["status"]
+             "status": session["status"]
              })
     return jsonify({})
+
 
 @user.route('/logout')
 def logout():

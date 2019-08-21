@@ -13,8 +13,7 @@ def login_required(redirect_to=None, to_flash=None):
     def handler(*args, **kwargs):
         next = url_for(request.endpoint, **request.view_args)
         flash(to_flash)
-        return redirect(url_for('user.login',next=next))
-
+        return redirect(url_for('user.login', next=next))
 
     def validator(*args, **kwargs):
         sess_status = session.get("status", IS_NOT_LOGGED_IN)

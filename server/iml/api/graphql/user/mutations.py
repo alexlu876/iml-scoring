@@ -6,11 +6,12 @@ from iml.api.graphql.user.types import User
 from iml.models import User as UserModel
 from iml.database import db
 
+
 class UserInfoInput(graphene.InputObjectType):
-    first = graphene.String(required=True, description = "First Name")
-    last = graphene.String(required=True, description = "Last Name")
-    email = graphene.String(required=True,description = "Email")
-    phoneNum = graphene.String(required=False, description = "Phone Number")
+    first = graphene.String(required=True, description="First Name")
+    last = graphene.String(required=True, description="Last Name")
+    email = graphene.String(required=True, description="Email")
+    phoneNum = graphene.String(required=False, description="Phone Number")
 
     def validateEmail(self):
         validFormat =  re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",

@@ -1,10 +1,11 @@
 from flask import session, redirect, flash, render_template
 from functools import wraps
 
+
 def validate_page_access(redirect_to=None,
                          to_flash=None,
-                         validate_function= lambda *args, **kwargs: True,
-                         failure_handler= None):
+                         validate_function=lambda *args, **kwargs: True,
+                         failure_handler=None):
     def decorator(f):
         @wraps(f)
         def check_and_call(*args, **kwargs):

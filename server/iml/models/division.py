@@ -4,6 +4,7 @@ from iml import db
 #import iml.models.score as scoreModule
 #import iml.models.contest as contestModule
 
+
 class Division(db.Model):
 
     __tablename__ = 'divisions'
@@ -32,11 +33,12 @@ class Division(db.Model):
         'Division',
         backref=db.backref('successor', remote_side=[id]))
 
-    def __init__(self, name, url, season_id, alternate_limit=4, successor_id=None ):
+    def __init__(self, name, url, season_id,
+                 alternate_limit=4, successor_id=None):
         self.name = name
         self.url = url
         self.season_id = season_id
-        self.alternate_limit=alternate_limit
+        self.alternate_limit = alternate_limit
         self.successor_id = successor_id
 
     # only returns students who have scores
@@ -49,4 +51,7 @@ class Division(db.Model):
         Contest = contestModule.Contest
 
         div_id = self.id
-        return Student.query.filter(Student.scores.any(Score.contest.has(Contest.division_id == div_id)))
+        return Student.query.filter(
+            Student.scores.any(
+                Score.contest.has(
+                    Contest.division_id == div_id)))
