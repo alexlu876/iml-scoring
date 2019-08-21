@@ -3,6 +3,7 @@ import React, {useContext} from 'react';
 import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom';
 
 import {ApolloLink} from 'apollo-link';
+import {onError} from 'apollo-link-error';
 import {createHttpLink} from 'apollo-link-http';
 import {TokenRefreshLink} from 'apollo-link-token-refresh';
 import {InMemoryCache} from 'apollo-cache-inmemory';
@@ -63,11 +64,16 @@ const authLink = setContext(
         };
         return headers;
     });
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  console.log('graphQLErrors', graphQLErrors)
+  console.log('networkError', networkError)
+})
 
 const link = ApolloLink.from([
     refreshLink,
     authLink,
-    httpLink
+    httpLink,
+    errorLink
 ]);
 export const client = new ApolloClient({
     link: link,
@@ -88,14 +94,13 @@ const App = observer(() => {
     const store = useContext(MainStore);
     return (
         <ApolloProvider client={client}>
+          <head><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/></head>
           <Router>
                 <MuiThemeProvider theme={outerTheme}>
-                    <div>
-                        <NavHeader toggleDrawer = {store.toggleDrawer} />
-                        <HeaderDrawer open= {store.drawerToggled}
-                        setOpen = {store.setDrawer}/>
-                    </div>
-                    </MuiThemeProvider>
+                    <NavHeader toggleDrawer = {store.toggleDrawer} />
+                    <HeaderDrawer open= {store.drawerToggled}
+                    setOpen = {store.setDrawer}/>
+                </MuiThemeProvider>
             {Routes.map((prop, key) => <Route exact path={prop.path} key={key} component={prop.component} /> )}
         </Router>
       </ApolloProvider>

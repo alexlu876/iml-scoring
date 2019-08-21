@@ -18,6 +18,8 @@ import {client} from '../../App';
 
 export default function View() {
   var [first, setFirst] = React.useState('');
+  var [entries, setEntries] = React.useState([])
+  var [viewing, setViewing] = React.useState('');
   const USERS_QUERY = gql`
     {
       users {
@@ -32,57 +34,106 @@ export default function View() {
           first
           last }}}}`
   var CREATE_STUDENT = gql`
-  mutation CreateStudent($first: String!){
-    createStudent(studentInfo:{
-      first:$first,
-      last:"2",
-      graduationYear:42069
-      schoolId:200,
-      divisionId:2,}) {student {id}}
-    }`
+    mutation CreateStudent($first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $divisionId:ID!){
+      createStudent(studentInfo:{
+        first:$first,
+        last:$last,
+        graduationYear:$graduationYear
+        schoolId:$schoolId,
+        divisionId:$divisionId,}) {student {id}}}`
+  var DELETE_STUDENT = gql`
+    mutation deleteStudent ($id: ID!){
+      deleteStudent (id: $id) {id}} `
+  var UPDATE_STUDENT = gql`
+    mutation UpdateStudent($first: String, $last:String, $graduationYear:Int, $schoolId:ID, $divisionId:ID){
+      updateStudent(studentInfo:{
+        first:$first,
+        last:$last,
+        graduationYear:$graduationYear,
+        schoolId:$schoolId,
+        divisionId:$divisionId,}) {student {id}}}`
   const [createStudent, { data }] = useMutation(CREATE_STUDENT, {client:client})
+  const [updateStudent, { data2 }] = useMutation(UPDATE_STUDENT, {client:client})
+  //const [deleteStudent, { data3 }] = useMutation(DELETE_STUDENT, {client:client})
   return (
-      <Typography>
-        {console.log(client)}
+      <Typography component={'span'}>
+        <ApolloProvider client={client}>
         <br/><br/>
+
         <Query query={STUDENTS_QUERY}>
           {({loading, error, data }) => {
               if (error) return (<div>Error</div>)
               if (loading) return (<div>loading...</div>)
               var studentsList = data.students.edges.map((edge) => edge.node)
+
               return (
-                <MaterialTable
-                  columns={[
-                    {title: 'bruhID', field: 'id'},
-                    {title: 'first', field: 'first'},
-                    {title: 'last', field: 'last'},
-                  ]}
-                  data={studentsList}
-                  title='BRUH table!!!!!'
-                />
+                  <MaterialTable
+                    title='table of BRUHs'
+                    options={{
+                      selection: true,
+                    }}
+                    columns={[
+                      {title: 'first', field: 'first'},
+                      {title: 'last', field: 'last'},
+                      {title: 'graduation year', field:'graduationYear'},
+                      {title: 'school', field:'schoolId'},
+                      {title: 'division', field:'divisionId'},
+                    ]}
+                    data={studentsList}
+                    editable={{
+                      isEditable: rowData => rowData.name != "a", // only name(a) rows would be uneditable
+                      isDeletable: rowData => rowData.name == "b", // only name(a) rows would be deletable
+                      onRowAdd: newData =>
+                          new Promise((resolve, reject) => {
+                              setTimeout(() => {
+                                  {createStudent({variables: newData})}
+                                  resolve();
+                              }, 1000);
+                          }),
+                      onRowUpdate: (newData, oldData) =>
+                          new Promise((resolve, reject) => {
+                              setTimeout(() => {
+                                  {updateStudent({variables: newData})}
+                                  resolve();
+                              }, 1000);
+                          }),
+                      onRowDelete: oldData =>
+                          new Promise((resolve, reject) => {
+                              setTimeout(() => {
+                                  {
+                                    //deleteStudent(1)
+                                      /* let data = this.state.data;
+                                      const index = data.indexOf(oldData);
+                                      data.splice(index, 1);
+                                      this.setState({ data }, () => resolve()); */
+                                  }
+                                  resolve();
+                              }, 1000);
+                          })
+                        }}
+                  />
               )
             }}
         </Query>
+
         <br/>
         add student my dude?
-        <ApolloProvider client={client}>
+
             <div>
               <form
                 onSubmit={e => {
                   e.preventDefault();
-                  createStudent({ variables: {first: first } });
+                  createStudent({ variables: {first: first, last:'bruh', graduationYear:420420, schoolId:42069, divisionId:69420} });
                 }}
               >
               <input
               value={first}
-              onChange={e => {setFirst(e.target.value);
-                console.log(e.target.value)}
+              onChange={e => {setFirst(e.target.value);}
               }/>
                 <button type="submit">Add Todo</button>
               </form>
             </div>
-          </ApolloProvider>
-
+        </ApolloProvider>
     </Typography>
   )
 }

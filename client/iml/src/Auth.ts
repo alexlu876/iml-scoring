@@ -14,10 +14,8 @@ export function setLocalTokenFreshness(freshness : boolean) {
 export function isTokenValid(token : string) : boolean {
     var decoded = jwtDecode(token);
     if (!decoded) return false;
-    console.log(decoded);
     var expirationTime = decoded["exp"];
     if (!expirationTime) return false;
-    console.log("bruh");
     return expirationTime*1000 > Date.now();
 }
 
