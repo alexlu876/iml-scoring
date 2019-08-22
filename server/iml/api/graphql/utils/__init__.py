@@ -13,6 +13,8 @@ def clean_input(graphene_scalar_fields):
 
 
 def localize_id(grapheneID):
+    if grapheneID is None:
+        return None
     try:
         grapheneID = int(grapheneID)
     except ValueError:

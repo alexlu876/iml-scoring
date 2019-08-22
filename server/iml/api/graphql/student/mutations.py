@@ -14,6 +14,7 @@ class StudentUpdateInput(graphene.InputObjectType):
     nickname = graphene.String(description="Nickname")
     graduation_year = graphene.Int(description="Graduation Year")
     team_id = graphene.ID(description="Permanent Team ID")
+    school_id = graphene.ID(required=True, description="School ID")
     division_id = graphene.ID(description="Division ID")
 
 
@@ -35,6 +36,7 @@ class CreateStudentMutation(graphene.Mutation):
         studentInfo = StudentCreationInput(required=True)
 
     student = graphene.Field(lambda: Student)
+    id = graphene.ID()
 
     # TODO - verification
     @classmethod
@@ -45,7 +47,8 @@ class CreateStudentMutation(graphene.Mutation):
         student = StudentModel(**studentInfo)
         db.session.add(student)
         db.session.commit()
-        return CreateStudentMutation(student)
+        return CreateStudentMutation(student=student,
+                                     id=student.id)
 
 
 class UpdateStudentMutation(graphene.Mutation):
@@ -54,6 +57,7 @@ class UpdateStudentMutation(graphene.Mutation):
         id = graphene.ID(required=True)
 
     student = graphene.Field(lambda: Student)
+    id = graphene.ID()
 
     @classmethod
     def mutate(cls, root, info, studentInfo, id):
@@ -66,4 +70,5 @@ class UpdateStudentMutation(graphene.Mutation):
             db.session.commit()
         # confirmation
         studentToModify = query.get(id)
-        return UpdateStudentMutation(student=studentToModify)
+        return UpdateStudentMutation(student=studentToModify,
+                                     id=id)
