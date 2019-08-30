@@ -51,9 +51,16 @@ const useStyles = makeStyles(theme => ({
     form: {
         width: '100%', // Fix IE 11 issue.
         marginTop: theme.spacing(3),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
     },
     submit: {
-        margin: theme.spacing(3, 0, 2),
+        marginBottom: theme.spacing(1)
+    },
+    field: {
+        width: '96%',
+        margin: theme.spacing(0, 1, 0, 1),
     },
 }));
 
@@ -100,33 +107,29 @@ const Login = () => {
                         type="email"
                         label="Email"
                         component={TextField}
-                        fullWidth
+                        variant="outlined"
+                        className={classes.field} />
+                      <br />
+                    <Field
+                        type="password"
+                        label="Password"
+                        name="password"
                         variant="outlined"
                         margin="normal"
-                    />
-                        <br />
-
-                        <Field
-                            type="password"
-                            label="Password"
-                            name="password"
-                            component={TextField}
-                        />
-                            <br />
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                disabled={isSubmitting}
-                                onClick={submitForm}
-                                className={classes.submit}
-                            >
-                                    Submit
-                        </Button>
-
+                        component={TextField}
+                        className={classes.field}/>
+                      <br />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={isSubmitting}
+                        onClick={submitForm}
+                        className={classes.submit}>
+                        Submit
+                    </Button>
                 </Form>
                 )
             }
-
         />
         </div>
         </Paper>

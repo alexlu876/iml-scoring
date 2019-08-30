@@ -15,6 +15,9 @@ const useStyles = makeStyles({
   fullList: {
     width: 'auto',
   },
+  listText: {
+    color: '#585'
+  },
 });
 
 export default function HeaderDrawer({open, setOpen} : any) {
@@ -51,7 +54,7 @@ export default function HeaderDrawer({open, setOpen} : any) {
                         <ListItemIcon>
                           <prop.icon />
                         </ListItemIcon>
-                        <ListItemText primary={prop.sidebarName} />
+                        <ListItemText className={classes.listText} primary={prop.sidebarName} />
                       </MenuItem>
                     </Link>
                   )})}
