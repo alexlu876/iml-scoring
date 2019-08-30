@@ -27,8 +27,7 @@ export default function View() {
     var [viewing, setViewing] = React.useState('');
     const [createStudent,] = useMutation(CREATE_STUDENT, {client:client})
     const [updateStudent,] = useMutation(UPDATE_STUDENT, {client:client})
-    
-    //const [deleteStudent, { data3 }] = useMutation(DELETE_STUDENT, {client:client})
+    const [deleteStudent,] = useMutation(DELETE_STUDENT, {client:client})
     return (
         <Typography component={'span'}>
             <ApolloProvider client={client}>
@@ -55,15 +54,15 @@ export default function View() {
                                     ]}
                                     data={studentsList}
                                     editable={{
-                                        isEditable: rowData => true, // only name(a) rows would be uneditable
-                                            isDeletable: rowData => false, // only name(a) rows would be deletable
+                                        isEditable: rowData => true,
+                                            isDeletable: rowData => true,
                                             onRowAdd: newData => createStudent(
                                                 {variables: newData}) as Promise<any>,
                                             onRowUpdate: (newData, oldData) => {
                                                 return updateStudent(
                                                     {variables: newData}) as Promise<any>;
                                             },
-                                            onRowDelete: oldData =>
+                                            onRowDelete: oldData => 
                                             new Promise((resolve, reject) => {
                                                 reject();
                                             })

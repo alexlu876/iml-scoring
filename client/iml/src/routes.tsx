@@ -10,7 +10,7 @@ import Login from './components/Login/Login';
 //^a template for other shit
 
 const Routes = [
-    
+
     {
         path: '/',
         sidebarName: 'home',

@@ -1,18 +1,31 @@
 import React from 'react';
+import {Formik, Field, Form} from 'formik';
 import { makeStyles } from '@material-ui/core/styles';
-
+import {
+  Button,
+  LinearProgress,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  FormControlLabel,
+} from '@material-ui/core';
+import * as Yup from 'yup';
+import MuiTextField from '@material-ui/core/TextField';
+import {
+  fieldToTextField,
+  TextField,
+  TextFieldProps,
+  Select,
+  Switch,
+  RadioGroup,
+} from 'formik-material-ui';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-
-
 import CssBaseline from '@material-ui/core/CssBaseline';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Avatar from '@material-ui/core/Avatar';
-
-
-
 
 const useStyles = makeStyles(theme => ({
     '@global': {
@@ -33,11 +46,26 @@ const useStyles = makeStyles(theme => ({
     form: {
         width: '100%', // Fix IE 11 issue.
         marginTop: theme.spacing(3),
+        alignItems: 'center',
+    },
+    field: {
+        bruh: 'moment',
+        width: '96%',
+        marginLeft: theme.spacing(1),
+        marginBottom: theme.spacing(1),
     },
     submit: {
-        margin: theme.spacing(3, 0, 2),
+        margin: theme.spacing(1, 1),
+        bruh: 'moment',
     },
 }));
+
+const validationSchema = Yup.object().shape(
+    {
+        email: Yup.string()
+            .email('Invalid Email Address!'),
+    }
+);
 
 export default function Register() {
 
@@ -45,20 +73,86 @@ export default function Register() {
 
     return (
         <div>
-            <Container component="main" maxWidth = "xs">
+            <Container component="main" maxWidth = "xs"><Paper>
                     <CssBaseline />
                     <div className={classes.paper}>
                         <Avatar className={classes.avatar}>
                            <LockOutlinedIcon />
                         </Avatar>
-
                         <Typography component="h1" variant="h5">
-                            Login
+                            register
                         </Typography>
+
+                        <Formik
+                            validationSchema={validationSchema}
+                            initialValues={{
+                                email: '',
+                                password: '',
+                            }}
+                            onSubmit = {
+                                (values, {setSubmitting}) => {
+                                    console.log(values);
+                                }
+                            }
+                            render = {
+                                ({submitForm, isSubmitting, values, setFieldValue}) => (
+                                <Form className={classes.form}>
+                                    <Field
+                                        name="bruh"
+                                        type="bruh"
+                                        label="Bruh"
+                                        select
+                                        component={TextField}
+                                        variant="outlined"
+                                        className={classes.field}
+                                        options={[
+                                          { value: "coach", label:"coach", },
+                                          { value: "admin", label:"admin", },
+                                          { value: "student", label:"student", },
+                                          { value: "bruh", label:"bRuH", } ]}
+                                        InputLabelProps={{shrink:true,}}>
+                                          <MenuItem key={"coach"} value={"coach"}> coach </MenuItem>
+                                          <MenuItem key={"admin"} value={"admin"}> admin </MenuItem>
+                                          <MenuItem key={"student"} value={"student"}> student </MenuItem>
+                                          <MenuItem key={"bruh"} value={"bruh"}> bRuH </MenuItem>
+
+                                    </Field>
+                                      <br />
+                                    <Field
+                                        name="email"
+                                        type="email"
+                                        label="Email"
+                                        component={TextField}
+                                        variant="outlined"
+                                        className={classes.field} />
+                                      <br />
+                                    <Field
+                                        type="password"
+                                        label="Password"
+                                        name="password"
+                                        variant="outlined"
+                                        component={TextField}
+                                        className={classes.field}/>
+                                      <br />
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        disabled={isSubmitting}
+                                        onClick={submitForm}
+                                        className={classes.submit}>
+                                        Submit
+                                    </Button>
+                                </Form>
+                                )
+                            }
+                        />
 
                     </div>
 
-            </Container>
+            </Paper></Container>
         </div>
+
+
+
     )
 }

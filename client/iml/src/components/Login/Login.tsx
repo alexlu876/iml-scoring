@@ -18,19 +18,14 @@ import {
   Switch,
 } from 'formik-material-ui';
 
-import { makeStyles } from '@material-ui/core/styles';
-
+import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
-
-
 import CssBaseline from '@material-ui/core/CssBaseline';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Avatar from '@material-ui/core/Avatar';
-
-
 
 const useStyles = makeStyles(theme => ({
     '@global': {
