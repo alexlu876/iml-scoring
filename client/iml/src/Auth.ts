@@ -1,5 +1,6 @@
 export const jwtDecode = require('jwt-decode');
 
+
 export function getLocalAccessToken() : string | null {
     return localStorage.getItem('accessToken');
 }
@@ -11,6 +12,12 @@ export function setLocalTokenFreshness(freshness : boolean) {
     localStorage.setItem('accessTokenFreshness', freshness ? '1' : '0');
 }
 
+export function getTokenIdentifier(token: string) : string | null {
+    var decoded = jwtDecode(token);
+    if (!decoded) return null;
+    var identity = decoded["identity"];
+    return identity;
+}
 export function isTokenValid(token : string) : boolean {
     var decoded = jwtDecode(token);
     if (!decoded) return false;
@@ -23,6 +30,10 @@ export function getLocalRefreshToken() : string | null {
     return localStorage.getItem('refreshToken');
 }
 
+export function setLocalRefreshToken(refreshToken: string) {
+    localStorage.setItem('refreshToken', refreshToken);
+}
+
 export function setLocalAccessToken(accessToken: string) {
     console.log(accessToken);
     localStorage.setItem('accessToken', accessToken);
@@ -31,4 +42,9 @@ export function setLocalAccessToken(accessToken: string) {
 //todo -use mobx or apollo state for this
 export function isLoggedIn() : boolean {
     return getLocalAccessToken() != null;
+}
+
+export function logout() : void {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
 }

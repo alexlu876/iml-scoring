@@ -46,8 +46,6 @@ export default function Register() {
     return (
         <div>
             <Container component="main" maxWidth = "xs">
-                <Paper>
-
                     <CssBaseline />
                     <div className={classes.paper}>
                         <Avatar className={classes.avatar}>
@@ -55,13 +53,10 @@ export default function Register() {
                         </Avatar>
 
                         <Typography component="h1" variant="h5">
-                            Sign up
-                            bruh
+                            Login
                         </Typography>
 
                     </div>
-
-                </Paper>
 
             </Container>
         </div>

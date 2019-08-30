@@ -8,7 +8,6 @@ from cerberus import Validator
 from graphql import GraphQLError
 
 
-# wraps mutate and resolve calls.
 def admin_required(f):
     @wraps(f)
     def check_and_call(*args, **kwargs):

@@ -18,7 +18,7 @@ import Register from './components/Register/Register'
 import outerTheme from './themes/Theme';
 import MainStore from './MainStore';
 import {observer} from 'mobx-react';
-import {getLocalAccessToken, getLocalRefreshToken, isTokenValid, setLocalAccessToken, setLocalTokenFreshness, isLoggedIn} from './Auth';
+import {getLocalAccessToken, getLocalRefreshToken, isTokenValid, setLocalAccessToken, setLocalTokenFreshness, isLoggedIn, logout} from './Auth';
 
 import Routes from './routes'
 
@@ -49,19 +49,27 @@ const refreshLink = new TokenRefreshLink(
             setLocalAccessToken(token);
             setLocalTokenFreshness(false);
         },
+        handleError: (err : Error) => {
+            /* todo : send accessToken identifier with login request */
+            logout();
+        }
     }
 );
 
 const authLink = setContext(
     (_ : any, { headers } : any) => {
     const token = localStorage.getItem('accessToken');
-        if (isLoggedIn())
-        return {
-            headers: {
-                ...headers,
-                Authorization: token ? `Bearer ${token}` : ""
-            },
-        };
+        if (isLoggedIn()) {
+            if (isTokenValid(getLocalAccessToken() || ''))
+                return {
+                    headers: {
+                        ...headers,
+                        Authorization: token ? `Bearer ${token}` : ""
+                    },
+                };
+            /* todo - figure out how to do this properly */
+            return headers;
+        }
         return headers;
     });
 const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -80,30 +88,21 @@ export const client = new ApolloClient({
     cache: new InMemoryCache()
 });
 
-const Navbar = () => {
-    return(
-        <div>
-            <NavHeader />
-            <HeaderDrawer />
-        </div>
-    );
-}
-
 
 const App = observer(() => {
     const store = useContext(MainStore);
     return (
         <ApolloProvider client={client}>
-          <head><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/></head>
-          <Router>
-                <MuiThemeProvider theme={outerTheme}>
+            <head><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/></head>
+        <MuiThemeProvider theme={outerTheme}>
+                <Router>
                     <NavHeader toggleDrawer = {store.toggleDrawer} />
                     <HeaderDrawer open= {store.drawerToggled}
-                    setOpen = {store.setDrawer}/>
-                </MuiThemeProvider>
-            {Routes.map((prop, key) => <Route exact path={prop.path} key={key} component={prop.component} /> )}
-        </Router>
-      </ApolloProvider>
+                        setOpen = {store.setDrawer}/>
+                        {Routes.map((prop, key) => <Route exact path={prop.path} key={key} component={prop.component} /> )}
+                </Router>
+            </MuiThemeProvider>
+        </ApolloProvider>
     );
 });
 export default App;
