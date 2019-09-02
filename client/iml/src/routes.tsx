@@ -6,8 +6,7 @@ import Register from './components/Register/Register';
 
 import Login from './components/Login/Login';
 
-
-//^a template for other shit
+import AdminPanel from './components/Admin/AdminPanel';
 
 const Routes = [
 
@@ -22,19 +21,29 @@ const Routes = [
         sidebarName: 'Login',
         navbarName: 'login',
         icon: AccountCircle,
-        component: Login },
+        component: Login 
+    },
     {
         path: '/signup',
         sidebarName: 'register',
         navbarName: 'register',
         icon: AccountCircle,
-        component: Register },
+        component: Register 
+    },
     {
         path: '/view',
         sidebarName: 'view data lmao',
         navbarName: 'bruh.',
         icon: AccountCircle,
-        component: View },
+        component: View 
+    },
+    {
+        path: '/admin',
+        sidebarName: 'Admin Panel',
+        navbarName: 'Admin Panel',
+        icon: AccountCircle,
+        component: AdminPanel
+    }
 ];
 
 export default Routes;

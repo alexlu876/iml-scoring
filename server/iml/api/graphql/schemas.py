@@ -107,7 +107,7 @@ class AuthMutation(graphene.Mutation):
                     identity=email, fresh=True),
                 refreshToken=create_refresh_token(email)
             )
-        return None
+        return GraphQLError("Invalid Login!")
 
 
 class RefreshMutation(graphene.Mutation):

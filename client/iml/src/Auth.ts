@@ -13,7 +13,12 @@ export function setLocalTokenFreshness(freshness : boolean) {
 }
 
 export function getTokenIdentifier(token: string) : string | null {
+    try {
     var decoded = jwtDecode(token);
+    }
+    catch (err) {
+        return null;
+    }
     if (!decoded) return null;
     var identity = decoded["identity"];
     return identity;
@@ -32,6 +37,7 @@ export function getLocalRefreshToken() : string | null {
 
 export function setLocalRefreshToken(refreshToken: string) {
     localStorage.setItem('refreshToken', refreshToken);
+    setLocalTokenFreshness(true);
 }
 
 export function setLocalAccessToken(accessToken: string) {

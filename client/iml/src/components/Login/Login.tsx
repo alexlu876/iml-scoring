@@ -27,6 +27,16 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Avatar from '@material-ui/core/Avatar';
 
+import { useMutation, useApolloClient} from '@apollo/react-hooks'
+import {client} from '../../App';
+import {AUTH} from '../../queries/user';
+import {
+    getTokenIdentifier,
+    getLocalAccessToken,
+    setLocalAccessToken,
+    setLocalRefreshToken
+} from '../../Auth';
+
 const useStyles = makeStyles(theme => ({
     '@global': {
         body: {
@@ -34,7 +44,7 @@ const useStyles = makeStyles(theme => ({
         },
     },
     paper: {
-        marginTop: theme.spacing(8),
+        marginTop: theme.spacing(12),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -54,7 +64,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: theme.spacing(1)
     },
     field: {
-        width: '96%',
+        width: '50%',
         margin: theme.spacing(0, 1, 0, 1),
     },
 }));
@@ -67,11 +77,13 @@ const validationSchema = Yup.object().shape(
     }
 );
 
-const Login = () => {
+export const Login = () => {
     const classes = useStyles();
+
+    const [authUser,] = useMutation(AUTH, {client: client})
     return (
         <div>
-            <Container component="main" maxWidth = "xs">
+            <Container component="main" maxWidth = "sm">
                 <Paper>
                     <CssBaseline/>
                     <div className={classes.paper}>
@@ -86,12 +98,24 @@ const Login = () => {
         <Formik
             validationSchema={validationSchema}
             initialValues={{
-                email: '',
+                email: getTokenIdentifier(getLocalAccessToken() || '') || '',
                 password: '',
             }}
             onSubmit = {
                 (values, {setSubmitting}) => {
-                    console.log(values);
+                    return authUser({variables: values})
+                        .then(
+                            res => {
+                                console.log(res);
+                                var data = res.data.auth;
+                                setLocalAccessToken(data.accessToken);
+                                setLocalRefreshToken(data.refreshToken);
+                            },
+                            err=> {
+                                setSubmitting(false);
+                            }
+                        )
+                        .then(() => setSubmitting(false));
                 }
             }
             render = {
@@ -102,14 +126,12 @@ const Login = () => {
                         type="email"
                         label="Email"
                         component={TextField}
-                        variant="outlined"
                         className={classes.field} />
                       <br />
                     <Field
                         type="password"
                         label="Password"
                         name="password"
-                        variant="outlined"
                         margin="normal"
                         component={TextField}
                         className={classes.field}/>

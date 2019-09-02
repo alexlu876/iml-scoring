@@ -15,6 +15,8 @@ import Menu from '@material-ui/core/Menu';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo'
 
+import {isLoggedIn, logout} from '../../../Auth';
+
 const useStyles = makeStyles(
     (theme: Theme) => 
     createStyles({
@@ -50,13 +52,6 @@ export default function HeaderNav({toggleDrawer} : any) {
 
     return (
         <div className={classes.root}>
-            <FormGroup>
-                <FormControlLabel
-                    control={<Switch checked={auth} onChange={handleChange} aria-label="LoginSwitch" />}
-                        label={auth ? 'Logout' : 'Login'}
-                    />
-            </FormGroup>
-
             <AppBar>
                 <Toolbar>
                     <IconButton edge="start"
@@ -68,7 +63,7 @@ export default function HeaderNav({toggleDrawer} : any) {
                     <Typography variant="h6" className={classes.title}>
                         NYCIML Scores 
                     </Typography>
-                        {auth && (
+                        {isLoggedIn() && (
                             <div>
                                 <IconButton
                                     aria-label="Account of current user"
@@ -94,7 +89,7 @@ export default function HeaderNav({toggleDrawer} : any) {
                                 open={open}
                                 onClose={handleClose}
                             >
-                                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                <MenuItem onClick={logout}>Log Out</MenuItem>
                             <MenuItem onClick={handleClose}>My account</MenuItem>
                             </Menu>
                         </div>
