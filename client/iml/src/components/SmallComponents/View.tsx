@@ -22,15 +22,11 @@ import {
 } from '../../queries/student'
 
 export default function View() {
-    var [first, setFirst] = React.useState('');
-    var [entries, setEntries] = React.useState([])
-    var [viewing, setViewing] = React.useState('');
     const [createStudent,] = useMutation(CREATE_STUDENT, {client:client})
     const [updateStudent,] = useMutation(UPDATE_STUDENT, {client:client})
     const [deleteStudent,] = useMutation(DELETE_STUDENT, {client:client})
     return (
         <Typography component={'span'}>
-            <ApolloProvider client={client}>
                 <br/><br/>
                 <Query query={STUDENTS_QUERY}>
                         {({loading, error, data } : any) => {
@@ -40,7 +36,7 @@ export default function View() {
 
                             return (
                                 <MaterialTable
-                                    title='table of BRUHs'
+                                    title='All Students'
                                     options={{
                                         // selection: true,
                                     }}
@@ -56,11 +52,14 @@ export default function View() {
                                     editable={{
                                         isEditable: rowData => true,
                                             isDeletable: rowData => true,
-                                            onRowAdd: newData => createStudent(
-                                                {variables: newData}) as Promise<any>,
+                                            onRowAdd: newData => {
+                                                return createStudent(
+                                                    {variables: newData}) as Promise<any>;
+                                            },
                                             onRowUpdate: (newData, oldData) => {
                                                 return updateStudent(
-                                                    {variables: newData}) as Promise<any>;
+                                                    {variables: newData}).then(() => {
+                                                    }) as Promise<any>;
                                             },
                                             onRowDelete: oldData => 
                                             new Promise((resolve, reject) => {
@@ -71,24 +70,6 @@ export default function View() {
                                                             )
                         }}
         </Query>
-        <br/>
-            add student my dude?
-
-        <div>
-            <form
-                onSubmit={e => {
-                    e.preventDefault();
-                    createStudent({ variables: {first: first, last:'bruh', graduationYear:420420, schoolId:42069, divisionId:69420} });
-                }}
-            >
-                <input
-                    value={first}
-                    onChange={e => {setFirst(e.target.value);}
-                    }/>
-                <button type="submit">Add Todo</button>
-        </form>
-    </div>
-        </ApolloProvider>
     </Typography>
     )
 }

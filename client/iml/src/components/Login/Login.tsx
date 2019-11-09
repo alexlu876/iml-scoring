@@ -77,7 +77,7 @@ const validationSchema = Yup.object().shape(
     }
 );
 
-export const Login = () => {
+export const Login = (redirect : string | undefined) => {
     const classes = useStyles();
 
     const [authUser,] = useMutation(AUTH, {client: client})
@@ -115,7 +115,9 @@ export const Login = () => {
                                 setSubmitting(false);
                             }
                         )
-                        .then(() => setSubmitting(false));
+                        .then(() => {
+                            setSubmitting(false);
+                        });
                 }
             }
             render = {

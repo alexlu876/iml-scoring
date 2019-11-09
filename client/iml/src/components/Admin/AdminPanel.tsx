@@ -5,7 +5,8 @@ import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles'
 import { Switch, Route, Link, BrowserRouter as Router, Redirect } from "react-router-dom";
 import {PrivateRoute} from '../../PrivateRoute';
-
+import {Seasons} from '../../components/Admin/Seasons';
+import View from '../../components/SmallComponents/View';
 const useStyles = makeStyles(theme => ({
     container: {
         marginTop: theme.spacing(12),
@@ -18,7 +19,6 @@ export default function AdminPanel({match, location} : any) {
     const classes = useStyles();
     return (
         <Container className={classes.container} maxWidth="lg">
-        <Fragment>
             <Tabs value={location.pathname}>
                 <Tab label="Seasons"
                     component={Link}
@@ -32,24 +32,25 @@ export default function AdminPanel({match, location} : any) {
                     component={Link}
                     to={`${match.url}/coaches`}
                 />
-                </Tabs>
+            </Tabs>
+        <Switch>
             <Route 
                 exact
                 path={match.url}
-                render = {() => <div> </div> } 
+                component = {() => <div> </div> } 
             />
             <Route
-                path={`${match.url}/tab2`}
-                render={() => <div>Tab 2</div>} 
+                path={`${match.url}/seasons`}
+                component={Seasons} 
                 />
             <Route
-                path={`${match.url}/tab3`}
-                render={() => <div>Tab 3</div>} 
+                path={`${match.url}/divisions`}
+                component={() => <div>Tab 3</div>} 
                 />
-            <Route path={`${match.url}/tab1`}
-                render={() => <div>Tab 1</div>} 
+            <Route path={`${match.url}/coaches`}
+                component={View} 
                 />
-        </Fragment>
+        </Switch>
         </Container>
     )
 }
