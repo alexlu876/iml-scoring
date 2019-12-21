@@ -60,13 +60,13 @@ class CreateSeasonMutation(graphene.Mutation):
             description="Used for URI/URL identification (ie /"
             "fall2017 or /spring2018/)"
         )
-        start_date = graphene.DateTime(
+        start_date = graphene.Date(
             required=True,
-            descripton="Start time of the season."
+            description="Start time of the season."
         )
-        end_date = graphene.DateTime(
+        end_date = graphene.Date(
             required=True,
-            descripton="End time of the season."
+            description="End time of the season."
         )
 
     season = graphene.Field(lambda: Season)
@@ -77,7 +77,7 @@ class CreateSeasonMutation(graphene.Mutation):
     def mutate(cls, root, info,
                name, url,
                start_date, end_date):
-        season = Season(
+        season = SeasonModel(
             name=name,
             url=url,
             start_date=start_date,

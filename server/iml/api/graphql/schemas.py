@@ -68,6 +68,9 @@ class Query(graphene.ObjectType):
     divisions = SQLAlchemyConnectionField(DivisionRelayConnection)
     division = graphene.Field(lambda: Division, id=graphene.ID(required=True))
 
+    seasons = SQLAlchemyConnectionField(SeasonRelayConnection)
+    season = graphene.Field(lambda: Season, id=graphene.ID(required=True))
+
     def resolve_user(root, info, id):
         query = User.get_query(info)
         return query.get(localize_id(id))
@@ -82,6 +85,10 @@ class Query(graphene.ObjectType):
 
     def resolve_division(root, info, id):
         query = Division.get_query(info)
+        return query.get(localize_id(id))
+
+    def resolve_season(root, info, id):
+        query = Season.get_query(info)
         return query.get(localize_id(id))
 
     @jwt_optional
@@ -136,6 +143,8 @@ class Mutation(graphene.ObjectType):
     updateStudent = UpdateStudentMutation.Field()
 
     createDivision = CreateDivisionMutation.Field()
+    createSeason = CreateSeasonMutation.Field()
+    createSchoolGrouping = CreateSchoolGroupingMutation.Field()
 
 
 gql_schema = graphene.Schema(query=Query, mutation=Mutation)
