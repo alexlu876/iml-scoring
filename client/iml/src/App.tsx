@@ -9,7 +9,7 @@ import {TokenRefreshLink} from 'apollo-link-token-refresh';
 import {InMemoryCache} from 'apollo-cache-inmemory';
 import {ApolloClient} from 'apollo-client';
 import {ApolloProvider} from 'react-apollo';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import {ThemeProvider as MuiThemeProvider} from '@material-ui/core/styles';
 import { setContext } from 'apollo-link-context';
 
 import NavHeader from './components/Header/HeaderNav/HeaderNav';
