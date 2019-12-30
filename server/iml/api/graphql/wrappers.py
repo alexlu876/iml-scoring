@@ -1,8 +1,17 @@
 from functools import wraps
+from typing import Dict, Callable, Any
 from flask_jwt_extended import (
-        verify_jwt_in_request,
-        get_jwt_claims,
-        )
+    verify_jwt_in_request,
+    get_jwt_claims,
+    jwt_optional,
+    get_current_user
+)
+
+from iml.models import (
+    User as UserModel,
+    School as SchoolModel
+)
+
 from cerberus import Validator
 
 from graphql import GraphQLError
@@ -20,29 +29,33 @@ def admin_required(f):
     return check_and_call
 
 
-def validate_input(validator: Validator):
-    """Wraps mutate calls and validates input before running."""
+# Function that takes the viewer id
+def require_authorization(params: Dict[str, Callable[[UserModel, Any], bool]]):
+    @jwt_optional
     def decorator(f):
         @wraps(f)
         def check_and_call(*args, **kwargs):
-            if (not validator):
-                raise GraphQLError(
-                    "Validator Not Passed!"
-                    "Please Contact an Admin!")
-            if (not validator.allow_unknown):
-                validator.allow_unknown = True
-            if (not validator.validate(kwargs)):
-                raise GraphQLError(
-                    "Invalid Arguments Provided By Client!",
-                    extensions={'invalidArgs': {
-                        to_camel_case(key): value
-                        for key, value in validator.errors.items()
-                    }}
-                )
+            user = get_current_user()
+            if not user:
+                return GraphQLError(
+                    "Not authenticated!")
+            for param, check_function in params.items:
+                # if the param is not a kwarg, skip it
+                if not kwargs.get(param):
+                    continue
+                check = check_function(user, kwargs.get(param))
+                if not check:
+                    # TODO -error handling
+                    return GraphQLError(
+                        "Missing authorization for this action!")
             return f(*args, **kwargs)
-
         return check_and_call
     return decorator
+
+
+require_school_admin = require_authorization({
+    'school_id': lambda user, school_id: user.isSchoolAdmin(SchoolModel.get(school_id))
+})
 
 
 def to_camel_case(snake: str) -> str:

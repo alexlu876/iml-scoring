@@ -3,19 +3,28 @@ from iml import db
 
 class Question(db.Model):
     __tablename__ = 'questions'
+    __table_args__ = (
+        db.ForeignKeyConstraint(
+            ['contest_id'],
+            ['contests.id']),
+        db.UniqueConstraint('contest_id', 'question_num'),
+    )
+    id = db.Column(db.Integer,
+                   primary_key=True)
     contest_id = db.Column(db.Integer,
-                           db.ForeignKey('contests.id'),
-                           primary_key=True)
+                           nullable=False)
     question_num = db.Column(db.Integer,
                              autoincrement=False,
-                             primary_key=True)
-    question_string = db.Column(db.String(128),
+                             nullable=False)
+    question_string = db.Column(db.UnicodeText(),
                                 nullable=True)
     question_value = db.Column(db.Integer,
                                nullable=False,
                                default=1)
 
-    # scores relationship backref'd
+    # categories relation back-reffed
+    scores = db.relationship('Score',
+                             back_populates='question')
 
     def __init__(self, contest_id, question_num,
                  question_string=None,

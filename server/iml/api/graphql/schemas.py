@@ -3,14 +3,13 @@ from graphene import relay
 
 from graphql import GraphQLError
 from graphene_sqlalchemy import (
-    SQLAlchemyObjectType,
     SQLAlchemyConnectionField
 )
 from flask_jwt_extended import (
-        create_access_token, create_refresh_token,
-        jwt_refresh_token_required, get_jwt_identity,
-        jwt_required, jwt_optional, get_current_user
-        )
+    create_access_token, create_refresh_token,
+    jwt_refresh_token_required, get_jwt_identity,
+    jwt_required, jwt_optional, get_current_user
+)
 
 from iml.api.graphql.utils import localize_id
 
@@ -37,7 +36,7 @@ from iml.api.graphql.student.types import (
     SchoolRelayConnection
 )
 from iml.api.graphql.score.types import (
-    Score, Question, Contest
+    Score, Question, Contest, Category
 )
 
 from iml.api.graphql.student.mutations import (

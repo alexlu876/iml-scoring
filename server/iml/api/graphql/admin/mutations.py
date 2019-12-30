@@ -1,12 +1,13 @@
 from graphene_sqlalchemy import SQLAlchemyObjectType
 import graphene
 
+from graphene_cerberus import validate_input
 from iml.database import db
 
 from iml.api.graphql.wrappers import (
-    admin_required,
-    validate_input
+    admin_required
 )
+
 from iml.api.graphql.admin.types import (
     SchoolGrouping,
     Division,

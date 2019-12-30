@@ -51,3 +51,8 @@ class User(db.Model):
 
     def isApproved(self):
         return self.isAdmin() or self.approval_status > 0
+
+    def isSchoolAdmin(self, school):
+        return self.isAdmin() or (
+            self.isApproved() and self.school_id == school.id
+        )

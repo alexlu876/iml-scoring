@@ -1,8 +1,9 @@
 from iml.models import (
-        Contest as ContestModel,
-        Question as QuestionModel,
-        Score as ScoreModel
-        )
+    Contest as ContestModel,
+    Question as QuestionModel,
+    Score as ScoreModel,
+    Category as CategoryModel
+)
 from graphene_sqlalchemy import SQLAlchemyObjectType
 
 
@@ -19,3 +20,8 @@ class Question(SQLAlchemyObjectType):
 class Score(SQLAlchemyObjectType):
     class Meta:
         model = ScoreModel
+
+
+class Category(SQLAlchemyObjectType):
+    class Meta:
+        model = CategoryModel

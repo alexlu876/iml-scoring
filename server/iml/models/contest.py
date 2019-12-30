@@ -1,12 +1,4 @@
 from iml import db
-#import iml.models.student as student
-#import iml.models.question as question
-#import iml.models.score as score
-
-
-#Student = student.Student
-#Question = question.Question
-#Score = score.Score
 
 
 class Contest(db.Model):
@@ -17,8 +9,8 @@ class Contest(db.Model):
     name = db.Column(db.String(32), nullable=False)
     start_time = db.Column(db.DateTime(), nullable=False)
     question_count = db.Column(db.Integer,
-            nullable=False,
-            default=6)
+                               nullable=False,
+                               default=6)
     team_size = db.Column(db.Integer, nullable=False,
                           default=5)
     # determines whether competition is active.
@@ -36,7 +28,7 @@ class Contest(db.Model):
 
     division = db.relationship('Division', back_populates='contests')
 
-    scores = db.relationship('Score', back_populates='contest')
+    # scores backref'd
 
     def getQuestionCount(self):
         return self.question_count
@@ -52,10 +44,7 @@ class Contest(db.Model):
         import iml.models.student as student
         import iml.models.question as question
         import iml.models.score as score
-
-
         Student = student.Student
-        Question = question.Question
         Score = score.Score
         contest_id = self.id
         return Student.query.filter(Student.scores.any(Score.contest_id == contest_id))
@@ -76,6 +65,6 @@ class Contest(db.Model):
 
     def getHighestPossibleScore(self):
         total = 0
-        for i in range(1,self.question_count+1):
-            total+=self.getQuestion(i).getMaxScore()
+        for i in range(1, self.question_count+1):
+            total += self.getQuestion(i).getMaxScore()
         return total

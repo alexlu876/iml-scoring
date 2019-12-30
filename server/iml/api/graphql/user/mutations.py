@@ -14,13 +14,14 @@ class UserInfoInput(graphene.InputObjectType):
     phoneNum = graphene.String(required=False, description="Phone Number")
 
     def validateEmail(self):
-        validFormat =  re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",
-                self.email)
+        validFormat = re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)",
+                               self.email)
         if not validFormat:
             raise GraphQLError("Invalid email format!")
         if UserModel.query.filter_by(email=self.email).first():
             raise GraphQLError("Email not unique!")
         return True
+
 
 class UserRegisterMutation(graphene.Mutation):
     class Arguments:
@@ -48,22 +49,25 @@ class AdminCreationMutation(graphene.Mutation):
         user = createUserAndAddToSession(userData, password, is_admin=True)
         return AdminCreationMutation(user)
 
+
 def createUserAndAddToSession(userData, password, is_admin=False):
     if userData.validateEmail():
-        username_base = '{}{}'.format(userData.first[0],
-                                       userData.last[:16]).replace(' ','_')
-        username_num = UserModel.query.filter(UserModel.username.contains(username_base)).count()+1
+        username_base = '{}{}'.format(
+            userData.first[0],
+            userData.last[:16]).replace(' ', '_')
+        username_num = UserModel.query.filter(
+            UserModel.username.contains(username_base)).count()+1
         username = '{}{}'.format(
                 username_base,
                 username_num if username_num > 0 else "").lower()
         user = UserModel(first=userData.first,
-                last=userData.last,
-                email=userData.email,
-                phone_num=userData.phoneNum,
-                username=username,
-                password=password,
-                is_admin=is_admin
-                )
+                         last=userData.last,
+                         email=userData.email,
+                         phone_num=userData.phoneNum,
+                         username=username,
+                         password=password,
+                         is_admin=is_admin
+                         )
         db.session.add(user)
         db.session.commit()
         return user

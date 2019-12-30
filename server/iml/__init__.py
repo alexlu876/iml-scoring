@@ -116,10 +116,13 @@ def add_claims_to_access_token(identity):
         'role': 'admin' if user.isAdmin() else 'user',
     }
 
+
 @app.route('/jwt_verify_refresh', methods=['GET'])
 @jwt_refresh_token_required
 def jwt_refresh_verify():
     return jwt_verify()
+
+
 @app.route('/jwt_verify_access', methods=['GET'])
 @jwt_optional
 def jwt_verify():
@@ -134,9 +137,9 @@ def jwt_verify():
 @app.route('/jwt_refresh', methods=['GET'])
 @jwt_refresh_token_required
 def jwt_refresh():
-    identity= get_jwt_identity()
+    identity = get_jwt_identity()
     if not identity:
-        return jsonify({});
+        return jsonify({})
     newAccessToken = create_access_token(
         identity=identity,
         fresh=False)
@@ -145,12 +148,11 @@ def jwt_refresh():
     )
 
 
-
 app.add_url_rule(
     '/graphql',
     view_func=GraphQLView.as_view(
         name='graphql',
-        schema = gql_schema,
+        schema=gql_schema,
         graphiql=True
     )
 )

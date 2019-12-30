@@ -18,6 +18,7 @@ import Register from './components/Register/Register'
 import outerTheme from './themes/Theme';
 import MainStore from './MainStore';
 import {observer} from 'mobx-react';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import {getLocalAccessToken, getLocalRefreshToken, isTokenValid, setLocalAccessToken, setLocalTokenFreshness, isLoggedIn, logout} from './Auth';
 
 import Routes from './routes'
@@ -94,12 +95,12 @@ const App = observer(() => {
     return (
         <ApolloProvider client={client}>
             <head><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/></head>
-        <MuiThemeProvider theme={outerTheme}>
+        <MuiThemeProvider theme={outerTheme(useMediaQuery('prefers-color-scheme: dark)'))}>
                 <Router>
                     <NavHeader toggleDrawer = {store.toggleDrawer} />
                     <HeaderDrawer open= {store.drawerToggled}
                         setOpen = {store.setDrawer}/>
-                        {Routes.map((prop, key) => <Route path={prop.path} key={key} component={prop.component} /> )}
+                    {Routes.map((prop, key) => <Route path={prop.path} key={key} component={prop.component} /> )}
                 </Router>
             </MuiThemeProvider>
         </ApolloProvider>

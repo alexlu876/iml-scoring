@@ -4,6 +4,7 @@ from iml.api.graphql.utils import (
     clean_input, localize_id, update_model_with_dict
 )
 
+from iml.api.graphql.wrappers import require_authorization
 from iml.database import db
 from iml.models import Student as StudentModel
 

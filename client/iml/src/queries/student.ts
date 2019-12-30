@@ -44,8 +44,6 @@ export var UPDATE_STUDENT = gql`
             first:$first,
             last:$last,
             graduationYear:$graduationYear,
-            schoolId:$schoolId,
-            divisionId:$divisionId,
             nickname:$nickname,
             teamId:$teamId
         }) {

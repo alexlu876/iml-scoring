@@ -1,9 +1,5 @@
 from iml import db
 
-#import iml.models.student as studentModule
-#import iml.models.score as scoreModule
-#import iml.models.contest as contestModule
-
 
 class Division(db.Model):
 
