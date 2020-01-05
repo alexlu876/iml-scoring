@@ -111,7 +111,7 @@ export const Login = (redirect : string | undefined) => {
                                 setLocalAccessToken(data.accessToken);
                                 setLocalRefreshToken(data.refreshToken);
                             },
-                            err=> {
+                            err => {
                                 setSubmitting(false);
                             }
                         )

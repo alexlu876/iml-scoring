@@ -54,7 +54,8 @@ def require_authorization(params: Dict[str, Callable[[UserModel, Any], bool]]):
 
 
 require_school_admin = require_authorization({
-    'school_id': lambda user, school_id: user.isSchoolAdmin(SchoolModel.get(school_id))
+    'school_id':
+    lambda user, school_id: user.isSchoolAdmin(SchoolModel.get(school_id))
 })
 
 

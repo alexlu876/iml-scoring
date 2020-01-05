@@ -1,8 +1,10 @@
 import gql from 'graphql-tag';
 
-export const SEASONS_QUERY = 
-gql`query{
-    seasons {
+export const SEASONS_QUERY = gql`
+query AllSeasons(
+  $first: Int,
+  $after: String) {
+    seasons (first: $first after: $after) {
         edges {
             node {
                 name
@@ -19,8 +21,8 @@ export const CREATE_SEASON = gql`
 mutation CreateSeason(
   $name: String!,
   $url: String!,
-  $startDate: DateTime!,
-  $endDate: DateTime!) {
+  $startDate: Date!,
+  $endDate: Date!) {
       createSeason(
           name: $name,
           url: $url,
@@ -35,7 +37,8 @@ mutation CreateSeason(
   }
 `
 
-export const DIVISIONS_QUERY = gql`query{divisions {
+export const DIVISIONS_QUERY = gql`
+query{divisions {
     edges {
         node {
             name

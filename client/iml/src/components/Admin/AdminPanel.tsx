@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Switch, Route, Link, BrowserRouter as Router, Redirect } from "react-router-dom";
 import {PrivateRoute} from '../../PrivateRoute';
 import {Seasons} from '../../components/Admin/Seasons';
-import View from '../../components/SmallComponents/View';
+import AllStudents from '../../components/Admin/Students';
 const useStyles = makeStyles(theme => ({
     container: {
         marginTop: theme.spacing(12),
@@ -32,6 +32,11 @@ export default function AdminPanel({match, location} : any) {
                     component={Link}
                     to={`${match.url}/coaches`}
                 />
+                <Tab
+                    label="All Students"
+                    component={Link}
+                    to={`${match.url}/students`}
+                />
             </Tabs>
         <Switch>
             <Route 
@@ -48,7 +53,10 @@ export default function AdminPanel({match, location} : any) {
                 component={() => <div>Tab 3</div>} 
                 />
             <Route path={`${match.url}/coaches`}
-                component={View} 
+                component={() => <div> users </div>} 
+                />
+            <Route path={`${match.url}/students`}
+                component={AllStudents} 
                 />
         </Switch>
         </Container>

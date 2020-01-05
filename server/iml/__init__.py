@@ -103,9 +103,11 @@ jwt = JWTManager(app)
 app.config["JWT_SECRET_KEY"] = "CHANGETHISFROMPUBLICREPO"
 app.config["JWT_TOKEN_LOCATION"] = [ 'headers']
 
+
 @jwt.user_loader_callback_loader
 def user_loader_callback(identity):
     return User.query.filter_by(email=identity).first() or None
+
 
 @jwt.user_claims_loader
 def add_claims_to_access_token(identity):

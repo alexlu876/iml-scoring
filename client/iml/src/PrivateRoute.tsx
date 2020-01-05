@@ -1,3 +1,4 @@
+import React from 'react';
 import {Route, Redirect} from 'react-router-dom';
 import Login from './components/Login/Login';
 import {Component} from 'react';
@@ -19,5 +20,5 @@ export const PrivateRoute = ({authorize, component : Component, ...rest}: any) =
                 )
             }
         />
-                );
+        );
 }

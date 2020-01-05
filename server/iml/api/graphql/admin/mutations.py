@@ -8,6 +8,10 @@ from iml.api.graphql.wrappers import (
     admin_required
 )
 
+from iml.api.graphql.utils import (
+    clean_input, localize_id, update_model_with_dict
+)
+
 from iml.api.graphql.admin.types import (
     SchoolGrouping,
     Division,
@@ -71,6 +75,7 @@ class CreateSeasonMutation(graphene.Mutation):
         )
 
     season = graphene.Field(lambda: Season)
+    id = graphene.ID()
 
     @classmethod
     # @admin_required
@@ -86,7 +91,43 @@ class CreateSeasonMutation(graphene.Mutation):
         )
         db.session.add(season)
         db.session.commit()
-        return CreateSeasonMutation(season)
+        return CreateSeasonMutation(season=season,
+                                    id=season.id)
+
+
+class UpdateSeasonMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+        name = graphene.String(
+            required=True,
+            description="Identifier for new Season"
+        )
+        url = graphene.String(
+            required=True,
+            description="Used for URI/URL identification (ie /"
+            "fall2017 or /spring2018/)"
+        )
+        start_date = graphene.Date(
+            required=True,
+            description="Start time of the season."
+        )
+        end_date = graphene.Date(
+            required=True,
+            description="End time of the season."
+        )
+
+    season = graphene.Field(lambda: Season)
+
+    @classmethod
+    # @admin_required
+    @validate_input(seasonMutationValidator)
+    def mutate(cls, root, info,
+               name, url,
+               start_date, end_date, id):
+        query = Season.get_query(info)
+        id = localize_id(id)
+        return UpdateSeasonMutation(season=season,
+                                    id=id)
 
 
 class CreateDivisionMutation(graphene.Mutation):
