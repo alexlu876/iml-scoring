@@ -1,4 +1,5 @@
 import React from 'react';
+import {Redirect} from 'react-router-dom';
 import {Formik, Field, Form} from 'formik';
 import {
   Button,
@@ -28,21 +29,22 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Avatar from '@material-ui/core/Avatar';
 
 import { useMutation, useApolloClient} from '@apollo/react-hooks'
+import { useSnackbar } from 'notistack';
+
 import {client} from '../../App';
 import {AUTH} from '../../queries/user';
 import {
     getTokenIdentifier,
     getLocalAccessToken,
     setLocalAccessToken,
-    setLocalRefreshToken
+    setLocalRefreshToken,
+    isLoggedIn,
 } from '../../Auth';
+import {
+    useHistory
+} from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
-    '@global': {
-        body: {
-            backgroundColor: theme.palette.common.white,
-        },
-    },
     paper: {
         marginTop: theme.spacing(12),
         display: 'flex',
@@ -80,7 +82,13 @@ const validationSchema = Yup.object().shape(
 export const Login = (redirect : string | undefined) => {
     const classes = useStyles();
 
-    const [authUser,] = useMutation(AUTH, {client: client})
+    const [authUser,] = useMutation(AUTH, {client: client});
+    const history = useHistory();
+    const { enqueueSnackbar } = useSnackbar();
+    if (isLoggedIn())
+        return (
+            <Redirect to="/"/>
+        );
     return (
         <div>
             <Container component="main" maxWidth = "sm">
@@ -110,9 +118,12 @@ export const Login = (redirect : string | undefined) => {
                                 var data = res.data.auth;
                                 setLocalAccessToken(data.accessToken);
                                 setLocalRefreshToken(data.refreshToken);
+                                redirect ? history.push(redirect) : history.push("");
+                                enqueueSnackbar('Successfully Logged In!');
                             },
                             err => {
                                 setSubmitting(false);
+                                enqueueSnackbar('Invalid Login!');
                             }
                         )
                         .then(() => {

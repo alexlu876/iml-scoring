@@ -22,9 +22,6 @@ export function  Seasons() {
     const edgeMapper = () => {return [];};
     if (loading) return (<div></div>);
     if (error) return (<div></div>);
-    var seasons = data.seasons.edges.map(
-        (edge : any) => edge.node
-    );
     return (
         <MaterialTable
             title='Seasons'
@@ -46,7 +43,7 @@ export function  Seasons() {
                     new Date(rowData.endDate).toDateString(),
                 }
             ]}
-            data={seasons}
+            data={data ? data.seasons.edges.map((edge: any) => edge.node) : null}
             editable={{
                 isEditable: rowData => true,
                     isDeletable: rowData => false,
@@ -56,7 +53,7 @@ export function  Seasons() {
                         newData.endDate
                             = moment(newData.endDate).format("YYYY-MM-DD");
                         console.log(newData);
-                        return createSeason({variables: newData}) as Promise<any>;
+                        return createSeason({variables: newData}).then(refetch) as Promise<any>;
                     },
                     onRowUpdate: (newData, oldData) => {
                         return new Promise<any>(() => null);

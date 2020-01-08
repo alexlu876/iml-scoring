@@ -4,9 +4,10 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Button from '@material-ui/core/Button';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import Switch from '@material-ui/core/Switch';
 import {List, ListItemIcon, ListItemText, Divider, IconButton, MenuList, MenuItem, Drawer } from '@material-ui/core';
 import Routes from '../../../routes';
-import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Redirect, Link, Switch as RouteSwitch} from 'react-router-dom';
 
 const useStyles = makeStyles({
   list: {
@@ -15,12 +16,9 @@ const useStyles = makeStyles({
   fullList: {
     width: 'auto',
   },
-  listText: {
-    color: '#585'
-  },
 });
 
-export default function HeaderDrawer({open, setOpen} : any) {
+export default function HeaderDrawer({darkTheme, setDarkTheme, open, setOpen} : any) {
     const classes = useStyles();
 
     function handleDrawerOpen() {
@@ -32,6 +30,9 @@ export default function HeaderDrawer({open, setOpen} : any) {
         return (event: React.KeyboardEvent | React.MouseEvent) => {
             setOpen(false);
         }
+    }
+    const handleThemeChange = (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        setDarkTheme(event.target.checked)
     }
 
     return (
@@ -48,18 +49,23 @@ export default function HeaderDrawer({open, setOpen} : any) {
             className={classes.list} >
                 <MenuList>
                 {Routes.map((prop, key) => {
-                  return (
-                    <Link to={prop.path} style={{ textDecoration: 'none' }} key={key}>
-                      <MenuItem>
+                  return (prop.isAccessable ? prop.isAccessable() : true) && (
+                      <MenuItem component={Link} to={prop.path} key={key}>
                         <ListItemIcon>
-                          <prop.icon />
+                            <prop.icon />
                         </ListItemIcon>
-                        <ListItemText className={classes.listText} primary={prop.sidebarName} />
+                        <ListItemText primary={prop.sidebarName} />
                       </MenuItem>
-                    </Link>
                   )})}
               </MenuList>
             <Divider />
+            <Switch
+                checked={darkTheme}
+                onChange={handleThemeChange('useDarkTheme')}
+                value='useDarkTheme'
+                inputProps={{ 'aria-label': 'use dark theme' }}
+            />
+
         </div>
         </SwipeableDrawer>
     );

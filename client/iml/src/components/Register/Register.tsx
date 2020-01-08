@@ -2,22 +2,22 @@ import React from 'react';
 import {Formik, Field, Form} from 'formik';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button,
-  LinearProgress,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  FormControlLabel,
+    Button,
+    LinearProgress,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    FormControlLabel,
 } from '@material-ui/core';
 import * as Yup from 'yup';
 import MuiTextField from '@material-ui/core/TextField';
 import {
-  fieldToTextField,
-  TextField,
-  TextFieldProps,
-  Select,
-  Switch,
-  RadioGroup,
+    fieldToTextField,
+    TextField,
+    TextFieldProps,
+    Select,
+    Switch,
+    RadioGroup,
 } from 'formik-material-ui';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
@@ -28,11 +28,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Avatar from '@material-ui/core/Avatar';
 
 const useStyles = makeStyles(theme => ({
-    '@global': {
-        body: {
-            backgroundColor: theme.palette.common.white,
-        },
-    },
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',

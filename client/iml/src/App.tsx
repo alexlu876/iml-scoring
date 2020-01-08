@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 
-import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Redirect, Link, Switch} from 'react-router-dom';
 
 import {ApolloLink} from 'apollo-link';
 import {onError} from 'apollo-link-error';
@@ -10,15 +10,18 @@ import {InMemoryCache} from 'apollo-cache-inmemory';
 import {ApolloClient} from 'apollo-client';
 import {ApolloProvider} from 'react-apollo';
 import {ThemeProvider as MuiThemeProvider} from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import {SnackbarProvider} from 'notistack';
 import { setContext } from 'apollo-link-context';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+
 
 import NavHeader from './components/Header/HeaderNav/HeaderNav';
 import HeaderDrawer from './components/Header/HeaderDrawer/HeaderDrawer';
 import Register from './components/Register/Register'
 import outerTheme from './themes/Theme';
-import MainStore from './MainStore';
+import UIStore from './UIStore';
 import {observer} from 'mobx-react';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import {getLocalAccessToken, getLocalRefreshToken, isTokenValid, setLocalAccessToken, setLocalTokenFreshness, isLoggedIn, logout} from './Auth';
 
 import Routes from './routes'
@@ -59,7 +62,7 @@ const refreshLink = new TokenRefreshLink(
 
 const authLink = setContext(
     (_ : any, { headers } : any) => {
-    const token = localStorage.getItem('accessToken');
+    const token = getLocalAccessToken();
         if (isLoggedIn()) {
             if (isTokenValid(getLocalAccessToken() || ''))
                 return {
@@ -91,18 +94,24 @@ export const client = new ApolloClient({
 
 
 const App = observer(() => {
-    const store = useContext(MainStore);
+    const store = useContext(UIStore);
     return (
         <ApolloProvider client={client}>
             <head><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/></head>
-        <MuiThemeProvider theme={outerTheme(useMediaQuery('prefers-color-scheme: dark)'))}>
+        <MuiThemeProvider theme={outerTheme(store.darkTheme)}>
+            <SnackbarProvider maxSnack={3}>
+                <CssBaseline/>
                 <Router>
                     <NavHeader toggleDrawer = {store.toggleDrawer} />
-                    <HeaderDrawer open= {store.drawerToggled}
+                    <HeaderDrawer 
+                        darkTheme = {store.darkTheme}
+                        setDarkTheme = {store.setDarkTheme}
+                        open= {store.drawerToggled}
                         setOpen = {store.setDrawer}/>
-                    {Routes.map((prop, key) => <Route path={prop.path} key={key} component={prop.component} /> )}
+                        {Routes.map((prop, key) => <Route path={prop.path} key={key} component={prop.component} />)}
                 </Router>
-            </MuiThemeProvider>
+            </SnackbarProvider>
+        </MuiThemeProvider>
         </ApolloProvider>
     );
 });

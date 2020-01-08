@@ -32,16 +32,16 @@ export default function AllStudents() {
         <Typography component={'span'}>
                 <br/><br/>
                 <Query query={STUDENTS_QUERY}>
-                        {({loading, error, data } : any) => {
+                        {({loading, error, data, refetch} : any) => {
                             if (error) return (<div>Error</div>)
                             if (loading) return (<div>loading...</div>)
-                            var studentsList = data.students.edges.map((edge : any) => edge.node)
-
                             return (
                                 <MaterialTable
                                     title='All Students'
                                     options={{
                                         // selection: true,
+                                        pageSize: Math.max(5, Math.min(50, data.students.edges.length)),
+                                        pageSizeOptions: [5,10,25,50,100,150]
                                     }}
                                     columns={[
                                         {title: 'First Name', field: 'first'},
@@ -51,11 +51,13 @@ export default function AllStudents() {
                                         {
                                             title: 'School',
                                             field:'schoolId',
-                                            lookup: {}
+                                            lookup: {
+                                                                                                
+                                            }
                                         },
                                         {title: 'Division', field:'divisionId'},
                                     ]}
-                                    data={studentsList}
+                                    data={data.students.edges.map((edge : any) => edge.node)}
                                     editable={{
                                         isEditable: rowData => true,
                                             isDeletable: rowData => false,
@@ -65,8 +67,7 @@ export default function AllStudents() {
                                             },
                                             onRowUpdate: (newData, oldData) => {
                                                 return updateStudent(
-                                                    {variables: newData}).then(() => {
-                                                    }) as Promise<any>;
+                                                    {variables: newData}).then(refetch) as Promise<any>;
                                             },
                                             onRowDelete: oldData => 
                                             new Promise((resolve, reject) => {
