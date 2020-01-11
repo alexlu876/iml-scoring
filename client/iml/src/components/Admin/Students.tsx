@@ -15,9 +15,10 @@ import TableRow from '@material-ui/core/TableRow';
 
 import { withApollo } from "react-apollo";
 import {client} from '../../App';
+import {useSnackbar} from 'notistack';
 
 import {
-    STUDENTS_QUERY, CREATE_STUDENT, UPDATE_STUDENT,
+    STUDENTS_QUERY, SCHOOLS_QUERY, CREATE_STUDENT, UPDATE_STUDENT,
     DELETE_STUDENT
 } from '../../queries/student'
 import {
@@ -25,9 +26,12 @@ import {
 } from '../../queries/division';
 
 export default function AllStudents() {
+    const {enqueueSnackbar} = useSnackbar();
     const [createStudent,] = useMutation(CREATE_STUDENT, {client:client});
     const [updateStudent,] = useMutation(UPDATE_STUDENT, {client:client});
     const [deleteStudent,] = useMutation(DELETE_STUDENT, {client:client});
+    const divisionsQuery = useQuery(DIVISIONS_QUERY, {client: client});
+    const schoolsQuery = useQuery(SCHOOLS_QUERY, {client: client});
     return (
         <Typography component={'span'}>
                 <br/><br/>
@@ -51,11 +55,13 @@ export default function AllStudents() {
                                         {
                                             title: 'School',
                                             field:'schoolId',
-                                            lookup: {
-                                                                                                
-                                            }
+                                            lookup: schoolsQuery.data && Object.fromEntries(new Map(schoolsQuery.data.schools.edges.map((edge: any) => [edge.node.id, edge.node.name] )))
                                         },
-                                        {title: 'Division', field:'divisionId'},
+                                        {
+                                            title: 'Division',
+                                            field:'divisionId',
+                                            lookup: divisionsQuery.data && Object.fromEntries(new Map(divisionsQuery.data.divisions.edges.map((edge: any) => [edge.node.id, `${edge.node.name} (${edge.node.season.name})` ] )))
+                                        },
                                     ]}
                                     data={data.students.edges.map((edge : any) => edge.node)}
                                     editable={{

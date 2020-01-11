@@ -1,12 +1,20 @@
 import graphene
-from iml.api.graphql.student.types import Student
+from iml.api.graphql.student.types import (
+    Student,
+    School
+)
 from iml.api.graphql.utils import (
     clean_input, localize_id, update_model_with_dict
 )
 
-from iml.api.graphql.wrappers import require_authorization
+from iml.api.graphql.wrappers import (
+    require_authorization, admin_required
+)
 from iml.database import db
-from iml.models import Student as StudentModel
+from iml.models import (
+    Student as StudentModel,
+    School as SchoolModel
+)
 
 
 class StudentUpdateInput(graphene.InputObjectType):
@@ -73,3 +81,64 @@ class UpdateStudentMutation(graphene.Mutation):
         studentToModify = query.get(id)
         return UpdateStudentMutation(student=studentToModify,
                                      id=id)
+
+
+class CreateSchoolMutation(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(
+            required=True,
+            description="Identifier for new school"
+        )
+        url = graphene.String(
+            required=True,
+            description="Used for URI/URL identification"
+        )
+        school_grouping_id = graphene.ID(
+            required=True,
+            description="ID for corresponding School Grouping"
+        )
+    school = graphene.Field(lambda: School)
+    id = graphene.ID()
+
+    @classmethod
+    @admin_required
+    def mutate(cls, root, info,
+               name, url, school_grouping_id
+               ):
+        school = SchoolModel(name, url, school_grouping_id)
+        db.session.add(school)
+        db.session.commit()
+        return CreateSchoolMutation(school=school)
+
+
+class UpdateSchoolMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+        name = graphene.String(
+            required=False,
+            description="Identifier for new school"
+        )
+        url = graphene.String(
+            required=False,
+            description="Used for URI/URL identification"
+        )
+        school_grouping_id = graphene.ID(
+            required=False,
+            description="ID for corresponding School Grouping"
+        )
+    school = graphene.Field(lambda: School)
+    id = graphene.ID()
+
+    @classmethod
+    @admin_required
+    def mutate(cls, root, info,
+               id, **kwargs):
+        query = School.get_query(info)
+        id = localize_id(id)
+        schoolToModify = query.get(id)
+        fields = clean_input(kwargs)
+        update_model_with_dict(schoolToModify, fields)
+        db.session.add(schoolToModify)
+        db.session.commit()
+        return UpdateSchoolMutation(school=schoolToModify)
+

@@ -31,6 +31,7 @@ mutation CreateSeason(
       ) {
           season {
               id
+              name
               url
           }
       }

@@ -6,6 +6,7 @@ class School(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
+    url = db.Column(db.String(64), nullable=False)
     school_grouping_id = db.Column(
         db.Integer,
         db.ForeignKey('school_groupings.id'),

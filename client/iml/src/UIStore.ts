@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 import {autorun, decorate, observable, computed} from 'mobx';
+import {isLoggedIn} from './Auth';
 
 
 function autosave(store: MainStoreObject, save : any) {
@@ -9,13 +10,14 @@ function autosave(store: MainStoreObject, save : any) {
 export class MainStoreObject {
     drawerToggled = false;
     darkTheme = false;
+    isLoggedIn = false;
 
     constructor() {
         this.load();
     };
 
     load() {
-        //load data into mobx 
+        this.isLoggedIn = isLoggedIn();
     };
 
     toggleDrawer = () => {

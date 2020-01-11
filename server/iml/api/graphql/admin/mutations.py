@@ -51,7 +51,35 @@ class CreateSchoolGroupingMutation(graphene.Mutation):
         )
         db.session.add(schoolGrouping)
         db.session.commit()
-        return CreateSchoolGroupingMutation(schoolGrouping)
+        return CreateSchoolGroupingMutation(schoolGrouping=schoolGrouping)
+
+
+class UpdateSchoolGroupingMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+        name = graphene.String(
+            required=False,
+            description="Identifier for new School Grouping"
+        )
+        url = graphene.String(
+            required=False,
+            description="Used for URI/URL identification (ie oos or /nyc/)"
+        )
+    schoolGrouping = graphene.Field(lambda: SchoolGrouping)
+
+    # TODO - validation
+    @classmethod
+    @admin_required
+    def mutate(cls, root, info,
+               id, **kwargs):
+        query = SchoolGrouping.get_query(info)
+        id = localize_id(id)
+        schoolGrouping = query.get(id)
+        fields = clean_input(kwargs)
+        update_model_with_dict(schoolGrouping, fields)
+        db.session.add(schoolGrouping)
+        db.session.commit()
+        return UpdateSchoolGroupingMutation(schoolGrouping=schoolGrouping)
 
 
 class CreateSeasonMutation(graphene.Mutation):
@@ -99,34 +127,38 @@ class UpdateSeasonMutation(graphene.Mutation):
     class Arguments:
         id = graphene.ID(required=True)
         name = graphene.String(
-            required=True,
+            required=False,
             description="Identifier for new Season"
         )
         url = graphene.String(
-            required=True,
+            required=False,
             description="Used for URI/URL identification (ie /"
             "fall2017 or /spring2018/)"
         )
         start_date = graphene.Date(
-            required=True,
+            required=False,
             description="Start time of the season."
         )
         end_date = graphene.Date(
-            required=True,
+            required=False,
             description="End time of the season."
         )
 
     season = graphene.Field(lambda: Season)
+    id = graphene.ID()
 
     @classmethod
     # @admin_required
     @validate_input(seasonMutationValidator)
-    def mutate(cls, root, info,
-               name, url,
-               start_date, end_date, id):
+    def mutate(cls, root, info, id, **kwargs):
         query = Season.get_query(info)
         id = localize_id(id)
-        return UpdateSeasonMutation(season=season,
+        seasonToModify = query.get(id)
+        fields = clean_input(kwargs)
+        update_model_with_dict(seasonToModify, fields)
+        db.session.add(seasonToModify)
+        db.session.commit()
+        return UpdateSeasonMutation(season=seasonToModify,
                                     id=id)
 
 
@@ -156,7 +188,7 @@ class CreateDivisionMutation(graphene.Mutation):
     division = graphene.Field(lambda: Division)
 
     @classmethod
-    # @admin_required
+    @admin_required
     @validate_input(divisionMutationValidator)
     def mutate(cls, root, info,
                name, url, alternate_limit,
@@ -171,3 +203,43 @@ class CreateDivisionMutation(graphene.Mutation):
         db.session.add(division)
         db.session.commit()
         return CreateDivisionMutation(division=division)
+
+
+class UpdateDivisionMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+        name = graphene.String(
+            required=False,
+            description="Identifier for new Season"
+        )
+        url = graphene.String(
+            required=False,
+            description="Used for URI/URL identification (ie /"
+            "fall2017 or /spring2018/)"
+        )
+        alternate_limit = graphene.Int(
+            required=False,
+            description="How many alternatives can be used per division-school"
+        )
+        season_id = graphene.ID(
+            required=False,
+            description="ID for Corresponding season"
+        )
+        successor_id = graphene.ID(
+            required=False,
+            description="ID for new Division to feed users into at season end."
+        )
+    division = graphene.Field(lambda: Division)
+
+    @classmethod
+    @admin_required
+    @validate_input(divisionMutationValidator)
+    def mutate(cls, root, info, id, **kwargs):
+        query = Division.get_query(info)
+        id = localize_id(id)
+        divisionToModify = query.get(id)
+        fields = clean_input(kwargs)
+        update_model_with_dict(divisionToModify, fields)
+        db.session.add(divisionToModify)
+        db.session.commit()
+        return UpdateSeasonMutation(division=divisionToModify)

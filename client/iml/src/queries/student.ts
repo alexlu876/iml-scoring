@@ -9,8 +9,20 @@ export const USERS_QUERY = gql`
         }
     }`
 
-export const STUDENT_QUERY = gql`query{student(id:1){id}}`
 
+export const SCHOOLS_QUERY = gql`
+query {
+    schools {
+        edges {
+            node {
+                name
+                id
+                schoolGroupingId
+            }
+        }
+    }
+}
+`
 export const STUDENTS_QUERY = gql`query{students{
     edges {
         node {

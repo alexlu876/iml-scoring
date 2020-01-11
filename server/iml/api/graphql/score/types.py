@@ -15,6 +15,7 @@ class Contest(SQLAlchemyObjectType):
 class Question(SQLAlchemyObjectType):
     class Meta:
         model = QuestionModel
+        exclude_fields = ("question_string",)
 
 
 class Score(SQLAlchemyObjectType):

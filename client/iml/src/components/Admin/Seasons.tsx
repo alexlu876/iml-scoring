@@ -20,9 +20,11 @@ export function  Seasons() {
         {client: client}
     )
     const edgeMapper = () => {return [];};
-    if (loading) return (<div></div>);
-    if (error) return (<div></div>);
+    if (loading) return (<div>loading...</div>);
+    if (error) return (<div>error...</div>);
     return (
+        <Typography component='span'>
+        <br/> <br/>
         <MaterialTable
             title='Seasons'
             options={{
@@ -63,7 +65,8 @@ export function  Seasons() {
                     }
             }
             }
-        />
+                        />
+            </Typography>
     );
 }
 
