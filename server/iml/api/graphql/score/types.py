@@ -1,3 +1,4 @@
+import graphene
 from iml.models import (
     Contest as ContestModel,
     Question as QuestionModel,
@@ -26,3 +27,27 @@ class Score(SQLAlchemyObjectType):
 class Category(SQLAlchemyObjectType):
     class Meta:
         model = CategoryModel
+
+
+class ScoreRelayConnection(graphene.relay.Connection):
+    class Meta:
+        node = Score
+        interfaces = (graphene.relay.Node,)
+
+
+class QuestionRelayConnection(graphene.relay.Connection):
+    class Meta:
+        node = Question
+        interfaces = (graphene.relay.Node,)
+
+
+class CategoryRelayConnection(graphene.relay.Connection):
+    class Meta:
+        node = Category
+        interfaces = (graphene.relay.Node,)
+
+
+class ContestRelayConnection(graphene.relay.Connection):
+    class Meta:
+        node = Contest
+        interfaces = (graphene.relay.Node,)

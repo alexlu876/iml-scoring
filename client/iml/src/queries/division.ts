@@ -7,6 +7,7 @@ query AllSeasons(
     seasons (first: $first after: $after) {
         edges {
             node {
+                id
                 name
                 startDate
                 endDate
@@ -38,18 +39,91 @@ mutation CreateSeason(
   }
 `
 
+export const UPDATE_SEASON = gql`
+mutation UpdateSeason(
+    $id: ID!,
+    $name: String,
+    $url: String,
+    $startDate: Date,
+    $endDate: Date) {
+      createSeason(
+          id: $id
+          name: $name,
+          url: $url,
+          startDate: $startDate,
+          endDate: $endDate
+      ) {
+          season {
+              id
+              name
+              url
+          }
+      }
+  }
+`
+
 export const DIVISIONS_QUERY = gql`
-query{divisions {
-    edges {
-        node {
-            name
-            alternateLimit
-            url
-            season {
+query {
+    divisions {
+        edges {
+            node {
+                id
                 name
+                alternateLimit
+                url
+                seasonId
+                successorId
+                season {
+                    name
+                }
             }
         }
     }
 }
-}
+`
+
+export const CREATE_DIVISION = gql`
+mutation CreateDivision(
+    $alternateLimit: Int!,
+    $name: String!,
+    $seasonId: ID!,
+    $successorId: ID,
+    $url: String!,
+    ) {
+        createDivision(
+            seasonId: $seasonId,
+            name: $name,
+            alternateLimit: $alternateLimit,
+            url: $url,
+            successorId: $successorId
+        ) {
+            division {
+                id
+            }
+        }
+    }
+`
+
+export const UPDATE_DIVISION = gql`
+mutation UpdateDivision(
+    $id: ID!,
+    $alternateLimit: Int,
+    $name: String
+    $seasonId: ID
+    $successorId: ID,
+    $url: String
+    ) {
+        updateDivision(
+            id: $id,
+            seasonId: $seasonId,
+            name: $name,
+            alternateLimit: $alternateLimit,
+            url: $url,
+            successorId: $successorId
+        ) {
+            division {
+                id
+            }
+        }
+    }
 `

@@ -6,7 +6,11 @@ query CurrentUserForLayout {
         first
         last
         isAdmin
+        approvalStatus
         email
+        school {
+            name
+        }
     }
 }
 `;
@@ -23,6 +27,18 @@ mutation AuthenticateUser($email: String! $password:String!) {
     }
 
 }
+`
+
+export const USERS_QUERY = gql`
+    {
+        users {
+            edges {
+                node {
+                    id
+                }
+            }
+        }
+    }
 `
 
 

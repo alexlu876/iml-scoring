@@ -4,6 +4,8 @@ import {isLoggedIn} from './Auth';
 
 
 function autosave(store: MainStoreObject, save : any) {
+    // do not autorun on creation-related changes
+    let firstRun = false;
     autorun(() => {
     });
 }
@@ -18,6 +20,7 @@ export class MainStoreObject {
 
     load() {
         this.isLoggedIn = isLoggedIn();
+        this.darkTheme = localStorage.getItem('darkTheme') === '1';
     };
 
     toggleDrawer = () => {

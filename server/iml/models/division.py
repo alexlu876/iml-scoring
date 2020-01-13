@@ -1,5 +1,15 @@
 from iml import db
 
+school_division_table \
+    = db.Table('school_division',
+               db.Column('school_id',
+                         db.Integer,
+                         db.ForeignKey('schools.id')),
+               db.Column('division_id',
+                         db.Integer,
+                         db.ForeignKey('divisions.id'))
+               )
+
 
 class Division(db.Model):
 
@@ -20,8 +30,12 @@ class Division(db.Model):
                              )
 
     teams = db.relationship('Team', back_populates='division')
-    students = db.relationship('Student', back_populates='division')
+    # students backref'd
     contests = db.relationship('Contest', back_populates='division')
+    schools = db.relationship('School',
+                              secondary=school_division_table,
+                              backref='divisions'
+                              )
 
     season = db.relationship('Season',
                              back_populates='divisions')

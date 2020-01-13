@@ -105,7 +105,7 @@ class CreateSchoolMutation(graphene.Mutation):
     def mutate(cls, root, info,
                name, url, school_grouping_id
                ):
-        school = SchoolModel(name, url, school_grouping_id)
+        school = SchoolModel(name=name, url=url, groupId=school_grouping_id)
         db.session.add(school)
         db.session.commit()
         return CreateSchoolMutation(school=school)

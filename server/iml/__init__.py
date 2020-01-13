@@ -101,7 +101,7 @@ app.register_blueprint(oauth2, url_prefix="/oauth2")
 jwt = JWTManager(app)
 
 app.config["JWT_SECRET_KEY"] = "CHANGETHISFROMPUBLICREPO"
-app.config["JWT_TOKEN_LOCATION"] = [ 'headers']
+app.config["JWT_TOKEN_LOCATION"] = ['headers']
 
 
 @jwt.user_loader_callback_loader

@@ -7,6 +7,8 @@ import { Switch, Route, Link, BrowserRouter as Router, Redirect } from "react-ro
 import {PrivateRoute} from '../../PrivateRoute';
 import {Seasons} from '../../components/Admin/Seasons';
 import AllStudents from '../../components/Admin/Students';
+import Divisions from '../../components/Admin/Divisions';
+import Schools from '../../components/Admin/Schools';
 const useStyles = makeStyles(theme => ({
     container: {
         marginTop: theme.spacing(12),
@@ -26,6 +28,11 @@ export default function AdminPanel({match, location} : any) {
                 <Tab label="Divisions"
                     component={Link}
                     to={`${match.url}/divisions`}
+                />
+                <Tab
+                    label="Schools"
+                    component={Link}
+                    to={`${match.url}/schools`}
                 />
                 <Tab
                     label="Coaches"
@@ -50,7 +57,11 @@ export default function AdminPanel({match, location} : any) {
                 />
             <Route
                 path={`${match.url}/divisions`}
-                component={() => <div>Tab 3</div>} 
+                component={Divisions} 
+                />
+            <Route
+                path={`${match.url}/schools`}
+                component={Schools} 
                 />
             <Route path={`${match.url}/coaches`}
                 component={() => <div> users </div>} 

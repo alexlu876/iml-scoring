@@ -23,7 +23,7 @@ def successor_exists(field, value, error):
 divisionMutationValidator = Validator(
     {
         'name': {'minlength': 3, 'maxlength': 64},
-        'url': {'regex': '^[a-zA-Z0-9_-]{3,}'},
+        'url': {'regex': '^[a-zA-Z0-9_-]{1,}'},
         'season_id': {'check_with': season_exists},
         'successor_id': {'check_with': successor_exists},
         'alternate_limit': {'max': 10}
@@ -34,7 +34,7 @@ divisionMutationValidator = Validator(
 seasonMutationValidator = Validator(
     {
         'name': {'minlength': 3, 'maxlength': 64},
-        'url': {'regex': '^[a-zA-Z0-9_-]{3,}'},
+        'url': {'regex': '^[a-zA-Z0-9_-]{1,}'},
         'start_date': {},
         'end_date': {},
     }

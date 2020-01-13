@@ -8,7 +8,8 @@ from iml.util import get_user, render_custom_template
 
 students = Blueprint("students", __name__)
 
-@students.route('/add_student', methods = ["GET","POST"])
+
+@students.route('/add_student', methods=["GET", "POST"])
 @login_required()
 def addStudents():
     user = get_user(session["userdata"]["id"])

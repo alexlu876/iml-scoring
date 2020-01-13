@@ -1,5 +1,6 @@
 import graphene
 from graphene import relay
+import datetime
 
 from graphql import GraphQLError
 from graphene_sqlalchemy import (
@@ -12,6 +13,11 @@ from flask_jwt_extended import (
 )
 
 from iml.api.graphql.utils import localize_id
+
+from iml.models import (
+    School as SchoolModel,
+    Season as SeasonModel
+)
 
 from iml.api.graphql.user.types import (
     User, UserRelayConnection
@@ -75,6 +81,7 @@ class Query(graphene.ObjectType):
 
     seasons = SQLAlchemyConnectionField(SeasonRelayConnection)
     season = graphene.Field(lambda: Season, id=graphene.ID(required=True))
+    current_season = graphene.Field(lambda: Season)
 
     school_groupings = SQLAlchemyConnectionField(SchoolGroupingRelayConnection)
 
@@ -101,6 +108,12 @@ class Query(graphene.ObjectType):
     @jwt_optional
     def resolve_viewer(root, info):
         return get_current_user()
+
+    def resolve_current_season(root, info):
+        query = Season.get_query(info)
+        current_time = datetime.datetime.utcnow().date()
+        return query.filter(SeasonModel.start_date <= current_time,
+                            SeasonModel.end_date >= current_time).first()
 
 
 class AuthMutation(graphene.Mutation):

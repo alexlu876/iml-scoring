@@ -1,4 +1,5 @@
 from iml import db
+import datetime
 
 
 class Season(db.Model):
@@ -28,8 +29,6 @@ class Season(db.Model):
     # TODO : write this
     @classmethod
     def current(cls):
-        pass
-
-
-
-
+        current_time = datetime.datetime.utcnow()
+        return Season.query.filter(Season.start_date <= current_time,
+                                   Season.end_date >= current_time)

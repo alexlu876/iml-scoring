@@ -17,13 +17,15 @@ class School(db.Model):
     teams = db.relationship('Team', back_populates='school')
     coaches = db.relationship('User', back_populates='school')
     students = db.relationship('Student', back_populates='school')
+    # division backref'd
 
     school_grouping = db.relationship(
         'SchoolGrouping',
         back_populates='schools')
 
-    def __init__(self, name, groupId):
+    def __init__(self, name, url, groupId):
         self.name = name
+        self.url = url
         self.school_grouping_id = groupId
 
     # TODO - sqlify this method

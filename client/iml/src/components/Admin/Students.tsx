@@ -1,17 +1,8 @@
 import React from 'react';
 import { Query, Mutation} from 'react-apollo'
-import { configure } from 'react-apollo-form'
 import { useMutation, useQuery, useApolloClient} from '@apollo/react-hooks'
-import {ApolloConsumer, ApolloProvider} from "react-apollo"
-import gql from 'graphql-tag'
 import Typography from '@material-ui/core/Typography';
 import MaterialTable from 'material-table'
-import { forwardRef } from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 
 import { withApollo } from "react-apollo";
 import {client} from '../../App';
@@ -69,7 +60,7 @@ export default function AllStudents() {
                                             isDeletable: rowData => false,
                                             onRowAdd: newData => {
                                                 return createStudent(
-                                                    {variables: newData}) as Promise<any>;
+                                                    {variables: newData}).then(refetch) as Promise<any>;
                                             },
                                             onRowUpdate: (newData, oldData) => {
                                                 return updateStudent(
@@ -78,6 +69,7 @@ export default function AllStudents() {
                                             onRowDelete: oldData => 
                                             new Promise((resolve, reject) => {
                                                 reject();
+                                                enqueueSnackbar("This operation is not supported!");
                                             })
                                     }}
                                                     />

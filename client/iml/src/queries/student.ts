@@ -1,13 +1,4 @@
 import gql from 'graphql-tag'
-export const USERS_QUERY = gql`
-    {
-        users {
-            edges {
-                node {
-                    id}
-            }
-        }
-    }`
 
 
 export const SCHOOLS_QUERY = gql`
@@ -16,8 +7,23 @@ query {
         edges {
             node {
                 name
+                url
                 id
                 schoolGroupingId
+            }
+        }
+    }
+}
+`
+
+export const SCHOOL_GROUPINGS_QUERY = gql`
+query {
+    schoolGroupings {
+        edges {
+            node {
+                name
+                id
+                url
             }
         }
     }
@@ -35,7 +41,42 @@ export const STUDENTS_QUERY = gql`query{students{
             teamId
             nickname
         }}}}`
-export var CREATE_STUDENT = gql`
+
+export const VIEWERS_STUDENTS = gql`
+query {
+    viewer {
+        students {
+            edges { 
+                node {
+                    id
+                    first
+                    last
+                    graduationYear
+                    schoolId
+                    divisionId
+                    teamId
+                    nickname
+                }
+            }
+        }
+    }
+}
+`
+export const CREATE_SCHOOL = gql`
+    mutation CreateSchool(
+    $name: String!,
+    $schoolGroupingId: ID!,
+    $url: String!) {
+        createSchool(name: $name,
+            schoolGroupingId:
+            $schoolGroupingId,url: $url) {
+            school {
+                id
+            }
+        }
+    }
+`
+export const CREATE_STUDENT = gql`
     mutation CreateStudent($first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $divisionId:ID!){
         createStudent(studentInfo:{
             first:$first,
@@ -45,6 +86,25 @@ export var CREATE_STUDENT = gql`
             divisionId:$divisionId,}) {student {id}
         }
     }`
+
+export const UPDATE_SCHOOL = gql`
+    mutation UpdateSchool(
+    $id: ID!,
+    $name: String,
+    $schoolGroupingId: ID,
+    $url: String) {
+        updateSchool(
+            id: $id
+            name: $name,
+            schoolGroupingId:
+            $schoolGroupingId,
+            url: $url) {
+            school {
+                id
+            }
+        }
+    }
+`
 
 export var DELETE_STUDENT = gql`
     mutation deleteStudent ($id: ID!){

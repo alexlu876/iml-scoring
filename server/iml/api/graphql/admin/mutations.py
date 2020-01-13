@@ -106,7 +106,7 @@ class CreateSeasonMutation(graphene.Mutation):
     id = graphene.ID()
 
     @classmethod
-    # @admin_required
+    @admin_required
     @validate_input(seasonMutationValidator)
     def mutate(cls, root, info,
                name, url,
@@ -242,4 +242,4 @@ class UpdateDivisionMutation(graphene.Mutation):
         update_model_with_dict(divisionToModify, fields)
         db.session.add(divisionToModify)
         db.session.commit()
-        return UpdateSeasonMutation(division=divisionToModify)
+        return UpdateDivisionMutation(division=divisionToModify)

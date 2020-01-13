@@ -9,7 +9,8 @@ DB_PASS = ""
 DB_HOST = ""
 DATABASE = ""
 
-SQLITE_FILE_NAME = "data/foobar.db"
+PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+SQLITE_FILE_NAME = os.path.join(PROJECT_ROOT, "data", "foobar.db")
 
 SESSION_TYPE = "filesystem"
 

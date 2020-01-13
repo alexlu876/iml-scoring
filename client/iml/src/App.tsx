@@ -40,7 +40,6 @@ const refreshLink = new TokenRefreshLink(
             return isTokenValid(authToken);
         },
         fetchAccessToken: (args: any[]) => {
-            console.log("BRUH2");
             var token = getLocalRefreshToken();
             return fetch('http://localhost:5000/jwt_refresh', {
                 method: 'GET',

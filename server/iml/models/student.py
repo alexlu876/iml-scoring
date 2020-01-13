@@ -5,11 +5,26 @@ from sqlalchemy.ext.hybrid import hybrid_property
 import datetime
 from typing import Dict, List
 
-#import iml.models.score as score
-# the name contest was used!
-#import iml.models.contest as contestModule
+student_division_table \
+    = db.Table('student_division',
+               db.Column('student_id',
+                         db.Integer,
+                         db.ForeignKey('students.id')),
+               db.Column('division_id',
+                         db.Integer,
+                         db.ForeignKey('divisions.id'))
+               )
 
-#Score = score.Score
+student_team_table \
+    = db.Table('student_team',
+               db.Column('student_id',
+                         db.Integer,
+                         db.ForeignKey('students.id')),
+               db.Column('team_id',
+                         db.Integer,
+                         db.ForeignKey('teams.id'))
+               )
+
 
 class Student(db.Model):
 
@@ -26,36 +41,41 @@ class Student(db.Model):
     school_id = db.Column(db.Integer, db.ForeignKey(
         'schools.id'),
         nullable=False)
-    # divis
-    division_id = db.Column(db.Integer, db.ForeignKey('divisions.id'),
-                            nullable=True)
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.id'),
-                        nullable=True)
 
     school = db.relationship('School', back_populates='students')
     scores = db.relationship('Score', back_populates='student')
-    division = db.relationship('Division', back_populates='students')
-    # if team is null, then they are an alternate
-    team = db.relationship('Team', back_populates='students')
+    teams = db.relationship('Team',
+                            secondary=student_team_table,
+                            backref='students'
+                            )
+    divisions = db.relationship('Division',
+                                secondary=student_division_table,
+                                backref='students'
+                                )
+    # if current_team is null, then they are an alternate
+    # TODO - replaec team with current team
+    # team = db.relationship('Team', back_populates='students')
 
-    def __init__(self, first, last, graduation_year, school_id, division_id, nickname=None, team_id=None,):
+    def __init__(self,
+                 first, last,
+                 graduation_year, school_id, division_id=None,
+                 nickname=None,):
         self.first = first
         self.last = last
         self.graduation_year = graduation_year
         self.nickname = nickname
         username_base = '{}_{}'.format(first[:16],
-                last[:16]).replace(' ','_')
-        username_num = Student.query.filter(Student.username.contains(username_base)).count()+1
+                                       last[:16]).replace(' ',
+                                                          '_')
+        username_num = Student.query.filter(
+            Student.username.contains(username_base)).count()+1
         self.username = '{}{}'.format(username_base,
-                username_num).lower()
+                                      username_num).lower()
         self.school_id = school_id
-        self.team_id = team_id
-        self.division_id = division_id
         self.creation_timestamp = datetime.datetime.utcnow()
 
-
     # returns whether the person participated in this contest for the specified team
-    def isParticipant(self,contest,team=None) -> bool:
+    def isParticipant(self, contest, team=None) -> bool:
         import iml.models.score as score
         # the name contest was used!
 
@@ -96,7 +116,7 @@ class Student(db.Model):
                 scoresDict[scoreObj.getQuestionNum()] = scoreObj.getValue()
             return scoresDict
 
-    def getAllScoresDict(self, division=None, team = None) -> List[Dict[int, int]]:
+    def getAllScoresDict(self, division=None, team=None) -> List[Dict[int, int]]:
         import iml.models.contest as contestModule
         contestsQuery = contestModule.Contest.query.all()
         if division:
@@ -115,8 +135,9 @@ class Student(db.Model):
         import iml.models.score as score
         Score = score.Score
 
-
-        score_sample = Score.query.filter_by(contest_id=contest.id, student_id=self.id).first()
+        score_sample = Score.query.filter_by(
+            contest_id=contest.id,
+            student_id=self.id).first()
         if score_sample:
             return score_sample.team
         return None
@@ -133,7 +154,6 @@ class Student(db.Model):
 
     def get_user_id(self):
         return self.getUserId()
-
 
     @hybrid_property
     def current_score(self) -> int:
