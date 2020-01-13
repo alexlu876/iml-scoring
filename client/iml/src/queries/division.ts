@@ -46,7 +46,7 @@ mutation UpdateSeason(
     $url: String,
     $startDate: Date,
     $endDate: Date) {
-      createSeason(
+      updateSeason(
           id: $id
           name: $name,
           url: $url,

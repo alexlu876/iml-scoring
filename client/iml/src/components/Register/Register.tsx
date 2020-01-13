@@ -93,27 +93,6 @@ export default function Register() {
                                 ({submitForm, isSubmitting, values, setFieldValue}) => (
                                 <Form className={classes.form}>
                                     <Field
-                                        name="bruh"
-                                        type="bruh"
-                                        label="Bruh"
-                                        select
-                                        component={TextField}
-                                        variant="outlined"
-                                        className={classes.field}
-                                        options={[
-                                          { value: "coach", label:"coach", },
-                                          { value: "admin", label:"admin", },
-                                          { value: "student", label:"student", },
-                                          { value: "bruh", label:"bRuH", } ]}
-                                        InputLabelProps={{shrink:true,}}>
-                                          <MenuItem key={"coach"} value={"coach"}> coach </MenuItem>
-                                          <MenuItem key={"admin"} value={"admin"}> admin </MenuItem>
-                                          <MenuItem key={"student"} value={"student"}> student </MenuItem>
-                                          <MenuItem key={"bruh"} value={"bruh"}> bRuH </MenuItem>
-
-                                    </Field>
-                                      <br />
-                                    <Field
                                         name="email"
                                         type="email"
                                         label="Email"

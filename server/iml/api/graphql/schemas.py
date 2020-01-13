@@ -23,7 +23,9 @@ from iml.api.graphql.user.types import (
     User, UserRelayConnection
 )
 from iml.api.graphql.user.mutations import (
-    AdminCreationMutation, UserRegisterMutation
+    AdminCreationMutation,
+    UserRegisterMutation,
+    CodeCreationMutation
 )
 from iml.api.graphql.admin.types import (
     SchoolGrouping,
@@ -156,6 +158,8 @@ class RefreshMutation(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     auth = AuthMutation.Field()
     refresh = RefreshMutation.Field()
+
+    createCode = CodeCreationMutation.Field()
     createAdmin = AdminCreationMutation.Field()
     register = UserRegisterMutation.Field()
 

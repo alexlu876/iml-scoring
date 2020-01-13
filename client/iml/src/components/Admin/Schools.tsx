@@ -44,7 +44,7 @@ const Schools = () => {
                     }}
                     columns={[
                         {title: 'Name', field: 'name'},
-                        {title: 'ID', field: 'id', editable: 'never'},
+                        {title: 'ID', field: 'id', hidden: true, editable: 'never'},
                         {title: 'URL/URI', field: 'url'},
                         {
                             title:'School Grouping',

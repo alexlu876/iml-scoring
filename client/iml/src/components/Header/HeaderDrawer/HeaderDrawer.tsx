@@ -56,13 +56,13 @@ export default function HeaderDrawer({darkTheme, setDarkTheme, open, setOpen} : 
             className={classes.list} >
                 <br/>
                 <Typography variant="h5" align='center'>
-                    {data && `${data.viewer.first} ${data.viewer.last} `}
+                    {data && data.viewer && `${data.viewer.first} ${data.viewer.last} `}
                 </Typography>
                 <br/>
                 <Typography variant="h6" align='center'>
-                    {data && data.viewer.school && `${data.viewer.school.name}` }
+                    {data && data.viewer && data.viewer.school && `${data.viewer.school.name}` }
                 </Typography>
-                {data && data.viewer.school && (<br/>)}
+                {data && data.viewer && data.viewer.school && (<br/>)}
                 <Divider />
                 <MenuList>
                 {Routes.map((prop, key) => {

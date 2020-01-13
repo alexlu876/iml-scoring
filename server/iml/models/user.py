@@ -20,6 +20,7 @@ class User(db.Model):
 
     school = db.relationship('School', back_populates='coaches')
     scores = db.relationship('Score', back_populates='coach')
+    # code and issued_codes backref'd
 
     students = db.relationship(
         'Student',
