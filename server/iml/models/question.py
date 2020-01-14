@@ -25,6 +25,8 @@ class Question(db.Model):
     # categories relation back-reffed
     scores = db.relationship('Score',
                              back_populates='question')
+    contest = db.relationship('Contest',
+                              back_populates='questions')
 
     def __init__(self, contest_id, question_num,
                  question_string=None,

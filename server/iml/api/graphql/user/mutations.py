@@ -6,6 +6,7 @@ from flask_jwt_extended import (
     get_current_user,
 )
 from iml.api.graphql.wrappers import admin_required
+from iml.api.graphql.utils import localize_id
 from iml.api.graphql.user.types import User, RegistrationCode
 from iml.models import (
     User as UserModel,
@@ -45,7 +46,7 @@ class CodeCreationMutation(graphene.Mutation):
         if (code and query.get(code)):
             raise GraphQLError("Code not unique!")
         else:
-            newCode = RegistrationCodeModel(school_id, user.id, code)
+            newCode = RegistrationCodeModel(localize_id(school_id), user.id, code)
             db.session.add(newCode)
             db.session.commit()
             return CodeCreationMutation(newCode)
@@ -66,6 +67,8 @@ class UserRegisterMutation(graphene.Mutation):
         codeObject = RegistrationCodeModel.query.get(code)
         if not codeObject:
             raise GraphQLError("Invalid Registration Code!")
+        if codeObject.used_by:
+            raise GraphQLError("Registration Code already used!")
         user = createUserAndAddToSession(
             user_data, password,
             is_admin=False, school=codeObject.school, code=codeObject)

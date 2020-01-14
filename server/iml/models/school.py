@@ -76,7 +76,8 @@ class RegistrationCode(db.Model):
     def __init__(self, school_id, issuer_id, code=None):
         # TODO - edge case check for redundant codes
         if not code:
-            self.code = binascii.b2a_hex(secrets.randbelow(0xffffffff))
+            self.code = hex(0x100000 +
+                            secrets.randbelow(0xffffff-0x100000))[2:]
         else:
             self.code = code
         self.school_id = school_id

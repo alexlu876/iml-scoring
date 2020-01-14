@@ -21,12 +21,14 @@ class Contest(db.Model):
                             db.ForeignKey('divisions.id'),
                             nullable=False)
 
-    def __init__(self, name, start_time, question_count):
+    def __init__(self, name, start_time, question_count=6, team_size=5):
         self.name = name
         self.start_time = start_time
         self.question_count = question_count
+        self.team_size = team_size
 
     division = db.relationship('Division', back_populates='contests')
+    questions = db.relationship('Question', back_populates='contest')
 
     # scores backref'd
 
