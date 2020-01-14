@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {Redirect} from 'react-router-dom';
 import { Home, Notifications, AccountCircle } from '@material-ui/icons';
 import Register from './components/Register/Register';
+import SchoolManager from './components/School/SchoolManager';
 
 import Login from './components/Login/Login';
 
@@ -30,8 +31,16 @@ const Routes = [
         sidebarName: 'Register',
         navbarName: 'Register',
         icon: AccountCircle,
-        isAccessable: () => false,
+        isAccessable: () => !isLoggedIn(),
         component: Register 
+    },
+    {
+        path:'/manage',
+        sidebarName: 'Manage School',
+        navbarName: 'Manage School',
+        icon: AccountCircle,
+        isAccessable: isLoggedIn,
+        component: SchoolManager 
     },
     {
         path: '/admin',
