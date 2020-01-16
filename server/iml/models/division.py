@@ -18,7 +18,19 @@ class Division(db.Model):
     name = db.Column(db.String(64), nullable=False)
     url = db.Column(db.String(64), nullable=False)
 
-    alternate_limit = db.Column(db.Integer, default=4)
+    alternate_limit = db.Column(db.Integer,
+                                default=4,
+                                nullable=False)
+    # hard max on teams, outside of alternates
+    # for example, some competitions may have less than
+    # 5 people per team, but this determines how many
+    # could join the team max (if contest max tends to be under
+    # this, this gives teams a stricter alternate that can only
+    # play one game, which is a decision IML admins may make
+    # at some point
+    team_size = db.Column(db.Integer,
+                          default=5,
+                          nullable=False)
 
     season_id = db.Column(db.Integer,
                           db.ForeignKey('seasons.id'),

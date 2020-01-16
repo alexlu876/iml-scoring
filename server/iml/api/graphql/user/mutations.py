@@ -46,7 +46,10 @@ class CodeCreationMutation(graphene.Mutation):
         if (code and query.get(code)):
             raise GraphQLError("Code not unique!")
         else:
-            newCode = RegistrationCodeModel(localize_id(school_id), user.id, code)
+            newCode = RegistrationCodeModel(
+                localize_id(school_id),
+                user.id,
+                code)
             db.session.add(newCode)
             db.session.commit()
             return CodeCreationMutation(newCode)

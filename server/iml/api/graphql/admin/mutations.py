@@ -148,7 +148,7 @@ class UpdateSeasonMutation(graphene.Mutation):
     id = graphene.ID()
 
     @classmethod
-    # @admin_required
+    @admin_required
     @validate_input(seasonMutationValidator)
     def mutate(cls, root, info, id, **kwargs):
         query = Season.get_query(info)

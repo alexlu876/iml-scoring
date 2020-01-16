@@ -37,26 +37,23 @@ export const STUDENTS_QUERY = gql`query{students{
             last
             graduationYear
             schoolId
-            divisionId
-            teamId
+            currentDivisionId
+            currentTeamId
             nickname
         }}}}`
 
 export const VIEWERS_STUDENTS = gql`
 query {
-    viewer {
-        students {
-            edges { 
-                node {
-                    id
-                    first
-                    last
-                    graduationYear
-                    schoolId
-                    divisionId
-                    teamId
-                    nickname
-                }
+    viewerStudents {
+        edges { 
+            node {
+                id
+                first
+                last
+                graduationYear
+                schoolId
+                currentDivisionId
+                nickname
             }
         }
     }
@@ -77,13 +74,16 @@ export const CREATE_SCHOOL = gql`
     }
 `
 export const CREATE_STUDENT = gql`
-    mutation CreateStudent($first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $divisionId:ID!){
+    mutation CreateStudent($first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $currentDivisionId:ID!, $nickname: String, $currentTeamId: ID){
         createStudent(studentInfo:{
             first:$first,
             last:$last,
             graduationYear:$graduationYear
             schoolId:$schoolId,
-            divisionId:$divisionId,}) {student {id}
+            currentDivisionId:$currentDivisionId,
+            currentTeamId: $currentTeamId,
+            nickname: $nickname
+        }) {student {id}
         }
     }`
 
@@ -111,13 +111,14 @@ export var DELETE_STUDENT = gql`
       deleteStudent (id: $id) {id}} `
 
 export var UPDATE_STUDENT = gql`
-    mutation UpdateStudent($id:ID!, $first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $divisionId:ID!, $teamId:ID, $nickname:String){
+    mutation UpdateStudent($id:ID!, $first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $currentDivisionId:ID!, $currentTeamId:ID, $nickname:String){
         updateStudent(id:$id, studentInfo:{
             first:$first,
             last:$last,
             graduationYear:$graduationYear,
             nickname:$nickname,
-            teamId:$teamId
+            currentTeamId:$currentTeamId,
+            currentDivisionId:$currentDivisionId,
         }) {
             id
             student {

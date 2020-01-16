@@ -73,6 +73,8 @@ class Query(graphene.ObjectType):
     user = graphene.Field(lambda: User,
                           id=graphene.ID(required=True))
     viewer = graphene.Field(lambda: User)
+    viewer_school = graphene.Field(lambda: School)
+    viewer_students = SQLAlchemyConnectionField(StudentRelayConnection)
 
     schools = SQLAlchemyConnectionField(SchoolRelayConnection)
     school = graphene.Field(lambda: School,
@@ -113,6 +115,20 @@ class Query(graphene.ObjectType):
     @jwt_optional
     def resolve_viewer(root, info):
         return get_current_user()
+
+    @jwt_optional
+    def resolve_viewer_school(root, info):
+        user = get_current_user()
+        return user.school if user else None
+
+    @jwt_optional
+    def resolve_viewer_students(root, info, *args, **kwargs):
+        user = get_current_user()
+        return user.students if user else None
+
+    def resolve_school_groupings(root, info):
+        query = SchoolGrouping.get_query(info)
+        return query.get(localize_id(id))
 
     def resolve_current_season(root, info):
         query = Season.get_query(info)

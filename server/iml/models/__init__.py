@@ -4,9 +4,8 @@ from iml.models.question import Question
 from iml.models.category import question_category_table, Category
 from iml.models.score import Score
 from iml.models.student import (
-    student_team_table,
-    student_division_table,
-    Student
+    Student,
+    StudentDivisionAssociation
 )
 from iml.models.division import school_division_table, Division
 from iml.models.schoolgrouping import SchoolGrouping

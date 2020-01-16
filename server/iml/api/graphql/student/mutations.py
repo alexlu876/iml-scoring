@@ -1,7 +1,17 @@
 import graphene
+from graphql import GraphQLError
+
+from flask_jwt_extended import (
+    jwt_required, get_current_user
+)
 from iml.api.graphql.student.types import (
     Student,
-    School
+    School,
+    Team
+)
+from iml.api.graphql.admin.types import (
+    Division,
+    Season
 )
 from iml.api.graphql.utils import (
     clean_input, localize_id, update_model_with_dict
@@ -13,7 +23,8 @@ from iml.api.graphql.wrappers import (
 from iml.database import db
 from iml.models import (
     Student as StudentModel,
-    School as SchoolModel
+    School as SchoolModel,
+    Team as TeamModel,
 )
 
 
@@ -22,9 +33,9 @@ class StudentUpdateInput(graphene.InputObjectType):
     last = graphene.String(description="Last Name")
     nickname = graphene.String(description="Nickname")
     graduation_year = graphene.Int(description="Graduation Year")
-    team_id = graphene.ID(description="Permanent Team ID")
+    current_team_id = graphene.ID(description="Permanent Team ID")
     school_id = graphene.ID(required=True, description="School ID")
-    division_id = graphene.ID(description="Division ID")
+    current_division_id = graphene.ID(description="Division ID")
 
 
 # TODO : add viewer-checks etc, general validation
@@ -36,8 +47,10 @@ class StudentCreationInput(graphene.InputObjectType):
         required=True,
         description="Graduation Year")
     school_id = graphene.ID(required=True, description="School ID")
-    team_id = graphene.ID(required=False, description="Permanent Team ID")
-    division_id = graphene.ID(required=True, description="Division ID")
+    current_team_id = graphene.ID(required=False,
+                                  description="Permanent Team ID")
+    current_division_id = graphene.ID(required=True,
+                                      description="Division ID")
 
 
 class CreateStudentMutation(graphene.Mutation):
@@ -141,4 +154,120 @@ class UpdateSchoolMutation(graphene.Mutation):
         db.session.add(schoolToModify)
         db.session.commit()
         return UpdateSchoolMutation(school=schoolToModify)
+
+
+class CreateTeamMutation(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(
+            required=True,
+            description="Name of new team."
+        )
+        school_id = graphene.ID(
+            required=True,
+            description="School ID"
+        )
+
+        division_id = graphene.ID(
+            required=True,
+            description="Required Division ID"
+        )
+
+    team = graphene.Field(lambda: Team)
+
+    @classmethod
+    @jwt_required
+    def mutate(cls, root, info,
+               name, school_id, division_id):
+        user = get_current_user()
+        school = School.get_query(info).get(school_id)
+        division = Division.get_query(info).get(division_id)
+        if not user:
+            raise GraphQLError("Invalid user!")
+        if not school:
+            raise GraphQLError("Invalid school ID!")
+        if not division:
+            raise GraphQLError("Invalid division ID")
+        if not user.isSchoolAdmin(school):
+            raise GraphQLError("Not an admin for the given school!")
+        if not division:
+            raise GraphQLError("Invalid division!")
+        if division not in school.divisions:
+            raise GraphQLError(
+                "Your school does not have access to this division!"
+                " Reach out to an admin to fix this.")
+        # create the team
+        new_team = TeamModel(name, school_id, division_id)
+        return CreateTeamMutation(team=new_team)
+
+
+class UpdateTeamMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(
+            required=False,
+            description="Required Team ID"
+        )
+        name = graphene.String(
+            required=False,
+            description="Name of new team."
+        )
+        school_id = graphene.ID(
+            required=False,
+            description="School ID"
+        )
+        division_id = graphene.ID(
+            required=False,
+            description="Required Division ID"
+        )
+
+    team = graphene.Field(lambda: Team)
+
+    @classmethod
+    @jwt_required
+    def mutate(cls, root, info, id,
+               name=None, school_id=None, division_id=None):
+        user = get_current_user()
+        school = School.get_query(info).get(school_id)
+        division = Division.get_query(info).get(division_id)
+        # get the team
+        team = Team.get_query(info).get(id)
+        if not user:
+            raise GraphQLError("Invalid user!")
+        if not team:
+            raise GraphQLError("Invalid team!")
+        if school_id and not school:
+            raise GraphQLError("Invalid school ID!")
+        if division_id and not division:
+            raise GraphQLError("Invalid division ID")
+        if school_id and not user.isSchoolAdmin(school):
+            raise GraphQLError("Not an admin for the given school!")
+        if division_id and division not in school.divisions:
+            raise GraphQLError(
+                "Your school does not have access to this division!"
+                " Reach out to an admin to fix this.")
+        if team.school_id != school.id and not user.isAdmin():
+            raise GraphQLError("You cannot modify another school's team!")
+        if name:
+            team.name = name
+        if school_id:
+            if user.isAdmin():
+                team.school_id = school_id
+            else:
+                raise GraphQLError("Cannot change a team\'s"
+                                   "school unless you are a coach")
+        if division_id:
+            team.division_id = division_id
+        db.session.add(team)
+        db.session.commit()
+        return UpdateTeamMutation(team=team)
+
+
+class SetTeamMembersMutation(graphene.Mutation):
+    class Arguments:
+        studentIds = graphene.List(graphene.ID)
+    team = graphene.Field(lambda: Team)
+
+    @classmethod
+    @jwt_required
+    def mutate(cls, root, info, studentIds):
+        pass
 

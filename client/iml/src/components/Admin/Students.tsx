@@ -7,7 +7,7 @@ import MaterialTable from 'material-table'
 import { withApollo } from "react-apollo";
 import {client} from '../../App';
 import {useSnackbar} from 'notistack';
-
+import {deglobifyId} from '../../utils/serializers';
 import {
     STUDENTS_QUERY, SCHOOLS_QUERY, CREATE_STUDENT, UPDATE_STUDENT,
     DELETE_STUDENT
@@ -46,12 +46,12 @@ export default function AllStudents() {
                                         {
                                             title: 'School',
                                             field:'schoolId',
-                                            lookup: schoolsQuery.data && Object.fromEntries(new Map(schoolsQuery.data.schools.edges.map((edge: any) => [edge.node.id, edge.node.name] )))
+                                            lookup: schoolsQuery.data && Object.fromEntries(new Map(schoolsQuery.data.schools.edges.map((edge: any) => [deglobifyId(edge.node.id), edge.node.name] )))
                                         },
                                         {
                                             title: 'Division',
-                                            field:'divisionId',
-                                            lookup: divisionsQuery.data && Object.fromEntries(new Map(divisionsQuery.data.divisions.edges.map((edge: any) => [edge.node.id, `${edge.node.name} (${edge.node.season.name})` ] )))
+                                            field:'currentDivisionId',
+                                            lookup: divisionsQuery.data && Object.fromEntries(new Map(divisionsQuery.data.divisions.edges.map((edge: any) => [deglobifyId(edge.node.id), `${edge.node.name} (${edge.node.season.name})` ] )))
                                         },
                                     ]}
                                     data={data.students.edges.map((edge : any) => edge.node)}

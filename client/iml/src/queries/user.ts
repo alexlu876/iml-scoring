@@ -1,5 +1,36 @@
 import gql from 'graphql-tag';
 
+export const VIEWER_SCHOOLS_QUERY = gql`
+query CurrentUsersSchool {
+    viewerSchool {
+        name
+        id
+        schoolGrouping {
+            name
+        }
+        coaches {
+            edges {
+                node {
+                    first
+                    last
+                    id
+                    email
+                }
+            }
+        }
+        divisions {
+            edges {
+                node {
+                    name
+                    id
+                }
+            }
+        }
+    }
+}
+`
+
+
 export const VIEWER_QUERY = gql`
 query CurrentUserForLayout {
     viewer {
@@ -10,6 +41,7 @@ query CurrentUserForLayout {
         email
         school {
             name
+            id
         }
     }
 }

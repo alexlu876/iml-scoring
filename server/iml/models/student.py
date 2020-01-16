@@ -1,29 +1,10 @@
 from iml import db
 
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.associationproxy import association_proxy
 
 import datetime
 from typing import Dict, List
-
-student_division_table \
-    = db.Table('student_division',
-               db.Column('student_id',
-                         db.Integer,
-                         db.ForeignKey('students.id')),
-               db.Column('division_id',
-                         db.Integer,
-                         db.ForeignKey('divisions.id'))
-               )
-
-student_team_table \
-    = db.Table('student_team',
-               db.Column('student_id',
-                         db.Integer,
-                         db.ForeignKey('students.id')),
-               db.Column('team_id',
-                         db.Integer,
-                         db.ForeignKey('teams.id'))
-               )
 
 
 class Student(db.Model):
@@ -38,32 +19,49 @@ class Student(db.Model):
     graduation_year = db.Column(db.Integer, nullable=False)
     creation_timestamp = db.Column(db.DateTime(), nullable=False)
 
+    current_division_id = db.Column(
+        db.Integer,
+        db.ForeignKey('divisions.id'),
+        nullable=True
+    )
+
+    current_team_id = db.Column(
+        db.Integer,
+        db.ForeignKey('teams.id'),
+        nullable=True
+    )
+
     school_id = db.Column(db.Integer, db.ForeignKey(
         'schools.id'),
         nullable=False)
 
     school = db.relationship('School', back_populates='students')
     scores = db.relationship('Score', back_populates='student')
-    teams = db.relationship('Team',
-                            secondary=student_team_table,
-                            backref='students'
-                            )
-    divisions = db.relationship('Division',
-                                secondary=student_division_table,
-                                backref='students'
-                                )
+    teams = association_proxy('division_associations', 'team')
+    divisions = association_proxy('division_associations', 'division')
+    current_division = db.relationship('Division',
+                                       foreign_keys=[current_division_id],
+                                       backref='current_students')
+    current_team = db.relationship('Team',
+                                   foreign_keys=[current_team_id],
+                                   backref='current_students'
+                                   )
+
     # if current_team is null, then they are an alternate
     # TODO - replaec team with current team
     # team = db.relationship('Team', back_populates='students')
 
     def __init__(self,
                  first, last,
-                 graduation_year, school_id, division_id=None,
+                 graduation_year, school_id,
+                 current_division_id=None, current_team_id=None,
                  nickname=None,):
         self.first = first
         self.last = last
         self.graduation_year = graduation_year
         self.nickname = nickname
+        self.current_division_id = current_division_id
+        self.current_team_id = current_team_id
         username_base = '{}_{}'.format(first[:16],
                                        last[:16]).replace(' ',
                                                           '_')
@@ -74,10 +72,8 @@ class Student(db.Model):
         self.school_id = school_id
         self.creation_timestamp = datetime.datetime.utcnow()
 
-    # returns whether the person participated in this contest for the specified team
     def isParticipant(self, contest, team=None) -> bool:
         import iml.models.score as score
-        # the name contest was used!
 
         Score = score.Score
         scoresQuery = Score.query.filter_by(contest_id=contest.id,
@@ -96,7 +92,8 @@ class Student(db.Model):
                                         self.isParticipant(contest, team)))
 
     # returns score in a dictionary
-    def getScoresDict(self, contest, division=None, team=None) -> Dict[int, int]:
+    def getScoresDict(self, contest,
+                      division=None, team=None) -> Dict[int, int]:
         import iml.models.contest as contestModule
         import iml.models.score as score
         # the name contest was used!
@@ -158,3 +155,32 @@ class Student(db.Model):
     @hybrid_property
     def current_score(self) -> int:
         return self.getFinalScore()
+
+
+class StudentDivisionAssociation(db.Model):
+    __tablename__ = 'student_division_assoc'
+    student_id = db.Column(
+        db.Integer,
+        db.ForeignKey('students.id'),
+        nullable=False,
+        primary_key=True
+    )
+    division_id = db.Column(
+        db.Integer,
+        db.ForeignKey('divisions.id'),
+        nullable=False,
+        primary_key=True
+    )
+    is_alternate = db.Column(db.Boolean, nullable=False)
+    team_id = db.Column(
+        db.Integer,
+        db.ForeignKey('teams.id'),
+        nullable=True)
+
+    student = db.relationship('Student', backref='division_associations')
+    division = db.relationship(
+        'Division',
+        backref='student_associations')
+    team = db.relationship('Team',
+                           backref='student_associations')
+

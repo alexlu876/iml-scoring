@@ -20,6 +20,7 @@ import {
     RadioGroup,
 } from 'formik-material-ui';
 import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
@@ -42,18 +43,17 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3),
+        width: '96%', // Fix IE 11 issue.
+        margin: theme.spacing(3,1,1,1),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
     },
     submit: {
-        marginBottom: theme.spacing(1)
+        margin: theme.spacing(3, 1, 2, 1),
     },
     field: {
-        width: '50%',
-        margin: theme.spacing(0, 1, 0, 1),
+        width: '100%',
     },
 }));
 
@@ -84,7 +84,7 @@ const validationSchema = Yup.object().shape(
         })
     }
 );
-// DO NOT USE arrow functions, changing this() is very important for Yup
+// DO NOT USE arrow functions, changing `this` is very important for Yup
 
 export default function Register() {
 
@@ -92,7 +92,7 @@ export default function Register() {
 
     return (
         <div>
-            <Container component="main" maxWidth = "md"><Paper>
+            <Container component="main" maxWidth = "sm"><Paper>
                     <CssBaseline />
                     <div className={classes.paper}>
                         <Avatar className={classes.avatar}>
@@ -122,55 +122,62 @@ export default function Register() {
                             render = {
                                 ({submitForm, isSubmitting, values, setFieldValue}) => (
                                 <Form className={classes.form}>
+                                <Grid container spacing={2}>
+                                <Grid item xs={12} sm={6}>
                                     <Field
                                         name="first"
                                         type="text"
                                         label="First Name"
                                         component={TextField}
                                         className={classes.field} />
-                                      <br />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
                                     <Field
                                         name="last"
                                         type="text"
                                         label="Last Name"
                                         component={TextField}
                                         className={classes.field} />
-                                      <br />
+                                </Grid>
+                                <Grid item xs={12}>
                                     <Field
                                         name="email"
                                         type="email"
                                         label="Email"
                                         component={TextField}
                                         className={classes.field} />
-                                      <br />
+                                </Grid>
+                                <Grid item xs={12}>
                                     <Field
                                         type="password"
                                         label="New Password (Not Email Password!)"
                                         name="password"
                                         component={TextField}
                                         className={classes.field}/>
-                                      <br />
+                                </Grid>
+                                <Grid item xs={12}>
                                     <Field
                                         type="password"
                                         label="Confirm Password"
                                         name="confirmPassword"
                                         component={TextField}
                                         className={classes.field}/>
-                                      <br />
+                                </Grid>
+                                <Grid item xs={12}>
                                     <Field
                                         type="text"
                                         label="Registration Code"
                                         name="registrationCode"
                                         component={TextField}
                                         className={classes.field}/>
-                                      <br />
                                     <Field
                                         type="text"
                                         label="Phone Number (Optional)"
                                         name="phoneNum"
                                         component={TextField}
                                         className={classes.field}/>
-                                      <br />
+                                  </Grid>
+                                </Grid>
                                     <Button
                                         variant="contained"
                                         color="primary"
