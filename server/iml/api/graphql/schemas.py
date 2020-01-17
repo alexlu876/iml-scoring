@@ -126,7 +126,7 @@ class Query(graphene.ObjectType):
         user = get_current_user()
         return user.students if user else None
 
-    def resolve_school_groupings(root, info):
+    def resolve_school_grouping(root, info):
         query = SchoolGrouping.get_query(info)
         return query.get(localize_id(id))
 

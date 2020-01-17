@@ -9,6 +9,8 @@ import {Seasons} from '../../components/Admin/Seasons';
 import AllStudents from '../../components/Admin/Students';
 import Divisions from '../../components/Admin/Divisions';
 import Schools from '../../components/Admin/Schools';
+import Coaches from '../../components/Admin/Coaches';
+import SchoolGroupings from '../../components/Admin/SchoolGroupings';
 const useStyles = makeStyles(theme => ({
     container: {
         marginTop: theme.spacing(12),
@@ -44,6 +46,11 @@ export default function AdminPanel({match, location} : any) {
                     component={Link}
                     to={`${match.url}/students`}
                 />
+                <Tab
+                    label="School Groupings"
+                    component={Link}
+                    to={`${match.url}/schoolgroupings`}
+                />
             </Tabs>
         <Switch>
             <Route 
@@ -64,10 +71,13 @@ export default function AdminPanel({match, location} : any) {
                 component={Schools} 
                 />
             <Route path={`${match.url}/coaches`}
-                component={() => <div> users </div>} 
+                component={Coaches} 
                 />
             <Route path={`${match.url}/students`}
                 component={AllStudents} 
+                />
+            <Route path={`${match.url}/schoolgroupings`}
+                component={SchoolGroupings} 
                 />
         </Switch>
         </Container>

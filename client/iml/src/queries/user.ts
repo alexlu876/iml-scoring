@@ -67,13 +67,15 @@ export const USERS_QUERY = gql`
             edges {
                 node {
                     id
+                    first
+                    last
+                    schoolId
+                    approvalStatus
+                    isAdmin
+                    username
+                    phoneNum
                 }
             }
         }
     }
 `
-
-
-// export const REGISTER = gql`
-// mutation R
-// `
