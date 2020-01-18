@@ -2,6 +2,9 @@ import React from 'react';
 import {Formik, Field, Form} from 'formik';
 import { makeStyles } from '@material-ui/core/styles';
 import {
+    useHistory
+} from 'react-router-dom';
+import {
     Button,
     LinearProgress,
     MenuItem,
@@ -29,6 +32,11 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Avatar from '@material-ui/core/Avatar';
 import libphonenumber from 'google-libphonenumber';
 
+import {REGISTER_MUTATION} from '../../queries/user';
+import {useSnackbar} from 'notistack';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+
+import {client} from '../../App';
 
 
 const useStyles = makeStyles(theme => ({
@@ -89,6 +97,9 @@ const validationSchema = Yup.object().shape(
 export default function Register() {
 
     const classes = useStyles();
+    const history = useHistory();
+    const {enqueueSnackbar} = useSnackbar();
+    const [registerMutation] = useMutation(REGISTER_MUTATION, {client: client});
 
     return (
         <div>
@@ -116,7 +127,19 @@ export default function Register() {
                             onSubmit = {
                                 (values, {setSubmitting}) => {
                                     console.log(values);
-                                    setSubmitting(false);
+                                    registerMutation({variables: values})
+                                        .then(
+                                            res => {
+                                                console.log(res);
+                                                history.push("/login");
+                                                enqueueSnackbar('Successfully Registered! Log in now to confirm');
+                                            },
+                                            err => {
+                                                console.log(err.message);
+                                                setSubmitting(false);
+                                                enqueueSnackbar(err.message.split(":")[1]);
+                                            });
+
                                 }
                             }
                             render = {

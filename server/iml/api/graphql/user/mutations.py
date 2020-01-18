@@ -31,6 +31,16 @@ class UserInfoInput(graphene.InputObjectType):
             raise GraphQLError("Email not unique!")
         return True
 
+    def validateNames(self):
+        if (len(self.first) < 1 or len(self.first) > 64):
+            raise GraphQLError("Invalid first name!")
+        if (len(self.last) < 1 or len(self.last) > 64):
+            raise GraphQLError("Invalid first name!")
+        return True
+
+    def validate(self):
+        return self.validateEmail() and self.validateNames()
+
 
 class CodeCreationMutation(graphene.Mutation):
     class Arguments:
@@ -94,7 +104,7 @@ class AdminCreationMutation(graphene.Mutation):
 
 def createUserAndAddToSession(userData, password,
                               is_admin=False, school=None, code=None):
-    if userData.validateEmail():
+    if userData.validate():
         username_base = '{}{}'.format(
             userData.first[0],
             userData.last[:16]).replace(' ', '_')

@@ -73,6 +73,28 @@ export const CREATE_SCHOOL = gql`
         }
     }
 `
+export const CREATE_SCHOOL_GROUPING = gql`
+mutation CreateSchoolGrouping($name: String!, $url: String!) {
+    createSchoolGrouping(name: $name, url: $url) {
+        schoolGrouping {
+            id
+            url
+            name
+        }
+    }
+}
+`
+export const UPDATE_SCHOOL_GROUPING = gql`
+mutation UpdateSchoolGrouping($id: ID!, $name: String, $url: String) {
+    updateSchoolGrouping(id: $id name: $name, url: $url) {
+        schoolGrouping {
+            id
+            url
+            name
+        }
+    }
+}
+`
 export const CREATE_STUDENT = gql`
     mutation CreateStudent($first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $currentDivisionId:ID!, $nickname: String, $currentTeamId: ID){
         createStudent(studentInfo:{

@@ -1,5 +1,6 @@
 from graphene_sqlalchemy import SQLAlchemyObjectType
 import graphene
+from graphql import GraphQLError
 
 from graphene_cerberus import validate_input
 from iml.database import db
@@ -16,6 +17,9 @@ from iml.api.graphql.admin.types import (
     SchoolGrouping,
     Division,
     Season
+)
+from iml.api.graphql.student.types import (
+    School
 )
 from iml.api.graphql.admin.validators import (
     divisionMutationValidator,
@@ -40,7 +44,6 @@ class CreateSchoolGroupingMutation(graphene.Mutation):
         )
     schoolGrouping = graphene.Field(lambda: SchoolGrouping)
 
-    # TODO - validation
     @classmethod
     @admin_required
     def mutate(cls, root, info, name, url):
@@ -121,6 +124,26 @@ class CreateSeasonMutation(graphene.Mutation):
         db.session.commit()
         return CreateSeasonMutation(season=season,
                                     id=season.id)
+
+
+class AddDivisionToSchoolMutation(graphene.Mutation):
+    class Arguments:
+        school_id = graphene.ID(required=True)
+        division_id = graphene.ID(required=True)
+    school = graphene.Field(lambda: School)
+
+    @classmethod
+    @admin_required
+    # TODO - validate properly
+    def mutate(cls, root, info, school_id, division_id):
+        school = School.get_query(info).get(school_id)
+        division = Division.get_query(info).get(division_id)
+        if not (school and division):
+            raise GraphQLError("One or more object IDs incorrect!")
+        school.divisions.append(division)
+        db.session.add(school)
+        db.session.commit()
+        return AddDivisionToSchoolMutation(school)
 
 
 class UpdateSeasonMutation(graphene.Mutation):

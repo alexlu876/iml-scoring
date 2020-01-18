@@ -5,13 +5,18 @@ import {client} from '../../App';
 import MaterialTable from 'material-table';
 import {useSnackbar} from 'notistack';
 
-import {SCHOOL_GROUPINGS_QUERY} from '../../queries/team';
+import {
+    SCHOOL_GROUPINGS_QUERY,
+    UPDATE_SCHOOL_GROUPING,
+    CREATE_SCHOOL_GROUPING
 
-import {deglobifyId} from '../../utils/serializers';
+} from '../../queries/student';
 
 const SchoolGroupings = () => {
     const {enqueueSnackbar} = useSnackbar();
     const { data, refetch, loading, error } = useQuery(SCHOOL_GROUPINGS_QUERY, {client: client});
+    const [updateSchoolGrouping,] = useMutation(UPDATE_SCHOOL_GROUPING, {client: client});
+    const [createSchoolGrouping,] = useMutation(CREATE_SCHOOL_GROUPING, {client: client}); 
     if (loading)
         return (<div> loading...</div>);
     if (error || !data.schoolGroupings)
@@ -28,9 +33,27 @@ const SchoolGroupings = () => {
                     }}
                     columns={[
                         {title: 'Name', field: 'name'},
-                        {title: 'ID', field: 'id'}
+                        {title: 'URL', field: 'url'},
+                        {title: 'ID', field: 'id', editable: 'never', hidden: true}
                     ]}
                     data={data.schoolGroupings.edges.map((edge : any) => edge.node)}
+                    editable={{
+                        isEditable: rowData => true,
+                            isDeletable: rowData => false,
+                            onRowAdd: newData => {
+                                return createSchoolGrouping(
+                                    {variables: newData}).then(refetch) as Promise<any>;
+                            },
+                            onRowUpdate: (newData, oldData) => {
+                                return updateSchoolGrouping(
+                                    {variables: newData}).then(refetch) as Promise<any>;
+                            },
+                            onRowDelete: oldData => 
+                            new Promise((resolve, reject) => {
+                                reject();
+                                enqueueSnackbar("This operation is not supported!");
+                            })
+                    }}
                                     />
                                             </Typography>
     );

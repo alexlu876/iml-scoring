@@ -79,3 +79,25 @@ export const USERS_QUERY = gql`
         }
     }
 `
+
+
+export const REGISTER_MUTATION = gql`
+mutation Register($first: String!, $last: String!, $email: String!,
+  $phoneNum: String, $registrationCode: String!, $password: String! ) {
+      register(userData: {
+          first: $first,
+          last: $last,
+          email: $email,
+          phoneNum: $phoneNum
+      }, password: $password, registrationCode: $registrationCode) {
+          user {
+              id
+              username
+              first
+              last
+              schoolId 
+          }
+      }
+  }
+
+`

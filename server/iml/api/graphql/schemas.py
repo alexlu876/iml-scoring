@@ -51,7 +51,9 @@ from iml.api.graphql.student.mutations import (
     CreateStudentMutation,
     UpdateStudentMutation,
     CreateSchoolMutation,
-    UpdateSchoolMutation
+    UpdateSchoolMutation,
+    CreateTeamMutation,
+    UpdateTeamMutation
 )
 from iml.api.graphql.score.mutations import (
     CreateContestMutation
@@ -62,7 +64,8 @@ from iml.api.graphql.admin.mutations import (
     CreateSchoolGroupingMutation,
     UpdateSeasonMutation,
     UpdateDivisionMutation,
-    UpdateSchoolGroupingMutation
+    UpdateSchoolGroupingMutation,
+    AddDivisionToSchoolMutation
 )
 
 
@@ -197,7 +200,13 @@ class Mutation(graphene.ObjectType):
     createSchool = CreateSchoolMutation.Field()
     updateSchool = UpdateSchoolMutation.Field()
 
+    # coach-level
+    createTeam = CreateTeamMutation.Field()
+    updateTeam = UpdateTeamMutation.Field()
+
     createContest = CreateContestMutation.Field()
+
+    addDivisionToSchool = AddDivisionToSchoolMutation.Field()
 
 
 gql_schema = graphene.Schema(query=Query, mutation=Mutation)

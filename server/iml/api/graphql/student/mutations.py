@@ -163,8 +163,8 @@ class CreateTeamMutation(graphene.Mutation):
             description="Name of new team."
         )
         school_id = graphene.ID(
-            required=True,
-            description="School ID"
+            required=False,
+            description="School ID (for Admins)"
         )
 
         division_id = graphene.ID(
@@ -177,12 +177,17 @@ class CreateTeamMutation(graphene.Mutation):
     @classmethod
     @jwt_required
     def mutate(cls, root, info,
-               name, school_id, division_id):
+               name, division_id, school_id=None):
         user = get_current_user()
-        school = School.get_query(info).get(school_id)
-        division = Division.get_query(info).get(division_id)
         if not user:
             raise GraphQLError("Invalid user!")
+        if not school_id:
+            school_id = user.school_id
+        school_id = localize_id(school_id)
+        division_id = localize_id(division_id)
+
+        school = School.get_query(info).get(school_id)
+        division = Division.get_query(info).get(division_id)
         if not school:
             raise GraphQLError("Invalid school ID!")
         if not division:
@@ -197,6 +202,8 @@ class CreateTeamMutation(graphene.Mutation):
                 " Reach out to an admin to fix this.")
         # create the team
         new_team = TeamModel(name, school_id, division_id)
+        db.session.add(new_team)
+        db.session.commit()
         return CreateTeamMutation(team=new_team)
 
 
@@ -226,6 +233,11 @@ class UpdateTeamMutation(graphene.Mutation):
     def mutate(cls, root, info, id,
                name=None, school_id=None, division_id=None):
         user = get_current_user()
+        if (school_id):
+            school_id = localize_id(school_id)
+        id = localize_id(id)
+        if (division_id):
+            division_id = localize_id(division_id)
         school = School.get_query(info).get(school_id)
         division = Division.get_query(info).get(division_id)
         # get the team
@@ -249,11 +261,11 @@ class UpdateTeamMutation(graphene.Mutation):
         if name:
             team.name = name
         if school_id:
-            if user.isAdmin():
+            if user.isAdmin() or team.school_id == school_id:
                 team.school_id = school_id
             else:
                 raise GraphQLError("Cannot change a team\'s"
-                                   "school unless you are a coach")
+                                   " school unless you are a coach")
         if division_id:
             team.division_id = division_id
         db.session.add(team)
