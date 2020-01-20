@@ -6,9 +6,12 @@ import {client} from '../../App';
 import {useSnackbar} from 'notistack';
 
 import {
+    TEAM_CURRENT_STUDENTS_QUERY,
+    NO_TEAM_STUDENTS_QUERY,
     VIEWER_SCHOOL_TEAMS_QUERY,
     CREATE_TEAM_MUTATION,
-    UPDATE_TEAM_MUTATION
+    UPDATE_TEAM_MUTATION,
+    SET_TEAM_MEMBERS
 } from '../../queries/team'; 
 import {deglobifyId} from '../../utils/serializers';
 
@@ -47,16 +50,25 @@ function intersection(a: number[], b: number[]) {
 }
 
 
-export default function TeamTransferList(teamId: any) {
+export default function TeamTransferList({divisionId, schoolId, teamId }:any) {
     
     const classes = useStyles();
-    
     const [checked, setChecked] = React.useState<number[]>([]);
-    const [left, setLeft] = React.useState<number[]>([]);
-    const [right, setRight] = React.useState<number[]>([]);
+    const currentMembersQuery = useQuery(
+        TEAM_CURRENT_STUDENTS_QUERY, {variables: {teamId: teamId}, client: client});
+    const noTeamQuery = useQuery(
+        NO_TEAM_STUDENTS_QUERY, {variables: {schoolId: schoolId, divisionId: divisionId}, client: client});
+    const [setMembers, ] = useMutation(SET_TEAM_MEMBERS, {client: client});
 
-    const leftChecked = intersection(checked, left);
-    const rightChecked = intersection(checked, right);
+    if (!currentMembersQuery.data || !noTeamQuery.data)
+        return (<div>loading...</div>)
+
+    const leftIds = noTeamQuery.data.noTeamStudents.edges.map((edge:any) => deglobifyId(edge.node.id));
+    const checkedLeft = intersection(checked, leftIds);
+
+    const rightIds = currentMembersQuery.data.teamCurrentStudents.edges.map((edge:any) => deglobifyId(edge.node.id));
+
+    const checkedRight = intersection(checked, rightIds) ;
 
     const handleToggle = (value: number) => () => {
         const currentIndex = checked.indexOf(value);
@@ -67,50 +79,69 @@ export default function TeamTransferList(teamId: any) {
         } else {
             newChecked.splice(currentIndex, 1);
         }
-
         setChecked(newChecked);
     };
 
     const handleCheckedRight = () => {
-        setRight(right.concat(leftChecked));
-        setLeft(not(left, leftChecked));
-        setChecked(not(checked, leftChecked));
+        // recall the mutation without checkedRight
+        // elements
+        setMembers({variables: {
+            teamId: teamId,
+            studentIds: rightIds.concat(checkedLeft),
+        }}).then(
+            res=> {
+                setChecked(not(checked,checkedLeft));
+                noTeamQuery.refetch();
+                currentMembersQuery.refetch();
+            }
+        );
     };
 
     const handleCheckedLeft = () => {
-        setLeft(left.concat(rightChecked));
-        setRight(not(right, rightChecked));
-        setChecked(not(checked, rightChecked));
+        console.log(leftIds.concat(checkedRight));
+        // recall the mutation without checkedRight
+        // elements
+        setMembers({variables: {
+            teamId: teamId,
+            studentIds: not(rightIds, checkedRight),
+        }}).then(
+            res=> {
+                setChecked(not(checked,checkedRight));
+                noTeamQuery.refetch();
+                currentMembersQuery.refetch();
+            }
+        );
+        
     };
 
-    const customList = (items: number[], lookup: any) => (
+    const customList = (items: any) => (
     <Paper className={classes.paper}>
       <List dense component="div" role="list">
-        {items.map((value: number) => {
-          const labelId = `transfer-list-item-${value}-label`;
-
-          return (
-            <ListItem key={value} role="listitem" button onClick={handleToggle(value)}>
-              <ListItemIcon>
-                <Checkbox
-                  checked={checked.indexOf(value) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{ 'aria-labelledby': labelId }}
-                />
-              </ListItemIcon>
-              <ListItemText id={labelId} primary={`List item ${value + 1}`} />
-            </ListItem>
-          );
-        })}
-        <ListItem />
-      </List>
-    </Paper>
-  );
+          {items.map((item: any) => {
+              const value = deglobifyId(item.id);
+              const labelId = `transfer-list-item-${value}-label`;
+              return (
+                <ListItem key={value} role="listitem" button onClick={handleToggle(value)}>
+                  <ListItemIcon>
+                    <Checkbox
+                      checked={checked.indexOf(value) !== -1}
+                      tabIndex={-1}
+                      disableRipple
+                      inputProps={{ 'aria-labelledby': labelId }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText id={labelId} primary={`${item.username}`} />
+                </ListItem>
+              );
+            })}
+            <ListItem />
+          </List>
+        </Paper>
+      );
 
   return (
     <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
-      <Grid item>{customList(left, {})}</Grid>
+        <Grid item>{customList(noTeamQuery.data.noTeamStudents.edges.map((edge: any) => edge.node))}</Grid>
       <Grid item>
         <Grid container direction="column" alignItems="center">
           <Button
@@ -118,7 +149,7 @@ export default function TeamTransferList(teamId: any) {
             size="small"
             className={classes.button}
             onClick={handleCheckedRight}
-            disabled={leftChecked.length === 0}
+            disabled={checkedLeft.length===0}
             aria-label="move selected right"
           >
             &gt;
@@ -128,14 +159,14 @@ export default function TeamTransferList(teamId: any) {
             size="small"
             className={classes.button}
             onClick={handleCheckedLeft}
-            disabled={rightChecked.length === 0}
+            disabled={checkedRight.length===0}
             aria-label="move selected left"
           >
             &lt;
           </Button>
         </Grid>
       </Grid>
-      <Grid item>{customList(right, {})}</Grid>
+          <Grid item>{customList(currentMembersQuery.data.teamCurrentStudents.edges.map((edge: any) => edge.node))}</Grid>
     </Grid>
   );
 

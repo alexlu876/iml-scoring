@@ -5,6 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import {deglobifyId} from '../../utils/serializers';
 
 import {client} from '../../App';
 import {useMutation, useQuery} from '@apollo/react-hooks';
@@ -89,7 +90,7 @@ export default function StudentsManager() {
             </TabPanel>
                         {data && data.viewerSchool && data.viewerSchool.teams.edges.map((edge: any, index: number) => (
                             <TabPanel value={value} index={index+2} >
-                                <TeamTransferList teamId={edge.node.id} />
+                                <TeamTransferList divisionId={edge.node.divisionId} schoolId={deglobifyId(data.viewerSchool.id)} teamId={deglobifyId(edge.node.id)} />
                             </TabPanel>
                                 )
                         )}

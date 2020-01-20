@@ -15,6 +15,34 @@ query {
 
 `
 
+export const NO_TEAM_STUDENTS_QUERY = gql`
+query NoTeamStudents($divisionId: ID!, $schoolId: ID!) {
+    noTeamStudents(divisionId: $divisionId schoolId:$schoolId ) {
+        edges {
+            node {
+                username
+                id
+                first
+                last
+            }
+        }
+    }
+}
+`
+
+export const TEAM_CURRENT_STUDENTS_QUERY = gql`
+query TeamCurrentStudents ($teamId: ID!) {
+    teamCurrentStudents(teamId: $teamId) {
+        edges {
+            node {
+                username
+                id
+            }
+        }
+    }
+}
+`
+
 export const VIEWER_SCHOOL_TEAMS_QUERY = gql`
 query ViewerTeams {
     viewerSchool {
@@ -87,6 +115,24 @@ mutation UpdateTeam($id: ID! $divisionId: ID, $name: String, $schoolId: ID) {
             }
             school {
                 name
+            }
+        }
+    }
+}
+`
+
+export const SET_TEAM_MEMBERS = gql`
+mutation SetTeamMembers($teamId: ID!, $studentIds: [ID]!) {
+    setTeamMembers(teamId: $teamId, studentIds: $studentIds) {
+        team {
+            currentStudents {
+                edges {
+                    node {
+                        id
+                        first
+                        last
+                    }
+                }
             }
         }
     }

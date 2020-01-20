@@ -91,6 +91,10 @@ class Query(graphene.ObjectType):
         division_id=graphene.ID(required=True),
         school_id=graphene.ID(required=True)
     )
+    team_current_students = graphene.relay.ConnectionField(
+        StudentRelayConnection,
+        team_id=graphene.ID(required=True)
+    )
 
     divisions = SQLAlchemyConnectionField(DivisionRelayConnection)
     division = graphene.Field(lambda: Division, id=graphene.ID(required=True))
@@ -118,6 +122,11 @@ class Query(graphene.ObjectType):
             school_id=school_id,
             current_division_id=division_id,
             current_team_id=None).all()
+
+    def resolve_team_current_students(root, info, team_id):
+        return Student.get_query(info).filter_by(
+            current_team_id=team_id
+        ).all()
 
     def resolve_division(root, info, id):
         query = Division.get_query(info)
