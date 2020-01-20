@@ -17,7 +17,7 @@ class Score(db.Model):
                          nullable=False)
     team_id = db.Column(db.Integer,
                         db.ForeignKey('teams.id'),
-                        nullable=False)
+                        nullable=True)
     timestamp = db.Column(db.DateTime(),
                           nullable=False)
 

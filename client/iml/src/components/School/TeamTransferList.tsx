@@ -48,50 +48,42 @@ function intersection(a: number[], b: number[]) {
 
 
 export default function TeamTransferList(teamId: any) {
-  const classes = useStyles();
-  const [checked, setChecked] = React.useState<number[]>([]);
-  const [left, setLeft] = React.useState<number[]>([0, 1, 2, 3]);
-  const [right, setRight] = React.useState<number[]>([4, 5, 6, 7]);
+    
+    const classes = useStyles();
+    
+    const [checked, setChecked] = React.useState<number[]>([]);
+    const [left, setLeft] = React.useState<number[]>([]);
+    const [right, setRight] = React.useState<number[]>([]);
 
-  const leftChecked = intersection(checked, left);
-  const rightChecked = intersection(checked, right);
+    const leftChecked = intersection(checked, left);
+    const rightChecked = intersection(checked, right);
 
-  const handleToggle = (value: number) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
+    const handleToggle = (value: number) => () => {
+        const currentIndex = checked.indexOf(value);
+        const newChecked = [...checked];
 
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
 
-    setChecked(newChecked);
-  };
+        setChecked(newChecked);
+    };
 
-  const handleAllRight = () => {
-    setRight(right.concat(left));
-    setLeft([]);
-  };
+    const handleCheckedRight = () => {
+        setRight(right.concat(leftChecked));
+        setLeft(not(left, leftChecked));
+        setChecked(not(checked, leftChecked));
+    };
 
-  const handleCheckedRight = () => {
-    setRight(right.concat(leftChecked));
-    setLeft(not(left, leftChecked));
-    setChecked(not(checked, leftChecked));
-  };
+    const handleCheckedLeft = () => {
+        setLeft(left.concat(rightChecked));
+        setRight(not(right, rightChecked));
+        setChecked(not(checked, rightChecked));
+    };
 
-  const handleCheckedLeft = () => {
-    setLeft(left.concat(rightChecked));
-    setRight(not(right, rightChecked));
-    setChecked(not(checked, rightChecked));
-  };
-
-  const handleAllLeft = () => {
-    setLeft(left.concat(right));
-    setRight([]);
-  };
-
-  const customList = (items: number[]) => (
+    const customList = (items: number[], lookup: any) => (
     <Paper className={classes.paper}>
       <List dense component="div" role="list">
         {items.map((value: number) => {
@@ -118,7 +110,7 @@ export default function TeamTransferList(teamId: any) {
 
   return (
     <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
-      <Grid item>{customList(left)}</Grid>
+      <Grid item>{customList(left, {})}</Grid>
       <Grid item>
         <Grid container direction="column" alignItems="center">
           <Button
@@ -143,7 +135,7 @@ export default function TeamTransferList(teamId: any) {
           </Button>
         </Grid>
       </Grid>
-      <Grid item>{customList(right)}</Grid>
+      <Grid item>{customList(right, {})}</Grid>
     </Grid>
   );
 

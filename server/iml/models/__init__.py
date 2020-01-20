@@ -1,5 +1,5 @@
 # relationships
-from iml.models.contest import Contest
+from iml.models.contest import Contest, ContestAttendance
 from iml.models.question import Question
 from iml.models.category import question_category_table, Category
 from iml.models.score import Score

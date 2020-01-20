@@ -53,7 +53,8 @@ from iml.api.graphql.student.mutations import (
     CreateSchoolMutation,
     UpdateSchoolMutation,
     CreateTeamMutation,
-    UpdateTeamMutation
+    UpdateTeamMutation,
+    SetTeamMembersMutation
 )
 from iml.api.graphql.score.mutations import (
     CreateContestMutation
@@ -85,6 +86,11 @@ class Query(graphene.ObjectType):
 
     students = SQLAlchemyConnectionField(StudentRelayConnection)
     student = graphene.Field(lambda: Student, id=graphene.ID(required=True))
+    no_team_students = graphene.relay.ConnectionField(
+        StudentRelayConnection,
+        division_id=graphene.ID(required=True),
+        school_id=graphene.ID(required=True)
+    )
 
     divisions = SQLAlchemyConnectionField(DivisionRelayConnection)
     division = graphene.Field(lambda: Division, id=graphene.ID(required=True))
@@ -106,6 +112,12 @@ class Query(graphene.ObjectType):
     def resolve_student(root, info, id):
         query = Student.get_query(info)
         return query.get(localize_id(id))
+
+    def resolve_no_team_students(root, info, division_id, school_id):
+        return Student.get_query(info).filter_by(
+            school_id=school_id,
+            current_division_id=division_id,
+            current_team_id=None).all()
 
     def resolve_division(root, info, id):
         query = Division.get_query(info)
@@ -203,6 +215,7 @@ class Mutation(graphene.ObjectType):
     # coach-level
     createTeam = CreateTeamMutation.Field()
     updateTeam = UpdateTeamMutation.Field()
+    setTeamMembers = SetTeamMembersMutation.Field()
 
     createContest = CreateContestMutation.Field()
 

@@ -96,14 +96,13 @@ mutation UpdateSchoolGrouping($id: ID!, $name: String, $url: String) {
 }
 `
 export const CREATE_STUDENT = gql`
-    mutation CreateStudent($first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $currentDivisionId:ID!, $nickname: String, $currentTeamId: ID){
+    mutation CreateStudent($first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $currentDivisionId:ID!, $nickname: String,){
         createStudent(studentInfo:{
             first:$first,
             last:$last,
             graduationYear:$graduationYear
             schoolId:$schoolId,
             currentDivisionId:$currentDivisionId,
-            currentTeamId: $currentTeamId,
             nickname: $nickname
         }) {student {id}
         }
@@ -133,13 +132,13 @@ export var DELETE_STUDENT = gql`
       deleteStudent (id: $id) {id}} `
 
 export var UPDATE_STUDENT = gql`
-    mutation UpdateStudent($id:ID!, $first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $currentDivisionId:ID!, $currentTeamId:ID, $nickname:String){
+    mutation UpdateStudent($id:ID!, $first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $currentDivisionId:ID!, $nickname:String){
         updateStudent(id:$id, studentInfo:{
             first:$first,
             last:$last,
             graduationYear:$graduationYear,
+            schoolId: $schoolId,
             nickname:$nickname,
-            currentTeamId:$currentTeamId,
             currentDivisionId:$currentDivisionId,
         }) {
             id

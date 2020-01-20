@@ -25,6 +25,7 @@ from iml.models import (
     Student as StudentModel,
     School as SchoolModel,
     Team as TeamModel,
+    StudentDivisionAssociation as StudentDivisionAssociationModel
 )
 
 
@@ -33,7 +34,6 @@ class StudentUpdateInput(graphene.InputObjectType):
     last = graphene.String(description="Last Name")
     nickname = graphene.String(description="Nickname")
     graduation_year = graphene.Int(description="Graduation Year")
-    current_team_id = graphene.ID(description="Permanent Team ID")
     school_id = graphene.ID(required=True, description="School ID")
     current_division_id = graphene.ID(description="Division ID")
 
@@ -47,8 +47,6 @@ class StudentCreationInput(graphene.InputObjectType):
         required=True,
         description="Graduation Year")
     school_id = graphene.ID(required=True, description="School ID")
-    current_team_id = graphene.ID(required=False,
-                                  description="Permanent Team ID")
     current_division_id = graphene.ID(required=True,
                                       description="Division ID")
 
@@ -62,12 +60,21 @@ class CreateStudentMutation(graphene.Mutation):
 
     # TODO - verification
     @classmethod
+    @jwt_required
     def mutate(cls, root, info, studentInfo):
         print(studentInfo)
         studentInfo = clean_input(studentInfo)
         print(studentInfo)
         student = StudentModel(**studentInfo)
         db.session.add(student)
+        db.session.commit()
+        division_assoc = StudentDivisionAssociationModel(
+            student_id=student.id,
+            division_id=student.current_division_id,
+            team_id=student.current_team_id,
+            is_alternate=False,
+        )
+        db.session.add(division_assoc)
         db.session.commit()
         return CreateStudentMutation(student=student,
                                      id=student.id)
@@ -82,16 +89,30 @@ class UpdateStudentMutation(graphene.Mutation):
     id = graphene.ID()
 
     @classmethod
+    @jwt_required
     def mutate(cls, root, info, studentInfo, id):
         query = Student.get_query(info)
         studentInfo = clean_input(studentInfo)
         id = localize_id(id)
         studentToModify = query.get(id)
+        student = studentToModify
         if len(studentInfo) != 0:
             update_model_with_dict(studentToModify, studentInfo)
             db.session.commit()
         # confirmation
         studentToModify = query.get(id)
+        student = studentToModify
+        if not StudentDivisionAssociationModel.query.get({
+                'student_id': student.id,
+                'division_id': student.current_division_id}):
+            division_assoc = StudentDivisionAssociationModel(
+                student_id=student.id,
+                division_id=student.current_division_id,
+                team_id=student.current_team_id,
+                is_alternate=False,
+            )
+            db.session.add(division_assoc)
+            db.session.commit()
         return UpdateStudentMutation(student=studentToModify,
                                      id=id)
 
@@ -275,11 +296,78 @@ class UpdateTeamMutation(graphene.Mutation):
 
 class SetTeamMembersMutation(graphene.Mutation):
     class Arguments:
-        studentIds = graphene.List(graphene.ID)
+        student_ids = graphene.List(graphene.ID)
+        team_id = graphene.ID(required=True)
     team = graphene.Field(lambda: Team)
 
     @classmethod
     @jwt_required
-    def mutate(cls, root, info, studentIds):
-        pass
+    def mutate(cls, root, info, student_ids, team_id):
+        user = get_current_user()
+        team = Team.get_query(info).get(team_id)
+        if not team:
+            raise GraphQLError("Invalid Team ID!")
+        school = team.school
+        division = team.division
+        if not user.isSchoolAdmin(team.school):
+            raise GraphQLError("Not admin for given team!")
+        students = []
+        for student_id in student_ids:
+            student_id = localize_id(student_id)
+            student = Student.get_query(info).get(student_id)
+            if not student or student.school != school:
+                raise GraphQLError("Cannot control student!")
+            if (student.current_division_id != team.division_id):
+                raise GraphQLError("Wrong division!")
+            students.append(student)
+        if (len(students) > division.team_size):
+            raise GraphQLError("Too many team members!")
+        removed_students = list(filter(
+            lambda student: student not in students,
+            team.current_students))
+        added_students = list(filter(
+            lambda student: student not in team.current_students,
+            students))
+        for student in added_students:
+            if (student.current_team):
+                raise GraphQLError("Student already on team!")
+        for student in (added_students+removed_students):
+            print(len(student.current_scores))
+            if (len(student.current_scores) != 0):
+                raise GraphQLError(
+                    "Student already has scores entered!"
+                    " Remove them or contact an admin.")
+            division_assoc = StudentDivisionAssociationModel. \
+                query.filter_by(
+                    student_id=student.id, division_id=division.id
+                ).first()
+            if (division_assoc.is_alternate):
+                raise GraphQLError(
+                    "Student is already a designated alternate!"
+                    " Remove their alternate status first.")
+        # if no errors raised so far,we can update
+        for student in removed_students:
+            student.current_team_id = None
+            if team in student.teams:
+                division_assoc = StudentDivisionAssociationModel. \
+                    query.filter_by(
+                        student_id=student.id, division_id=division.id
+                    ).first()
+                division_assoc.team_id = None
+                db.session.add(division_assoc)
+                db.session.commit()
+            db.session.add(student)
+            db.session.commit()
 
+        for student in added_students:
+            student.current_team_id = team.id
+            division_assoc = StudentDivisionAssociationModel. \
+                query.filter_by(
+                    student_id=student.id, division_id=division.id
+                ).first()
+            division_assoc.team_id = team.id
+            db.session.add(division_assoc)
+            db.session.commit()
+            db.session.add(student)
+            db.session.commit()
+        return SetTeamMembersMutation(team)

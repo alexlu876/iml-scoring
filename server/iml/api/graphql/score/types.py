@@ -3,7 +3,8 @@ from iml.models import (
     Contest as ContestModel,
     Question as QuestionModel,
     Score as ScoreModel,
-    Category as CategoryModel
+    Category as CategoryModel,
+    ContestAttendance as ContestAttendanceModel
 )
 from graphene_sqlalchemy import SQLAlchemyObjectType
 
@@ -29,6 +30,11 @@ class Category(SQLAlchemyObjectType):
         model = CategoryModel
 
 
+class ContestAttendance(SQLAlchemyObjectType):
+    class Meta:
+        model = ContestAttendanceModel
+
+
 class ScoreRelayConnection(graphene.relay.Connection):
     class Meta:
         node = Score
@@ -50,4 +56,10 @@ class CategoryRelayConnection(graphene.relay.Connection):
 class ContestRelayConnection(graphene.relay.Connection):
     class Meta:
         node = Contest
+        interfaces = (graphene.relay.Node,)
+
+
+class ContestAttendanceRelayConnection(graphene.relay.Connection):
+    class Meta:
+        node = ContestAttendance
         interfaces = (graphene.relay.Node,)

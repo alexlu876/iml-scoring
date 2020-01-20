@@ -39,6 +39,8 @@ class Student(db.Model):
     scores = db.relationship('Score', back_populates='student')
     teams = association_proxy('division_associations', 'team')
     divisions = association_proxy('division_associations', 'division')
+
+    # contests backreff'd
     current_division = db.relationship('Division',
                                        foreign_keys=[current_division_id],
                                        backref='current_students')
@@ -46,6 +48,14 @@ class Student(db.Model):
                                    foreign_keys=[current_team_id],
                                    backref='current_students'
                                    )
+    current_scores = db.relationship(
+        'Score',
+        viewonly=True,
+        secondary="join(Question, Contest, Contest.id==Question.contest_id)."
+        "join( Score, Question.id==Score.question_id )",
+        primaryjoin='Student.current_division_id==Contest.division_id',
+        secondaryjoin='Score.question_id==Question.id'
+    )
 
     # if current_team is null, then they are an alternate
     # TODO - replaec team with current team
@@ -152,10 +162,6 @@ class Student(db.Model):
     def get_user_id(self):
         return self.getUserId()
 
-    @hybrid_property
-    def current_score(self) -> int:
-        return self.getFinalScore()
-
 
 class StudentDivisionAssociation(db.Model):
     __tablename__ = 'student_division_assoc'
@@ -171,7 +177,9 @@ class StudentDivisionAssociation(db.Model):
         nullable=False,
         primary_key=True
     )
-    is_alternate = db.Column(db.Boolean, nullable=False)
+    is_alternate = db.Column(db.Boolean,
+                             nullable=False,
+                             default=False)
     team_id = db.Column(
         db.Integer,
         db.ForeignKey('teams.id'),

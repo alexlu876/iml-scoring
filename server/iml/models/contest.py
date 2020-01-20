@@ -1,6 +1,34 @@
 from iml import db
 
 
+class ContestAttendance(db.Model):
+    __tablename__ = 'contest_attendance'
+
+    contest_id = db.Column(db.Integer,
+                           db.ForeignKey('contests.id'),
+                           primary_key=True)
+    student_id = db.Column(db.Integer,
+                           db.ForeignKey('students.id'),
+                           primary_key=True)
+    team_id = db.Column(db.Integer,
+                        db.ForeignKey('teams.id'),
+                        nullable=True)
+    attended = db.Column(db.Boolean,
+                         nullable=False)
+    contest = db.relationship('Contest',
+                              backref='attendance')
+    student = db.relationship('Student',
+                              backref='attendance')
+    team = db.relationship('Team',
+                           backref='contest_attendances')
+
+    def __init__(self, contest_id, student_id, attended, team_id=None):
+        self.contest_id = contest_id
+        self.student_id = student_id
+        self.team_id = team_id
+        self.attended = attended
+
+
 class Contest(db.Model):
 
     __tablename__ = 'contests'
@@ -20,15 +48,16 @@ class Contest(db.Model):
     division_id = db.Column(db.Integer,
                             db.ForeignKey('divisions.id'),
                             nullable=False)
+    division = db.relationship('Division', back_populates='contests')
+    questions = db.relationship('Question', back_populates='contest')
+
+    #attendance backreffed
 
     def __init__(self, name, start_time, question_count=6, team_size=5):
         self.name = name
         self.start_time = start_time
         self.question_count = question_count
         self.team_size = team_size
-
-    division = db.relationship('Division', back_populates='contests')
-    questions = db.relationship('Question', back_populates='contest')
 
     # scores backref'd
 
