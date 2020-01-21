@@ -62,14 +62,26 @@ query {
 
 export const STUDENT_CONTEST_ATTENDANCE = gql`
 query StudentContestAttendance($contestId: ID!, $studentId: ID!) {
+    studentIsAlternate(contestId: $contestId, studentId: $studentId)
     studentContestAttendance(contestId: $contestId, studentId: $studentId) {
         attended
+        contest {
+            divisionId
+        }
         studentId
-        divisionId
         teamId
         team {
             name
         }
+    }
+    student (id: $studentId) {
+        currentTeamId
+        currentTeam {
+            name
+        }
+        id
+        first
+        last
     }
 }
 `
@@ -181,4 +193,17 @@ export var UPDATE_STUDENT = gql`
             }
         }
     }
+`
+
+export const UPDATE_CONTEST_ATTENDANCE = gql`
+mutation UpdateContestAttendance($attended: Boolean!, $contestId: ID!, $studentId: ID!, $teamId: ID)  {
+    updateContestAttendance(attended: $attended, contestId: $contestId, studentId: $studentId, teamId: $teamId) {
+        attendance {
+            studentId
+            contestId
+            attended
+            teamId
+        }
+    }
+}
 `

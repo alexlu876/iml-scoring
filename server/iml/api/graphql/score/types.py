@@ -16,6 +16,7 @@ class Contest(SQLAlchemyObjectType):
 
 class Question(SQLAlchemyObjectType):
     class Meta:
+        interfaces = (graphene.relay.Node,)
         model = QuestionModel
         exclude_fields = ("question_string",)
 
@@ -23,43 +24,41 @@ class Question(SQLAlchemyObjectType):
 class Score(SQLAlchemyObjectType):
     class Meta:
         model = ScoreModel
+        interfaces = (graphene.relay.Node,)
 
 
 class Category(SQLAlchemyObjectType):
     class Meta:
         model = CategoryModel
+        interfaces = (graphene.relay.Node,)
 
 
 class ContestAttendance(SQLAlchemyObjectType):
     class Meta:
         model = ContestAttendanceModel
+        interfaces = (graphene.relay.Node,)
 
 
 class ScoreRelayConnection(graphene.relay.Connection):
     class Meta:
         node = Score
-        interfaces = (graphene.relay.Node,)
 
 
 class QuestionRelayConnection(graphene.relay.Connection):
     class Meta:
         node = Question
-        interfaces = (graphene.relay.Node,)
 
 
 class CategoryRelayConnection(graphene.relay.Connection):
     class Meta:
         node = Category
-        interfaces = (graphene.relay.Node,)
 
 
 class ContestRelayConnection(graphene.relay.Connection):
     class Meta:
         node = Contest
-        interfaces = (graphene.relay.Node,)
 
 
 class ContestAttendanceRelayConnection(graphene.relay.Connection):
     class Meta:
         node = ContestAttendance
-        interfaces = (graphene.relay.Node,)

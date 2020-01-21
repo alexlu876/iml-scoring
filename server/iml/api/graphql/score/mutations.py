@@ -155,6 +155,16 @@ class UpdateContestAttendanceMutation(graphene.Mutation):
         if student.current_division != contest.division:
             raise GraphQLError(
                 "This student cannot participate in the given contest!")
+        if not team_id:
+            return UpdateContestAttendanceMutation(
+                attendance=update_attendance(
+                    info,
+                    contest_id=contest_id,
+                    student_id=student_id,
+                    attended=attended,
+                    team_id=team_id
+                )
+            )
         if not team:
             raise GraphQLError("Invalid team!")
         if team.school != school:
@@ -165,34 +175,53 @@ class UpdateContestAttendanceMutation(graphene.Mutation):
                 student_id=student.id
             ).first():
                 raise GraphQLError("Update regular students status first!")
+        # end loop
 
-        participants = ContestAttendance.query.filter_by(
+        participants = ContestAttendance.get_query(info).filter_by(
             contest_id=contest_id,
-            team_id_id=team_id,
+            team_id=team_id,
             attended=True
         )
-        if (participants.count() >= contest.team_size-1):
+        if (participants.count() >= contest.team_size-1 and
+                not participants.filter_by(student_id=student.id).first()):
             raise GraphQLError("This team already has too many participants!")
-
-        attendance = ContestAttendance.get_query(info).get(
-            {"contest_id": contest_id, "student_id": student_id})
-        if (attendance is None):
-            attendance = ContestAttendanceModel(
+        return UpdateContestAttendanceMutation(
+            attendance=update_attendance(
+                info,
                 contest_id=contest_id,
                 student_id=student_id,
                 attended=attended,
                 team_id=team_id
             )
-        else:
-            attendance.attended = attended
-            attendance.team_id = team_id
-            # update the scores for this contest with the new team_id,
-            # if they exist:
-            student.scores.filter(ScoreModel.question.has(
-                contest_id=contest_id)).update({'team_id': team_id})
-        db.session.add(attendance)
+        )
+
+
+def update_attendance(info, contest_id, student_id, attended, team_id):
+    attendance = ContestAttendance.get_query(info).get(
+        {"contest_id": contest_id, "student_id": student_id})
+    if (attendance is None):
+        attendance = ContestAttendanceModel(
+            contest_id=contest_id,
+            student_id=student_id,
+            attended=attended,
+            team_id=team_id
+        )
+    else:
+        attendance.attended = attended
+        attendance.team_id = team_id
+        # update the scores for this contest with the new team_id,
+        # if they exist:
+        db.session.query(ScoreModel).filter_by(
+            student_id=student_id,
+        ).filter(ScoreModel.question.has(
+            contest_id=contest_id)).update(
+                {'team_id': team_id},
+                synchronize_session='fetch'
+            )
         db.session.commit()
-        return UpdateContestAttendanceMutation(attendance=attendance)
+    db.session.add(attendance)
+    db.session.commit()
+    return attendance
 
 
 class ScoreInput(graphene.InputObjectType):

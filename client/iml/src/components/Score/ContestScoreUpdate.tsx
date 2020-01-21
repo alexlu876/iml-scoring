@@ -10,6 +10,16 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { Switch, Route, Link, useParams,  BrowserRouter as Router, Redirect } from "react-router-dom";
 
+import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks';
+import {useSnackbar} from 'notistack';
+import {client} from '../../App';
+
+import {
+    VIEWER_STUDENTS_BY_CONTEST,
+    STUDENT_CONTEST_ATTENDANCE,
+    UPDATE_CONTEST_ATTENDANCE,
+} from '../../queries/student';
+import {VIEWER_SCHOOL_TEAMS_QUERY} from '../../queries/team';
 import AttendanceTable from '../../components/Score/AttendanceTable';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -48,8 +58,10 @@ export default function ContestScoreUpdate() {
 	const classes = useStyles();
 	const [activeStep, setActiveStep] = React.useState(0);
 	const steps = getSteps();
+    const {refetch} = useQuery(VIEWER_STUDENTS_BY_CONTEST,{client: client, variables: {contestId: id}});
 
 	const handleNext = () => {
+        refetch().then(res=>{}, err=>{});
 		setActiveStep(prevActiveStep => prevActiveStep + 1);
 	};
 

@@ -2,6 +2,7 @@ from iml.models import (
     Student as StudentModel,
     Team as TeamModel,
     School as SchoolModel,
+    StudentDivisionAssociation as StudentDivisionAssociationModel
 )
 from graphene_sqlalchemy import SQLAlchemyObjectType
 import graphene
@@ -40,3 +41,16 @@ class SchoolRelayConnection(graphene.relay.Connection):
     class Meta:
         node = School
         interfaces = (graphene.relay.Node,)
+
+
+class StudentDivisionAssociation(SQLAlchemyObjectType):
+    class Meta:
+        model = StudentDivisionAssociationModel
+        interfaces = (graphene.relay.Node,)
+
+
+class StudentDivisionAssociationRelayConnection(graphene.relay.Connection):
+    class Meta:
+        node = StudentDivisionAssociation
+        interfaces = (graphene.relay.Node,)
+

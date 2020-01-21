@@ -42,10 +42,11 @@ from iml.api.graphql.student.types import (
     School,
     StudentRelayConnection,
     TeamRelayConnection,
-    SchoolRelayConnection
+    SchoolRelayConnection,
+    StudentDivisionAssociation
 )
 from iml.api.graphql.score.types import (
-    Score, Question, Contest,
+    Score, Question, Contest, ScoreRelayConnection,
     ContestAttendance, ContestAttendanceRelayConnection, Category
 )
 
@@ -87,6 +88,11 @@ class Query(graphene.ObjectType):
         StudentRelayConnection,
         contest_id=graphene.ID(required=True)
     )
+    student_is_alternate = graphene.Field(
+        graphene.Boolean,
+        contest_id=graphene.ID(required=True),
+        student_id=graphene.ID(required=True)
+    )
     viewer_attendees_by_contest = graphene.relay.ConnectionField(
         StudentRelayConnection,
         contest_id=graphene.ID(required=True)
@@ -104,6 +110,14 @@ class Query(graphene.ObjectType):
     )
     student_contest_attendance = graphene.Field(
         lambda: ContestAttendance,
+        contest_id=graphene.ID(required=True),
+        student_id=graphene.ID(required=True)
+    )
+
+    scores = SQLAlchemyConnectionField(ScoreRelayConnection)
+
+    scores_by_contest = graphene.relay.ConnectionField(
+        ScoreRelayConnection,
         contest_id=graphene.ID(required=True),
         student_id=graphene.ID(required=True)
     )
@@ -207,6 +221,20 @@ class Query(graphene.ObjectType):
             'contest_id': localize_id(contest_id),
             'student_id': localize_id(student_id)
              })
+
+    def resolve_student_is_alternate(root, info, contest_id, student_id):
+        contest = Contest.get_query(info).get(contest_id)
+        if not contest:
+            raise GraphQLError("Invalid contest!")
+        return StudentDivisionAssociation.get_query(info).filter_by(
+            division_id=contest.division_id,
+            student_id=student_id,
+            is_alternate=True).first() is not None
+
+    def resolve_scores_by_contest(root, info, contest_id, student_id):
+        return Score.get_query(info).filter_by(
+            contest_id=contest_id,
+            student_id=student_id).all()
 
 
 class AuthMutation(graphene.Mutation):
