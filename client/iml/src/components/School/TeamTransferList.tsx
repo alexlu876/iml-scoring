@@ -90,9 +90,9 @@ export default function TeamTransferList({divisionId, schoolId, teamId }:any) {
             studentIds: rightIds.concat(checkedLeft),
         }}).then(
             res=> {
-                setChecked(not(checked,checkedLeft));
                 noTeamQuery.refetch();
                 currentMembersQuery.refetch();
+                setChecked(not(checked,checkedLeft));
             }
         );
     };
@@ -106,9 +106,9 @@ export default function TeamTransferList({divisionId, schoolId, teamId }:any) {
             studentIds: not(rightIds, checkedRight),
         }}).then(
             res=> {
-                setChecked(not(checked,checkedRight));
                 noTeamQuery.refetch();
                 currentMembersQuery.refetch();
+                setChecked(not(checked,checkedRight));
             }
         );
         

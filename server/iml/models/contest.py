@@ -1,4 +1,5 @@
 from iml import db
+from sqlalchemy.ext.associationproxy import association_proxy
 
 
 class ContestAttendance(db.Model):
@@ -51,7 +52,11 @@ class Contest(db.Model):
     division = db.relationship('Division', back_populates='contests')
     questions = db.relationship('Question', back_populates='contest')
 
-    #attendance backreffed
+    # attendance backreffed
+    attending_students = association_proxy(
+        'attendance',
+        'student',
+    )
 
     def __init__(self, name, start_time, question_count=6, team_size=5):
         self.name = name

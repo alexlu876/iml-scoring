@@ -16,7 +16,8 @@ from iml.api.graphql.utils import localize_id
 
 from iml.models import (
     School as SchoolModel,
-    Season as SeasonModel
+    Season as SeasonModel,
+    Student as StudentModel
 )
 
 from iml.api.graphql.user.types import (
@@ -44,7 +45,8 @@ from iml.api.graphql.student.types import (
     SchoolRelayConnection
 )
 from iml.api.graphql.score.types import (
-    Score, Question, Contest, Category
+    Score, Question, Contest,
+    ContestAttendance, ContestAttendanceRelayConnection, Category
 )
 
 from iml.api.graphql.student.mutations import (
@@ -54,10 +56,12 @@ from iml.api.graphql.student.mutations import (
     UpdateSchoolMutation,
     CreateTeamMutation,
     UpdateTeamMutation,
-    SetTeamMembersMutation
+    SetTeamMembersMutation,
 )
 from iml.api.graphql.score.mutations import (
-    CreateContestMutation
+    CreateContestMutation,
+    UpdateContestAttendanceMutation,
+    UpdateScoreMutation
 )
 from iml.api.graphql.admin.mutations import (
     CreateSeasonMutation,
@@ -79,11 +83,14 @@ class Query(graphene.ObjectType):
     viewer = graphene.Field(lambda: User)
     viewer_school = graphene.Field(lambda: School)
     viewer_students = SQLAlchemyConnectionField(StudentRelayConnection)
-
-    schools = SQLAlchemyConnectionField(SchoolRelayConnection)
-    school = graphene.Field(lambda: School,
-                            id=graphene.ID(required=True))
-
+    viewer_students_by_contest = graphene.relay.ConnectionField(
+        StudentRelayConnection,
+        contest_id=graphene.ID(required=True)
+    )
+    viewer_attendees_by_contest = graphene.relay.ConnectionField(
+        StudentRelayConnection,
+        contest_id=graphene.ID(required=True)
+    )
     students = SQLAlchemyConnectionField(StudentRelayConnection)
     student = graphene.Field(lambda: Student, id=graphene.ID(required=True))
     no_team_students = graphene.relay.ConnectionField(
@@ -95,6 +102,15 @@ class Query(graphene.ObjectType):
         StudentRelayConnection,
         team_id=graphene.ID(required=True)
     )
+    student_contest_attendance = graphene.Field(
+        lambda: ContestAttendance,
+        contest_id=graphene.ID(required=True),
+        student_id=graphene.ID(required=True)
+    )
+
+    schools = SQLAlchemyConnectionField(SchoolRelayConnection)
+    school = graphene.Field(lambda: School,
+                            id=graphene.ID(required=True))
 
     divisions = SQLAlchemyConnectionField(DivisionRelayConnection)
     division = graphene.Field(lambda: Division, id=graphene.ID(required=True))
@@ -150,6 +166,32 @@ class Query(graphene.ObjectType):
         user = get_current_user()
         return user.students if user else None
 
+    @jwt_required
+    def resolve_viewer_students_by_contest(root, info, contest_id, **kwargs):
+        user = get_current_user()
+        contest = Contest.get_query(info).get(localize_id(contest_id))
+        if not contest:
+            raise GraphQLError("Invalid contest provided!")
+        return Student.get_query(info).filter_by(
+            current_division_id=contest.division_id,
+            school_id=user.school_id
+        ).order_by(StudentModel.current_team_id.desc(),
+                   StudentModel.username).all()
+
+    @jwt_required
+    def resolve_viewer_attendees_by_contest(root, info, contest_id, **kwargs):
+        user = get_current_user()
+        contest = Contest.get_query(info).get(localize_id(contest_id))
+        if not contest:
+            raise GraphQLError("Invalid contest provided!")
+        return Student.get_query(info).filter_by(
+            school_id=user.school_id
+        ).filter(
+            StudentModel.attendance.any(contest_id=contest.id,
+                                        attended=True)
+        ).order_by(StudentModel.current_team_id.desc(),
+                   StudentModel.username).all()
+
     def resolve_school_grouping(root, info):
         query = SchoolGrouping.get_query(info)
         return query.get(localize_id(id))
@@ -159,6 +201,12 @@ class Query(graphene.ObjectType):
         current_time = datetime.datetime.utcnow().date()
         return query.filter(SeasonModel.start_date <= current_time,
                             SeasonModel.end_date >= current_time).first()
+
+    def resolve_student_contest_attendance(root, info, contest_id, student_id):
+        return ContestAttendance.get_query(info).get({
+            'contest_id': localize_id(contest_id),
+            'student_id': localize_id(student_id)
+             })
 
 
 class AuthMutation(graphene.Mutation):
@@ -225,6 +273,8 @@ class Mutation(graphene.ObjectType):
     createTeam = CreateTeamMutation.Field()
     updateTeam = UpdateTeamMutation.Field()
     setTeamMembers = SetTeamMembersMutation.Field()
+    updateContestAttendance = UpdateContestAttendanceMutation.Field()
+    updateScore = UpdateScoreMutation.Field()
 
     createContest = CreateContestMutation.Field()
 

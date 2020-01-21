@@ -8,6 +8,7 @@ import Login from './components/Login/Login';
 
 import {isLoggedIn} from './Auth';
 import AdminPanel from './components/Admin/AdminPanel';
+import ScoreManager from './components/Score/ScoreManager';
 
 const Routes = [
 
@@ -41,6 +42,14 @@ const Routes = [
         icon: AccountCircle,
         isAccessable: isLoggedIn,
         component: SchoolManager 
+    },
+    {
+        path: '/scores/add',
+        sidebarName: 'Add Scores',
+        navbarName: 'Add Scores',
+        icon: AccountCircle,
+        isAccessable: isLoggedIn,
+        component: ScoreManager,
     },
     {
         path: '/admin',

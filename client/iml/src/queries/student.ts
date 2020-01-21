@@ -59,6 +59,39 @@ query {
     }
 }
 `
+
+export const STUDENT_CONTEST_ATTENDANCE = gql`
+query StudentContestAttendance($contestId: ID!, $studentId: ID!) {
+    studentContestAttendance(contestId: $contestId, studentId: $studentId) {
+        attended
+        studentId
+        divisionId
+        teamId
+        team {
+            name
+        }
+    }
+}
+`
+
+export const VIEWER_STUDENTS_BY_CONTEST = gql`
+query ViewerStudentsByContest($contestId: ID!) {
+    viewerStudentsByContest(contestId: $contestId) {
+        edges {
+            node {
+                currentDivisionId
+                id
+                currentTeamId
+                schoolId
+                username
+                first
+                last
+            }
+        }
+    }
+}
+
+`
 export const CREATE_SCHOOL = gql`
     mutation CreateSchool(
     $name: String!,
@@ -147,4 +180,5 @@ export var UPDATE_STUDENT = gql`
                 last
             }
         }
-    }`
+    }
+`
