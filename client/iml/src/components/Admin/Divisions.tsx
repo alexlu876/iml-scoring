@@ -24,7 +24,7 @@ const Divisions = () => {
     if (loading)
         return (<div> loading...</div>);
     if (error)
-        return (<div> error...</div>);
+        return (<div> error... {error.message}</div>);
     return (
         <Typography component={'span'}>
                 <br/><br/>

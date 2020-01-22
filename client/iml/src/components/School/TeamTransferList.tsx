@@ -114,6 +114,7 @@ export default function TeamTransferList({divisionId, schoolId, teamId }:any) {
         
     };
 
+
     const customList = (items: any) => (
     <Paper className={classes.paper}>
       <List dense component="div" role="list">
@@ -141,7 +142,12 @@ export default function TeamTransferList({divisionId, schoolId, teamId }:any) {
 
   return (
     <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
-        <Grid item>{customList(noTeamQuery.data.noTeamStudents.edges.map((edge: any) => edge.node))}</Grid>
+        <Grid item>
+            {customList(noTeamQuery.data.noTeamStudents.edges.map((edge: any) => edge.node))}
+            <Typography align="center" variant="h6">
+                Eligible Members
+            </Typography>
+      </Grid>
       <Grid item>
         <Grid container direction="column" alignItems="center">
           <Button
@@ -166,7 +172,12 @@ export default function TeamTransferList({divisionId, schoolId, teamId }:any) {
           </Button>
         </Grid>
       </Grid>
-          <Grid item>{customList(currentMembersQuery.data.teamCurrentStudents.edges.map((edge: any) => edge.node))}</Grid>
+          <Grid item>
+              {customList(currentMembersQuery.data.teamCurrentStudents.edges.map((edge: any) => edge.node))}
+            <Typography align="center" variant="h6">
+                Team Members
+            </Typography>
+      </Grid>
     </Grid>
   );
 

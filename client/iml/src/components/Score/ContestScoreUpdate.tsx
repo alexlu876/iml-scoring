@@ -21,6 +21,7 @@ import {
 } from '../../queries/student';
 import {VIEWER_SCHOOL_TEAMS_QUERY} from '../../queries/team';
 import AttendanceTable from '../../components/Score/AttendanceTable';
+import ScoreEntryTable from '../../components/Score/ScoreEntryTable';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,7 +47,7 @@ function getStepContent(stepIndex: number) {
         case 0:
             return (<AttendanceTable/>);
         case 1:
-            return (<div>bruh</div>);
+                return (<ScoreEntryTable/>);
         default:
             return 'Unknown stepIndex';
     }

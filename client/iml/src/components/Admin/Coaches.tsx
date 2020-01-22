@@ -33,6 +33,7 @@ const Coaches = () => {
                         {title: 'Approval Status', field: 'approvalStatus'},
                         {title: 'Is Admin?', field:'isAdmin', type:'boolean'},
                         {title: 'Phone #', field: 'phoneNum'},
+                        {title: 'Email', field: 'email'},
                         {title: 'ID', field: 'id', hidden: true, editable: 'never'},
                     ]}
                     data={data.users.edges.map((edge : any) => edge.node)}

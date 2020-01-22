@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -76,13 +77,17 @@ export default function HeaderDrawer({darkTheme, setDarkTheme, open, setOpen} : 
                   )})}
               </MenuList>
             <Divider />
-            <Switch
-                checked={darkTheme}
-                onChange={handleThemeChange('useDarkTheme')}
-                value='useDarkTheme'
-                inputProps={{ 'aria-label': 'use dark theme' }}
-            />
-
+            <FormControlLabel
+                control={
+                <Switch
+                    checked={darkTheme}
+                    onChange={handleThemeChange('useDarkTheme')}
+                    value='useDarkTheme'
+                    inputProps={{ 'aria-label': 'use dark theme' }}
+                />
+                        }
+                    label="Dark Theme"
+                />
         </div>
         </SwipeableDrawer>
     );

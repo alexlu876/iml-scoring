@@ -70,6 +70,7 @@ export const USERS_QUERY = gql`
                     first
                     last
                     schoolId
+                    email
                     approvalStatus
                     isAdmin
                     username

@@ -102,7 +102,20 @@ query ViewerStudentsByContest($contestId: ID!) {
         }
     }
 }
-
+`
+export const VIEWER_ATTENDEES_BY_CONTEST = gql`
+query ViewerAttendeesByContest($contestId: ID!) {
+    viewerAttendeesByContest(contestId: $contestId) {
+        edges {
+            node {
+                id
+                first
+                last
+                username
+            }
+        }
+    }
+}
 `
 export const CREATE_SCHOOL = gql`
     mutation CreateSchool(
