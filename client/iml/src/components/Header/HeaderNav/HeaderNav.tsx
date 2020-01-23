@@ -90,7 +90,6 @@ export default function HeaderNav({toggleDrawer} : any) {
                                 onClose={handleClose}
                             >
                                 <MenuItem onClick={logout}>Log Out</MenuItem>
-                            <MenuItem onClick={handleClose}>My account</MenuItem>
                             </Menu>
                         </div>
                         )}

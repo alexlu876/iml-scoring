@@ -34,7 +34,7 @@ class StudentUpdateInput(graphene.InputObjectType):
     last = graphene.String(description="Last Name")
     nickname = graphene.String(description="Nickname")
     graduation_year = graphene.Int(description="Graduation Year")
-    school_id = graphene.ID(required=True, description="School ID")
+    school_id = graphene.ID(description="School ID")
     current_division_id = graphene.ID(description="Division ID")
 
 
@@ -62,9 +62,12 @@ class CreateStudentMutation(graphene.Mutation):
     @classmethod
     @jwt_required
     def mutate(cls, root, info, studentInfo):
+        user = get_current_user()
         print(studentInfo)
         studentInfo = clean_input(studentInfo)
-        print(studentInfo)
+        if (user.school_id != studentInfo.school_id
+                and not user.isAdmin()) or not user.isApproved():
+            raise GraphQLError("Not enough permissions!")
         student = StudentModel(**studentInfo)
         db.session.add(student)
         db.session.commit()

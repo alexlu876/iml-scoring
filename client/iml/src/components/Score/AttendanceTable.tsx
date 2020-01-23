@@ -30,7 +30,7 @@ const useStyles = makeStyles({
 
 
 export default function AttendanceTable() {
-	const {id} = useParams();
+	let {id} = useParams();
 
 	const classes = useStyles();
 	const rows = [{}];

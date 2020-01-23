@@ -16,6 +16,7 @@ from iml.api.graphql.student.types import (
 from iml.api.graphql.score.types import (
     Contest,
     Score,
+    ScoreRelayConnection,
     Question,
     ContestAttendance
 )
@@ -236,7 +237,9 @@ class UpdateScoreMutation(graphene.Mutation):
         scores = graphene.List(ScoreInput)
         contest_id = graphene.ID(required=True)
         student_id = graphene.ID(required=True)
-    scores = graphene.List(lambda: Score)
+    scores = graphene.relay.ConnectionField(
+        ScoreRelayConnection
+    )
 
     @classmethod
     @jwt_required

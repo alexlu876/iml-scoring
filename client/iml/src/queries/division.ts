@@ -74,6 +74,7 @@ query {
                 seasonId
                 successorId
                 season {
+                    id
                     name
                 }
             }

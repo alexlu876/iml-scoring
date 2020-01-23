@@ -28,6 +28,9 @@ from iml.api.graphql.user.mutations import (
     UserRegisterMutation,
     CodeCreationMutation
 )
+from iml.api.graphql.score.queries import (
+    ScoreQueries
+)
 from iml.api.graphql.admin.types import (
     SchoolGrouping,
     Division,
@@ -47,6 +50,7 @@ from iml.api.graphql.student.types import (
 )
 from iml.api.graphql.score.types import (
     Score, Question, Contest, ScoreRelayConnection,
+    ContestRelayConnection, QuestionRelayConnection,
     ContestAttendance, ContestAttendanceRelayConnection, Category
 )
 
@@ -97,6 +101,8 @@ class Query(graphene.ObjectType):
         StudentRelayConnection,
         contest_id=graphene.ID(required=True)
     )
+    contests = SQLAlchemyConnectionField(ContestRelayConnection)
+    contest = graphene.Field(lambda: Contest, id=graphene.ID(required=True))
     students = SQLAlchemyConnectionField(StudentRelayConnection)
     student = graphene.Field(lambda: Student, id=graphene.ID(required=True))
     no_team_students = graphene.relay.ConnectionField(
@@ -135,6 +141,8 @@ class Query(graphene.ObjectType):
 
     school_groupings = SQLAlchemyConnectionField(SchoolGroupingRelayConnection)
 
+    score_queries = graphene.Field(ScoreQueries)
+
     def resolve_user(root, info, id):
         query = User.get_query(info)
         return query.get(localize_id(id))
@@ -165,6 +173,9 @@ class Query(graphene.ObjectType):
     def resolve_season(root, info, id):
         query = Season.get_query(info)
         return query.get(localize_id(id))
+
+    def resolve_contest(root, info, id):
+        return Contest.get_query(info).get(localize_id(id))
 
     @jwt_optional
     def resolve_viewer(root, info):
