@@ -67,7 +67,8 @@ from iml.api.graphql.student.mutations import (
 from iml.api.graphql.score.mutations import (
     CreateContestMutation,
     UpdateContestAttendanceMutation,
-    UpdateScoreMutation
+    UpdateScoreMutation,
+    DeleteScoreMutation
 )
 from iml.api.graphql.admin.mutations import (
     CreateSeasonMutation,
@@ -331,6 +332,7 @@ class Mutation(graphene.ObjectType):
     setTeamMembers = SetTeamMembersMutation.Field()
     updateContestAttendance = UpdateContestAttendanceMutation.Field()
     updateScore = UpdateScoreMutation.Field()
+    deleteScore = DeleteScoreMutation.Field()
 
     createContest = CreateContestMutation.Field()
 

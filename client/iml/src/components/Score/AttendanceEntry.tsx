@@ -6,7 +6,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks';
 import {useSnackbar} from 'notistack';
-import {client} from '../../App';
 
 import {
     VIEWER_STUDENTS_BY_CONTEST,
@@ -21,11 +20,10 @@ export default function AttendanceEntry({studentId, contestId}: any) {
     const studentAttendance = useQuery(
         STUDENT_CONTEST_ATTENDANCE,
         {
-            client: client,
             variables: {contestId: contestId, studentId: studentId}
         });
-    const viewerTeams = useQuery(VIEWER_SCHOOL_TEAMS_QUERY, {client: client});
-    const [updateAttendance, ] = useMutation(UPDATE_CONTEST_ATTENDANCE, {client: client}); 
+    const viewerTeams = useQuery(VIEWER_SCHOOL_TEAMS_QUERY);
+    const [updateAttendance, ] = useMutation(UPDATE_CONTEST_ATTENDANCE); 
     if (!studentAttendance.data || !viewerTeams.data)
         return (<div>loading...</div>);
     else {
@@ -52,7 +50,7 @@ export default function AttendanceEntry({studentId, contestId}: any) {
             const oldValue = value;
             let attended=true;
             if (valString == 'notAttending') {
-                attended=false
+                attended=false;
             }
             setValue(valString);
             if (valString == 'noTeam' || valString == 'notAttending') {

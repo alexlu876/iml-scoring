@@ -1,12 +1,8 @@
 import React from 'react';
 import {useSnackbar} from 'notistack';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+
 import {deglobifyId} from '../../utils/serializers';
 import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks'
 import {
@@ -17,7 +13,6 @@ import {
     CONTEST_BY_ID,
     SIMPLE_SCORE_BY_CONTEST
 } from '../../queries/score';
-import {client} from '../../App';
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 import PublishIcon from '@material-ui/icons/Publish';
 import IconButton from '@material-ui/core/IconButton';
@@ -31,11 +26,11 @@ export default function ScoreEntryRow({student, contest}: any) {
     const [isChanged, setChanged] = React.useState(false);
     const {enqueueSnackbar} = useSnackbar();
     const scoresQuery = useQuery(
-        SIMPLE_SCORE_BY_CONTEST, {client: client, variables: {
+        SIMPLE_SCORE_BY_CONTEST, {variables: {
             'contestId': contest.id,
             'studentId': student.id
         }});
-    const [updateScoresMutation] = useMutation(UPDATE_SCORE, {client: client});
+    const [updateScoresMutation] = useMutation(UPDATE_SCORE);
     const updateScoreRow = (index : number, pointsAwarded: number) => {
         setState([ ...state.slice(0,index)
                 ,{ ...(state[index]), pointsAwarded: pointsAwarded},

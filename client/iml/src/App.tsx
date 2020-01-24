@@ -86,7 +86,7 @@ const link = ApolloLink.from([
     httpLink,
     errorLink
 ]);
-export const client = new ApolloClient({
+const client = new ApolloClient({
     link: link,
     cache: new InMemoryCache()
 });

@@ -2,14 +2,13 @@ import React from 'react';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import Typography from '@material-ui/core/Typography';
 import MaterialTable from 'material-table';
-import {client} from '../../App';
 import {useSnackbar} from 'notistack';
 
 import {VIEWERS_STUDENTS} from '../../queries/student'; 
 
 function StudentsTable() {
     const {enqueueSnackbar} = useSnackbar();
-    const {data, loading, error, refetch} = useQuery(VIEWERS_STUDENTS, {client: client});
+    const {data, loading, error, refetch} = useQuery(VIEWERS_STUDENTS);
     if (!data || loading || error)
         return (<div>Loading...</div>)
     return (

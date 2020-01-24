@@ -240,6 +240,30 @@ class ScoreInput(graphene.InputObjectType):
                                   required=True)
 
 
+def partially_validate_score_entry(info, user, student, contest):
+    if not user:
+        raise GraphQLError("Invalid user!")
+    if not student:
+        raise GraphQLError("Invalid student!")
+    if not contest:
+        raise GraphQLError("Invalid contest!")
+    if not user.isSchoolAdmin(student.school):
+        raise GraphQLError("Not an admin for given school!")
+    school = student.school
+    if contest.division not in school.divisions:
+        raise GraphQLError(
+            "This contest is not available to the given school!")
+    if student.current_division != contest.division:
+        raise GraphQLError(
+            "This student cannot participate in the given contest!")
+    attendance = ContestAttendance.get_query(info).get(
+        {"student_id": student.id, "contest_id": contest.id}
+    )
+    if not (attendance and attendance.attended):
+        raise GraphQLError("This student did not attend this contest!")
+    return True
+
+
 class UpdateScoreMutation(graphene.Mutation):
     class Arguments:
         scores = graphene.List(ScoreInput)
@@ -258,27 +282,10 @@ class UpdateScoreMutation(graphene.Mutation):
 
         student = Student.get_query(info).get(student_id)
         contest = Contest.get_query(info).get(contest_id)
-        if not user:
-            raise GraphQLError("Invalid user!")
-        if not student:
-            raise GraphQLError("Invalid student!")
-
-        if not contest:
-            raise GraphQLError("Invalid contest!")
-        if not user.isSchoolAdmin(student.school):
-            raise GraphQLError("Not an admin for given school!")
-        school = student.school
-        if contest.division not in school.divisions:
-            raise GraphQLError(
-                "This contest is not available to the given school!")
-        if student.current_division != contest.division:
-            raise GraphQLError(
-                "This student cannot participate in the given contest!")
+        partially_validate_score_entry(info, user, student, contest)
         attendance = ContestAttendance.get_query(info).get(
             {"student_id": student.id, "contest_id": contest.id}
         )
-        if not (attendance and attendance.attended):
-            raise GraphQLError("This student did not attend this contest!")
         team_id = attendance.team_id
         # dealing with whether team is provided, and that
         # attendance/alternate confirmation rules have bene followed
@@ -286,6 +293,32 @@ class UpdateScoreMutation(graphene.Mutation):
         return UpdateScoreMutation(
             update_scores(student, contest, user,
                           team_id, scores))
+
+
+class DeleteScoreMutation(graphene.Mutation):
+    class Arguments:
+        contest_id = graphene.ID(required=True)
+        student_id = graphene.ID(required=True)
+    success = graphene.Boolean()
+
+    @classmethod
+    @jwt_required
+    def mutate(cls, root, info, student_id, contest_id):
+        user = get_current_user()
+        student_id = localize_id(student_id)
+        contest_id = localize_id(contest_id)
+        student = Student.get_query(info).get(student_id)
+        contest = Contest.get_query(info).get(contest_id)
+
+        partially_validate_score_entry(info, user, student, contest)
+        scores = db.session.query(ScoreModel).filter_by(
+            student_id=student_id,
+        ).filter(ScoreModel.question.has(
+            contest_id=contest_id))
+        deletion = scores.delete()
+        db.session.add(deletion)
+        db.session.commit()
+        return DeleteScoreMutation(True)
 
 
 def update_scores(student: StudentModel,

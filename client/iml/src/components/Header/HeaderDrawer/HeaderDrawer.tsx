@@ -3,9 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import Switch from '@material-ui/core/Switch';
 import {List, ListItemIcon, ListItemText, Divider, IconButton, MenuList, MenuItem, Drawer } from '@material-ui/core';
 import Routes from '../../../routes';
@@ -14,7 +11,6 @@ import {BrowserRouter as Router, Route, Redirect, Link, Switch as RouteSwitch} f
 import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks'
 
 import {VIEWER_QUERY} from '../../../queries/user';
-import {client} from '../../../App';
 
 const useStyles = makeStyles({
   list: {
@@ -27,7 +23,7 @@ const useStyles = makeStyles({
 
 export default function HeaderDrawer({darkTheme, setDarkTheme, open, setOpen} : any) {
     const classes = useStyles();
-    const {data, loading, error} = useQuery(VIEWER_QUERY, {client: client});
+    const {data, loading, error} = useQuery(VIEWER_QUERY);
 
     function handleDrawerOpen() {
         return (event: React.KeyboardEvent | React.MouseEvent) => {

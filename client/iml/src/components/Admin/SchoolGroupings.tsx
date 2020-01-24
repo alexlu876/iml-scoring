@@ -1,7 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import {client} from '../../App';
 import MaterialTable from 'material-table';
 import {useSnackbar} from 'notistack';
 
@@ -14,9 +13,9 @@ import {
 
 const SchoolGroupings = () => {
     const {enqueueSnackbar} = useSnackbar();
-    const { data, refetch, loading, error } = useQuery(SCHOOL_GROUPINGS_QUERY, {client: client});
-    const [updateSchoolGrouping,] = useMutation(UPDATE_SCHOOL_GROUPING, {client: client});
-    const [createSchoolGrouping,] = useMutation(CREATE_SCHOOL_GROUPING, {client: client}); 
+    const { data, refetch, loading, error } = useQuery(SCHOOL_GROUPINGS_QUERY);
+    const [updateSchoolGrouping,] = useMutation(UPDATE_SCHOOL_GROUPING);
+    const [createSchoolGrouping,] = useMutation(CREATE_SCHOOL_GROUPING); 
     if (loading)
         return (<div> loading...</div>);
     if (error || !data.schoolGroupings)

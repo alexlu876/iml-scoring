@@ -3,9 +3,6 @@ import { Query, Mutation} from 'react-apollo'
 import { useMutation, useQuery, useApolloClient} from '@apollo/react-hooks'
 import Typography from '@material-ui/core/Typography';
 import MaterialTable from 'material-table'
-
-import { withApollo } from "react-apollo";
-import {client} from '../../App';
 import {useSnackbar} from 'notistack';
 import {deglobifyId} from '../../utils/serializers';
 import {
@@ -18,11 +15,11 @@ import {
 
 export default function AllStudents() {
     const {enqueueSnackbar} = useSnackbar();
-    const [createStudent,] = useMutation(CREATE_STUDENT, {client:client});
-    const [updateStudent,] = useMutation(UPDATE_STUDENT, {client:client});
-    const [deleteStudent,] = useMutation(DELETE_STUDENT, {client:client});
-    const divisionsQuery = useQuery(DIVISIONS_QUERY, {client: client});
-    const schoolsQuery = useQuery(SCHOOLS_QUERY, {client: client});
+    const [createStudent,] = useMutation(CREATE_STUDENT);
+    const [updateStudent,] = useMutation(UPDATE_STUDENT);
+    const [deleteStudent,] = useMutation(DELETE_STUDENT);
+    const divisionsQuery = useQuery(DIVISIONS_QUERY);
+    const schoolsQuery = useQuery(SCHOOLS_QUERY);
     return (
         <Typography component={'span'}>
                 <br/><br/>

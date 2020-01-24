@@ -36,9 +36,7 @@
     "notistack": "^0.9.7",
     "package.json": "^2.0.1",
     "react": "^16.8.6",
-    "react-apollo": "^2.5.8",
-    "react-apollo-form": "^0.1.8",
-    "react-apollo-hooks": "^0.5.0",
+    "react-apollo": "^3.0.0",
     "react-dom": "^16.8.6",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
@@ -50,8 +48,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "react-apollo-form": "react-apollo-form fetch-mutations http://localhost:5000/graphql ./src/forms"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

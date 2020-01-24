@@ -12,7 +12,6 @@ import { Switch, Route, Link, useParams,  BrowserRouter as Router, Redirect } fr
 
 import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks';
 import {useSnackbar} from 'notistack';
-import {client} from '../../App';
 
 import {
     VIEWER_STUDENTS_BY_CONTEST,
@@ -59,7 +58,7 @@ export default function ContestScoreUpdate() {
 	const classes = useStyles();
 	const [activeStep, setActiveStep] = React.useState(0);
 	const steps = getSteps();
-    const {refetch} = useQuery(VIEWER_STUDENTS_BY_CONTEST,{client: client, variables: {contestId: id}});
+    const {refetch} = useQuery(VIEWER_STUDENTS_BY_CONTEST,{variables: {contestId: id}});
 
 	const handleNext = () => {
         refetch().then(res=>{}, err=>{});

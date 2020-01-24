@@ -1,7 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks'
-import {client} from '../../App';
 import MaterialTable from 'material-table'
 import {useSnackbar} from 'notistack';
 
@@ -16,10 +15,10 @@ import {deglobifyId} from '../../utils/serializers';
 
 const Divisions = () => {
     const {enqueueSnackbar} = useSnackbar();
-    const [createDivision,] = useMutation(CREATE_DIVISION, {client:client});
-    const [updateDivision,] = useMutation(UPDATE_DIVISION, {client: client});
-    const divisionsQuery = useQuery(DIVISIONS_QUERY, {client: client});
-    const seasonsQuery = useQuery(SEASONS_QUERY, {client: client});
+    const [createDivision,] = useMutation(CREATE_DIVISION);
+    const [updateDivision,] = useMutation(UPDATE_DIVISION);
+    const divisionsQuery = useQuery(DIVISIONS_QUERY);
+    const seasonsQuery = useQuery(SEASONS_QUERY);
     const {data, refetch, loading, error} = divisionsQuery;
     if (loading)
         return (<div> loading...</div>);

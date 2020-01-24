@@ -2,7 +2,6 @@ import React from 'react';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import Typography from '@material-ui/core/Typography';
 import MaterialTable from 'material-table';
-import {client} from '../../App';
 import {useSnackbar} from 'notistack';
 
 import {
@@ -14,9 +13,9 @@ import {deglobifyId} from '../../utils/serializers';
 
 export default function TeamsTable() {
     const {enqueueSnackbar} = useSnackbar();
-    const {data, loading, error, refetch} = useQuery(VIEWER_SCHOOL_TEAMS_QUERY, {client: client});
-    const [createTeam,] = useMutation(CREATE_TEAM_MUTATION, {client: client});
-    const [updateTeam,] = useMutation(UPDATE_TEAM_MUTATION, {client: client});
+    const {data, loading, error, refetch} = useQuery(VIEWER_SCHOOL_TEAMS_QUERY);
+    const [createTeam,] = useMutation(CREATE_TEAM_MUTATION);
+    const [updateTeam,] = useMutation(UPDATE_TEAM_MUTATION);
     if (!data || loading || error)
         return (<div>Loading... {''+error || ''}</div>)
     return (

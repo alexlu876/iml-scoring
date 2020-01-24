@@ -1,11 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import MaterialTable from 'material-table';
-import {Query} from 'react-apollo';
 import moment from 'moment';
-import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks'
-
-import {client} from '../../App';
+import { useQuery, useMutation} from '@apollo/react-hooks'
 import {
     SEASONS_QUERY,
     CREATE_SEASON,
@@ -14,15 +11,9 @@ import {
 
 export function  Seasons() {
     const { loading, error, data, refetch } = useQuery(
-        SEASONS_QUERY,
-        {client: client}
-    );
-    const [createSeason,] = useMutation(CREATE_SEASON,
-        {client: client}
-    );
-    const [updateSeason,] = useMutation(UPDATE_SEASON,
-        {client: client}
-    );
+        SEASONS_QUERY);
+    const [createSeason,] = useMutation(CREATE_SEASON);
+    const [updateSeason,] = useMutation(UPDATE_SEASON);
     const edgeMapper = () => {return [];};
     if (loading) return (<div>loading...</div>);
     if (error) return (<div>error...</div>);

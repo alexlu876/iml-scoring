@@ -36,8 +36,6 @@ import {REGISTER_MUTATION} from '../../queries/user';
 import {useSnackbar} from 'notistack';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 
-import {client} from '../../App';
-
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -99,7 +97,7 @@ export default function Register() {
     const classes = useStyles();
     const history = useHistory();
     const {enqueueSnackbar} = useSnackbar();
-    const [registerMutation] = useMutation(REGISTER_MUTATION, {client: client});
+    const [registerMutation] = useMutation(REGISTER_MUTATION);
 
     return (
         <div>

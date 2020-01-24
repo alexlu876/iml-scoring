@@ -1,20 +1,11 @@
 import React from 'react';
 import { Query, Mutation} from 'react-apollo'
-import { configure } from 'react-apollo-form'
 import { useMutation, useApolloClient} from '@apollo/react-hooks'
 import {ApolloConsumer, ApolloProvider} from "react-apollo"
 import gql from 'graphql-tag'
 import Typography from '@material-ui/core/Typography';
 import MaterialTable from 'material-table'
 import { forwardRef } from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-
-import { withApollo } from "react-apollo";
-import {client} from '../../App';
 
 import {
     STUDENTS_QUERY, CREATE_STUDENT, UPDATE_STUDENT,
@@ -22,9 +13,9 @@ import {
 } from '../../queries/student'
 
 export default function View() {
-    const [createStudent,] = useMutation(CREATE_STUDENT, {client:client})
-    const [updateStudent,] = useMutation(UPDATE_STUDENT, {client:client})
-    const [deleteStudent,] = useMutation(DELETE_STUDENT, {client:client})
+    const [createStudent,] = useMutation(CREATE_STUDENT)
+    const [updateStudent,] = useMutation(UPDATE_STUDENT)
+    const [deleteStudent,] = useMutation(DELETE_STUDENT)
     return (
         <Typography component={'span'}>
                 <br/><br/>

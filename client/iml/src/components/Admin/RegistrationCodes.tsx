@@ -1,7 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import {client} from '../../App';
 import MaterialTable from 'material-table';
 import {useSnackbar} from 'notistack';
 
@@ -11,7 +10,7 @@ import {deglobifyId} from '../../utils/serializers';
 
 const RegistrationCodes = () => {
     const {enqueueSnackbar} = useSnackbar();
-    const { data, refetch, loading, error } = useQuery(USERS_QUERY, {client: client});
+    const { data, refetch, loading, error } = useQuery(USERS_QUERY);
     if (loading)
         return (<div> loading...</div>);
     if (error || !data.users)

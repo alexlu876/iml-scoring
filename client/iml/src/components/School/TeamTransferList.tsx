@@ -1,16 +1,11 @@
 import React from 'react';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import Typography from '@material-ui/core/Typography';
-import MaterialTable from 'material-table';
-import {client} from '../../App';
 import {useSnackbar} from 'notistack';
 
 import {
     TEAM_CURRENT_STUDENTS_QUERY,
     NO_TEAM_STUDENTS_QUERY,
-    VIEWER_SCHOOL_TEAMS_QUERY,
-    CREATE_TEAM_MUTATION,
-    UPDATE_TEAM_MUTATION,
     SET_TEAM_MEMBERS
 } from '../../queries/team'; 
 import {deglobifyId} from '../../utils/serializers';
@@ -53,12 +48,13 @@ function intersection(a: number[], b: number[]) {
 export default function TeamTransferList({divisionId, schoolId, teamId }:any) {
     
     const classes = useStyles();
+    const {enqueueSnackbar} = useSnackbar();
     const [checked, setChecked] = React.useState<number[]>([]);
     const currentMembersQuery = useQuery(
-        TEAM_CURRENT_STUDENTS_QUERY, {variables: {teamId: teamId}, client: client});
+        TEAM_CURRENT_STUDENTS_QUERY, {variables: {teamId: teamId}});
     const noTeamQuery = useQuery(
-        NO_TEAM_STUDENTS_QUERY, {variables: {schoolId: schoolId, divisionId: divisionId}, client: client});
-    const [setMembers, ] = useMutation(SET_TEAM_MEMBERS, {client: client});
+        NO_TEAM_STUDENTS_QUERY, {variables: {schoolId: schoolId, divisionId: divisionId}});
+    const [setMembers, ] = useMutation(SET_TEAM_MEMBERS);
 
     if (!currentMembersQuery.data || !noTeamQuery.data)
         return (<div>loading...</div>)
@@ -93,6 +89,9 @@ export default function TeamTransferList({divisionId, schoolId, teamId }:any) {
                 noTeamQuery.refetch();
                 currentMembersQuery.refetch();
                 setChecked(not(checked,checkedLeft));
+            },
+            err=> {
+                enqueueSnackbar(err.message.split(':')[1]);
             }
         );
     };
@@ -109,6 +108,9 @@ export default function TeamTransferList({divisionId, schoolId, teamId }:any) {
                 noTeamQuery.refetch();
                 currentMembersQuery.refetch();
                 setChecked(not(checked,checkedRight));
+            },
+            err=> {
+                enqueueSnackbar(err.message.split(':')[1]);
             }
         );
         

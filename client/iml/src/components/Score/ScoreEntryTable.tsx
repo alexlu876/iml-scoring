@@ -17,7 +17,6 @@ import {
     UPDATE_SCORE,
     CONTEST_BY_ID
 } from '../../queries/score';
-import {client} from '../../App';
 import ScoreEntryRow from '../../components/Score/ScoreEntryRow';
 
 const useStyles = makeStyles({
@@ -31,9 +30,9 @@ export default function ScoreEntryTable() {
 
 	const classes = useStyles();
     const attendingStudents = useQuery(VIEWER_ATTENDEES_BY_CONTEST,
-        {client: client, variables: {contestId: id}});
+        {variables: {contestId: id}});
     const contestInfo = useQuery(CONTEST_BY_ID,
-        {client: client, variables: {contestId: id}});
+        {variables: {contestId: id}});
     if (attendingStudents.error || contestInfo.error)
         return (<div>error...</div>);
     if (!attendingStudents.data || !contestInfo.data)

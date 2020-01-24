@@ -31,7 +31,6 @@ import Avatar from '@material-ui/core/Avatar';
 import { useMutation, useApolloClient} from '@apollo/react-hooks'
 import { useSnackbar } from 'notistack';
 
-import {client} from '../../App';
 import {AUTH} from '../../queries/user';
 import {
     getTokenIdentifier,
@@ -82,7 +81,7 @@ const validationSchema = Yup.object().shape(
 export const Login = (redirect : string | undefined) => {
     const classes = useStyles();
 
-    const [authUser,] = useMutation(AUTH, {client: client});
+    const [authUser,] = useMutation(AUTH);
     const history = useHistory();
     const { enqueueSnackbar } = useSnackbar();
     if (isLoggedIn())
@@ -100,7 +99,6 @@ export const Login = (redirect : string | undefined) => {
                         </Avatar>
 
                         <Typography component="h1" variant="h5">
-                            Log In
                         </Typography>
 
         <Formik

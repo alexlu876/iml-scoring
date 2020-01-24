@@ -7,7 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import {deglobifyId} from '../../utils/serializers';
 
-import {client} from '../../App';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import {
     VIEWER_SCHOOL_TEAMS_QUERY,
@@ -57,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function StudentsManager() {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
-    const {data, loading, error, refetch} = useQuery(VIEWER_SCHOOL_TEAMS_QUERY, {client: client});
+    const {data, loading, error, refetch} = useQuery(VIEWER_SCHOOL_TEAMS_QUERY);
 
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setValue(newValue);

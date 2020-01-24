@@ -13,7 +13,6 @@ import Paper from '@material-ui/core/Paper';
 import {deglobifyId} from '../../utils/serializers';
 import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks'
 import { Switch, Route, Link, useParams,  BrowserRouter as Router, Redirect } from "react-router-dom";
-import {client} from '../../App';
 
 import {
     VIEWER_STUDENTS_BY_CONTEST,
@@ -35,7 +34,7 @@ export default function AttendanceTable() {
 	const classes = useStyles();
 	const rows = [{}];
     const eligibleStudents = useQuery(VIEWER_STUDENTS_BY_CONTEST, 
-        {client: client, variables: {contestId: id} }
+        {variables: {contestId: id} }
     )
     if (!eligibleStudents.data)
         return (<div>loading...</div>)

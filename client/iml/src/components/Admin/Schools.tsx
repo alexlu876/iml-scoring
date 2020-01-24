@@ -1,7 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks'
-import {client} from '../../App';
 import MaterialTable from 'material-table'
 import {useSnackbar} from 'notistack';
 
@@ -23,11 +22,11 @@ import {deglobifyId} from '../../utils/serializers';
 
 const Schools = () => {
     const {enqueueSnackbar} = useSnackbar();
-    const [createSchool,] = useMutation(CREATE_SCHOOL, {client: client});
-    const [updateSchool,] = useMutation(UPDATE_SCHOOL, {client: client});
-    const schoolsQuery = useQuery(SCHOOLS_QUERY, {client: client});
+    const [createSchool,] = useMutation(CREATE_SCHOOL);
+    const [updateSchool,] = useMutation(UPDATE_SCHOOL);
+    const schoolsQuery = useQuery(SCHOOLS_QUERY);
     const {data, refetch, loading, error} = schoolsQuery;
-    const schoolGroupingsQuery = useQuery(SCHOOL_GROUPINGS_QUERY, {client:client});
+    const schoolGroupingsQuery = useQuery(SCHOOL_GROUPINGS_QUERY);
     if (loading)
         return (<div> loading... </div>);
     if (error)

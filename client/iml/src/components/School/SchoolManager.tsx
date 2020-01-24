@@ -1,14 +1,13 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles'
 import CardTitle from '../../components/CardTitle';
-import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks'
+import { useQuery} from '@apollo/react-hooks'
 
 import {VIEWER_QUERY, VIEWER_SCHOOLS_QUERY } from '../../queries/user';
-import {client} from '../../App';
 
 import StudentsManager from '../../components/School/StudentsManager';
 
@@ -31,8 +30,8 @@ const useStyles = makeStyles(theme => ({
 
 const SchoolManager = () => {
     const classes = useStyles();
-    const viewerQuery = useQuery(VIEWER_QUERY, {client: client});
-    const schoolQuery = useQuery(VIEWER_SCHOOLS_QUERY, {client: client});
+    const viewerQuery = useQuery(VIEWER_QUERY);
+    const schoolQuery = useQuery(VIEWER_SCHOOLS_QUERY);
     if (!schoolQuery.data || !schoolQuery.data.viewerSchool)
         return (
         <Container className={classes.container} maxWidth="xl">
