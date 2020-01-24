@@ -53,7 +53,8 @@ class Student(db.Model):
         viewonly=True,
         secondary="join(Question, Contest, Contest.id==Question.contest_id)."
         "join( Score, Question.id==Score.question_id )",
-        primaryjoin='Student.current_division_id==Contest.division_id',
+        primaryjoin="and_(Student.current_division_id==Contest.division_id"
+        ",Student.id==Score.student_id)",
         secondaryjoin='Score.question_id==Question.id'
     )
 

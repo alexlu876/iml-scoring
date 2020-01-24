@@ -32,6 +32,16 @@ query Contest($contestId: ID!) {
         division {
             id
             name
+            currentStudents {
+                edges {
+                    node {
+                        id
+                        first
+                        last
+                        username
+                    }
+                }
+            }
         }
         questionCount
         questions {
@@ -64,7 +74,14 @@ mutation UpdateScore($studentId: ID!, $contestId: ID!, $scores: [ScoreInput] ) {
         }
     }
 }
+`
 
+export const DELETE_SCORE = gql`
+mutation DeleteScore($studentId: ID!, $contestId: ID!) {
+    deleteScore(studentId:$studentId, contestId: $contestId) {
+        success
+    }
+}
 `
 
 export const SIMPLE_SCORE_BY_CONTEST = gql`

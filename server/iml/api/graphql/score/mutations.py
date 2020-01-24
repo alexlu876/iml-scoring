@@ -315,8 +315,7 @@ class DeleteScoreMutation(graphene.Mutation):
             student_id=student_id,
         ).filter(ScoreModel.question.has(
             contest_id=contest_id))
-        deletion = scores.delete()
-        db.session.add(deletion)
+        scores.delete(synchronize_session='fetch')
         db.session.commit()
         return DeleteScoreMutation(True)
 

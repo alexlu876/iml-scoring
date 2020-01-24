@@ -32,13 +32,11 @@ export default function AttendanceTable() {
 	let {id} = useParams();
 
 	const classes = useStyles();
-	const rows = [{}];
     const eligibleStudents = useQuery(VIEWER_STUDENTS_BY_CONTEST, 
         {variables: {contestId: id} }
-    )
+    );
     if (!eligibleStudents.data)
         return (<div>loading...</div>)
-
 	return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">

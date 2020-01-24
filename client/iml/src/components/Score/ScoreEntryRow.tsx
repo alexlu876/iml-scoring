@@ -10,6 +10,7 @@ import {
 } from '../../queries/student';
 import {
     UPDATE_SCORE,
+    DELETE_SCORE,
     CONTEST_BY_ID,
     SIMPLE_SCORE_BY_CONTEST
 } from '../../queries/score';
@@ -17,6 +18,7 @@ import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 import PublishIcon from '@material-ui/icons/Publish';
 import IconButton from '@material-ui/core/IconButton';
 import SyncIcon from '@material-ui/icons/Sync';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 export default function ScoreEntryRow({student, contest}: any) {
     const [state, setState,] = React.useState(
@@ -31,6 +33,7 @@ export default function ScoreEntryRow({student, contest}: any) {
             'studentId': student.id
         }});
     const [updateScoresMutation] = useMutation(UPDATE_SCORE);
+    const [deleteScoresMutation] = useMutation(DELETE_SCORE);
     const updateScoreRow = (index : number, pointsAwarded: number) => {
         setState([ ...state.slice(0,index)
                 ,{ ...(state[index]), pointsAwarded: pointsAwarded},
@@ -89,6 +92,24 @@ export default function ScoreEntryRow({student, contest}: any) {
             }
         );
     }
+
+    function handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
+        event.preventDefault();
+        deleteScoresMutation({variables: {
+            contestId: contest.id,
+            studentId: student.id,
+        }}).then(
+            res=> {
+                setChanged(false);
+                scoresQuery.refetch().then(
+                    res=> {}, 
+                    err=>{enqueueSnackbar("Error confirming deletion!")});
+            },
+            err=> {
+                enqueueSnackbar(err.message.split(":")[1]);
+            }
+        );
+    }
     return (
         <TableRow key={student.id}>
             <TableCell component="th" scope="row">
@@ -117,6 +138,12 @@ export default function ScoreEntryRow({student, contest}: any) {
                     onClick={handleSync}
                     >
                     <SyncIcon/>
+                </IconButton>
+                <IconButton
+                    aria-label="sync"
+                    onClick={handleDelete}
+                    >
+                    <DeleteForeverIcon/>
                 </IconButton>
             </TableCell>
         </TableRow>
