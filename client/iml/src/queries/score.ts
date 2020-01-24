@@ -55,8 +55,8 @@ mutation UpdateScore($studentId: ID!, $contestId: ID!, $scores: [ScoreInput] ) {
                     id
                     question {
                         id
-                        question_num
-                        question_value
+                        questionNum
+                        questionValue
                     }
                     pointsAwarded
                 }
@@ -65,4 +65,13 @@ mutation UpdateScore($studentId: ID!, $contestId: ID!, $scores: [ScoreInput] ) {
     }
 }
 
+`
+
+export const SIMPLE_SCORE_BY_CONTEST = gql`
+query SimpleScoreByContest($contestId: ID!, $studentId: ID!) {
+    simpleScoreByContest (contestId: $contestId, studentId: $studentId) {
+        pointsAwarded
+        questionNum
+    }
+}
 `

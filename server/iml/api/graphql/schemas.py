@@ -17,7 +17,8 @@ from iml.api.graphql.utils import localize_id
 from iml.models import (
     School as SchoolModel,
     Season as SeasonModel,
-    Student as StudentModel
+    Student as StudentModel,
+    Score as ScoreModel
 )
 
 from iml.api.graphql.user.types import (
@@ -29,7 +30,7 @@ from iml.api.graphql.user.mutations import (
     CodeCreationMutation
 )
 from iml.api.graphql.score.queries import (
-    ScoreQueries
+    SimpleScore
 )
 from iml.api.graphql.admin.types import (
     SchoolGrouping,
@@ -141,7 +142,23 @@ class Query(graphene.ObjectType):
 
     school_groupings = SQLAlchemyConnectionField(SchoolGroupingRelayConnection)
 
-    score_queries = graphene.Field(ScoreQueries)
+    simple_score_by_contest = graphene.List(
+        SimpleScore,
+        contest_id=graphene.ID(required=True),
+        student_id=graphene.ID(required=True)
+    )
+
+    def resolve_simple_score_by_contest(root, info,
+                                        contest_id, student_id):
+        contest_id = localize_id(contest_id)
+        student_id = localize_id(student_id)
+        scores = Score.get_query(info).filter_by(
+            student_id=student_id).filter(
+                ScoreModel.question.has(contest_id=contest_id)).all()
+        return map((lambda score: {
+            'question_num': score.question.question_num,
+            'points_awarded': score.points_awarded
+        }), scores)
 
     def resolve_user(root, info, id):
         query = User.get_query(info)

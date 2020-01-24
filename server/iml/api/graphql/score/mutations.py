@@ -166,6 +166,14 @@ class UpdateContestAttendanceMutation(graphene.Mutation):
                     team_id=team_id
                 )
             )
+        if not attended:
+            # do not allow changing to "not attended if scores exist"
+            scores = db.session.query(ScoreModel).filter_by(
+                student_id=student_id,
+            ).filter(ScoreModel.question.has(
+                contest_id=contest_id))
+            if scores and scores.count() <= 0:
+                raise GraphQLError("Remove scores first!")
         if not team:
             raise GraphQLError("Invalid team!")
         if team.school != school:
@@ -267,7 +275,7 @@ class UpdateScoreMutation(graphene.Mutation):
             raise GraphQLError(
                 "This student cannot participate in the given contest!")
         attendance = ContestAttendance.get_query(info).get(
-            {student_id: student.id, contest_id: contest.id}
+            {"student_id": student.id, "contest_id": contest.id}
         )
         if not (attendance and attendance.attended):
             raise GraphQLError("This student did not attend this contest!")
@@ -299,7 +307,7 @@ def update_scores(student: StudentModel,
         scores[entry.question_num-1] = entry.points_awarded
     for i in range(0, question_count):
         # check if any of the questions are missing
-        if not scores[i]:
+        if scores[i] is None:
             raise GraphQLError("Missing question number " + str(i+1))
     # at this point, scores are properly formatted, and all exist.
     scores_list = []
@@ -320,7 +328,7 @@ def update_scores(student: StudentModel,
             db.session.commit()
             scores_list.append(old_score_object)
         else:
-            new_score_object = Score(
+            new_score_object = ScoreModel(
                 question_id=question_object.id,
                 points_awarded=scores[i],
                 timestamp=datetime.utcnow(),
