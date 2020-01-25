@@ -40,6 +40,9 @@ export const STUDENTS_QUERY = gql`query{students{
             currentDivisionId
             currentTeamId
             nickname
+            currentDivisionAssoc {
+                isAlternate
+            }
         }}}}`
 
 export const VIEWERS_STUDENTS = gql`
@@ -54,6 +57,9 @@ query {
                 schoolId
                 currentDivisionId
                 nickname
+                currentDivisionAssoc {
+                    isAlternate
+                }
             }
         }
     }
@@ -154,14 +160,17 @@ mutation UpdateSchoolGrouping($id: ID!, $name: String, $url: String) {
 }
 `
 export const CREATE_STUDENT = gql`
-    mutation CreateStudent($first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $currentDivisionId:ID!, $nickname: String,){
+    mutation CreateStudent($first: String!, $last:String!, 
+        $graduationYear:Int!, $schoolId:ID, $currentDivisionId:ID!, 
+        $nickname: String, $isAlternate: Boolean){
         createStudent(studentInfo:{
             first:$first,
             last:$last,
             graduationYear:$graduationYear
             schoolId:$schoolId,
             currentDivisionId:$currentDivisionId,
-            nickname: $nickname
+            nickname: $nickname,
+            isAlternate: $isAlternate
         }) {student {id}
         }
     }`
@@ -190,7 +199,9 @@ export var DELETE_STUDENT = gql`
       deleteStudent (id: $id) {id}} `
 
 export var UPDATE_STUDENT = gql`
-    mutation UpdateStudent($id:ID!, $first: String!, $last:String!, $graduationYear:Int!, $schoolId:ID!, $currentDivisionId:ID!, $nickname:String){
+    mutation UpdateStudent($id:ID!, $first: String!, $last:String!,
+        $graduationYear:Int!, $schoolId:ID!, $currentDivisionId:ID!,
+        $nickname:String, $isAlternate: Boolean){
         updateStudent(id:$id, studentInfo:{
             first:$first,
             last:$last,
@@ -198,10 +209,13 @@ export var UPDATE_STUDENT = gql`
             schoolId: $schoolId,
             nickname:$nickname,
             currentDivisionId:$currentDivisionId,
+            isAlternate: $isAlternate 
         }) {
             id
             student {
                 first
+                nickname
+                id
                 last
             }
         }

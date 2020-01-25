@@ -4,11 +4,18 @@ import Typography from '@material-ui/core/Typography';
 import MaterialTable from 'material-table';
 import {useSnackbar} from 'notistack';
 
-import {VIEWERS_STUDENTS} from '../../queries/student'; 
+import {
+    VIEWERS_STUDENTS,
+    UPDATE_STUDENT,
+    CREATE_STUDENT
+} from '../../queries/student'; 
+import {VIEWER_SCHOOL_TEAMS_QUERY} from '../../queries/team';
 
 function StudentsTable() {
     const {enqueueSnackbar} = useSnackbar();
     const {data, loading, error, refetch} = useQuery(VIEWERS_STUDENTS);
+    const [updateStudent] = useMutation(UPDATE_STUDENT);
+    const [createStudent] = useMutation(CREATE_STUDENT);
     if (!data || loading || error)
         return (<div>Loading...</div>)
     return (
@@ -19,22 +26,54 @@ function StudentsTable() {
             }}
             columns ={[
                 {title: 'First Name', field: 'first'},
+                {title: 'id', field: 'id', hidden: true, editable: 'never'},
+                {title: 'schoolId', field: 'schoolId', hidden: true, editable: 'never'},
                 {title: 'Last Name', field: 'last'},
                 {title: 'Nickname', field: 'nickname'},
                 {
                     title: 'Graduation Year',
                     field:'graduationYear',
-                    type: 'numeric'},
+                    type: 'numeric'
+                },
+                {
+                    title: 'Current Division',
+                    field:'currentDivisionId',
+                },
+                {title: 
+                    'Current Division Alternate?', 
+                    field: 'isAlternate', 
+                    type:'boolean',
+
+                },
             ]}
-            data={data ? data.viewerStudents.edges.map((edge: any) => edge.node) : []}
+        data={data ? data.viewerStudents.edges.map((edge: any) => 
+            {return {
+                ...edge.node,
+                isAlternate: edge.node.currentDivisionAssoc ? edge.node.currentDivisionAssoc.isAlternate : false
+            };
+            }) : []}
             editable={{
                 isEditable: rowData => true,
                     isDeletable: rowData => false,
                     onRowAdd: (newData) => {
-                        return new Promise<any>(() => null);
+                        return createStudent({
+                            variables: newData,
+                            refetchQueries: [{
+                                query: VIEWER_SCHOOL_TEAMS_QUERY
+                            }]}).then(
+                            res=> {refetch()},
+                            err=> {enqueueSnackbar(err.message.split(":")[1])}
+                        ) as Promise<any>;
                     },
                     onRowUpdate: (newData, oldData) => {
-                        return new Promise<any>(() => null);
+                        return updateStudent({
+                            variables: newData,
+                            refetchQueries: [{
+                                query: VIEWER_SCHOOL_TEAMS_QUERY
+                            }]}).then(
+                            res=> {refetch()},
+                            err=> {enqueueSnackbar(err.message.split(":")[1])}
+                        ) as Promise<any>;
                     },
                     onRowDelete: (oldData) => {
                         return new Promise<any>(() => null);

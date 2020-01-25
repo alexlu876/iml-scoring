@@ -48,6 +48,13 @@ class Student(db.Model):
                                    foreign_keys=[current_team_id],
                                    backref='current_students'
                                    )
+    current_division_assoc = db.relationship(
+        'StudentDivisionAssociation',
+        primaryjoin="and_(Student.id==StudentDivisionAssociation.student_id,"
+        "Student.current_division_id==StudentDivisionAssociation.division_id)",
+        uselist=False
+    )
+    is_alternate = association_proxy('current_division_assoc', 'is_alternate')
     current_scores = db.relationship(
         'Score',
         viewonly=True,

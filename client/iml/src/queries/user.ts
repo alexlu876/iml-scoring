@@ -39,6 +39,7 @@ query CurrentUserForLayout {
         isAdmin
         approvalStatus
         email
+        schoolId
         school {
             name
             id

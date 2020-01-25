@@ -5,7 +5,7 @@ from graphql_relay.node.node import from_global_id
 def clean_input(graphene_scalar_fields):
     d = {}
     for key, value in graphene_scalar_fields.items():
-        if key[-2:] == "id":
+        if key[-2:].lower() == "id":
             d[key] = localize_id(value)
         else:
             d[key] = value
@@ -26,7 +26,7 @@ def localize_id(grapheneID):
 def update_model_with_dict(obj, props):
     for key, value in props.items():
         try:
-            if getattr(obj, key):
-                setattr(obj, key, value)
+            getattr(obj, key)
+            setattr(obj, key, value)
         except AttributeError:
-            pass
+            print(f"key does not exist! {obj}")

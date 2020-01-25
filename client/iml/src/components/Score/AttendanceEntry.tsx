@@ -6,9 +6,11 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks';
 import {useSnackbar} from 'notistack';
+import {deglobifyId} from '../../utils/serializers';
 
 import {
     VIEWER_STUDENTS_BY_CONTEST,
+    VIEWER_ATTENDEES_BY_CONTEST,
     STUDENT_CONTEST_ATTENDANCE,
     UPDATE_CONTEST_ATTENDANCE,
 } from '../../queries/student';
@@ -58,7 +60,8 @@ export default function AttendanceEntry({studentId, contestId}: any) {
                     attended: attended,
                     contestId: contestId,
                     studentId: studentId
-                }}).then(
+                }, refetchQueries: [{query: VIEWER_ATTENDEES_BY_CONTEST, variables: {contestId: contestId}}]
+                }).then(
                     res => {
                         setValue(valString);
                         studentAttendance.refetch();
@@ -75,7 +78,10 @@ export default function AttendanceEntry({studentId, contestId}: any) {
                     teamId: valString,
                     contestId: contestId,
                     studentId: studentId
-                }}).then(
+                }, refetchQueries: [{query: VIEWER_ATTENDEES_BY_CONTEST,
+                    variables: {contestId: contestId}
+                }]
+                }).then(
                     res => {
                         setValue(valString);
                         studentAttendance.refetch();
@@ -95,8 +101,8 @@ export default function AttendanceEntry({studentId, contestId}: any) {
               {studentAttendance.data.studentIsAlternate && 
                   viewerTeams.data.viewerSchool.teams.edges.map((edge:any) => (
                       <FormControlLabel
-                            key={edge.node.id+""}
-                            value={edge.node.id+""}
+                            key={deglobifyId(edge.node.id)+""}
+                            value={deglobifyId(edge.node.id)+""}
                             control={(<Radio color="primary" />)}
                             label={edge.node.name}
                             labelPlacement="end"

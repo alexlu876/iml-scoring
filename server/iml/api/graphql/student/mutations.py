@@ -34,8 +34,9 @@ class StudentUpdateInput(graphene.InputObjectType):
     last = graphene.String(description="Last Name")
     nickname = graphene.String(description="Nickname")
     graduation_year = graphene.Int(description="Graduation Year")
-    school_id = graphene.ID(description="School ID")
+    school_id = graphene.ID(description="School ID (default viewer's)")
     current_division_id = graphene.ID(description="Division ID")
+    is_alternate = graphene.Boolean(description="Alternate Status")
 
 
 # TODO : add viewer-checks etc, general validation
@@ -46,9 +47,11 @@ class StudentCreationInput(graphene.InputObjectType):
     graduation_year = graphene.Int(
         required=True,
         description="Graduation Year")
-    school_id = graphene.ID(required=True, description="School ID")
+    school_id = graphene.ID(required=False,
+                            description="School ID (default viewer\'s)")
     current_division_id = graphene.ID(required=True,
                                       description="Division ID")
+    is_alternate = graphene.Boolean(description="Alternate Status")
 
 
 class CreateStudentMutation(graphene.Mutation):
@@ -65,9 +68,45 @@ class CreateStudentMutation(graphene.Mutation):
         user = get_current_user()
         print(studentInfo)
         studentInfo = clean_input(studentInfo)
-        if (user.school_id != studentInfo.school_id
+        # at this point, IDs have been localized.
+        if not studentInfo.get('school_id'):
+            studentInfo['school_id'] = user.school_id
+        if (user.school_id != studentInfo.get('school_id')
                 and not user.isAdmin()) or not user.isApproved():
             raise GraphQLError("Not enough permissions!")
+
+        school = School.get_query(info).get(
+            localize_id(studentInfo.get('school_id'))
+        )
+        division = Division.get_query(info).get(
+            localize_id(studentInfo.get('current_division_id'))
+        )
+        if not school:
+            raise GraphQLError("Invalid school!")
+        if not division:
+            raise GraphQLError("Invalid division!")
+        if not user.isSchoolAdmin(school):
+            raise GraphQLError("Not an admin for this school!")
+        if division not in school.divisions:
+            raise GraphQLError("Invalid division for given school!")
+        is_alternate = False
+        if studentInfo.get('is_alternate'):
+            if studentInfo.get('current_team_id'):
+                raise GraphQLError(
+                    "Cannot be on a team and an alternate at the same time!")
+            alternate_limit = division.alternate_limit
+            n = StudentDivisionAssociationModel.query.filter_by(
+                division_id=division.id,
+                is_alternate=True
+            ).filter(
+                StudentDivisionAssociationModel.student.has(
+                    school_id=school.id
+                )
+            ).count()
+            if (n >= alternate_limit):
+                raise GraphQLError("Too many alternates already!")
+            is_alternate = True
+        studentInfo.pop('is_alternate')
         student = StudentModel(**studentInfo)
         db.session.add(student)
         db.session.commit()
@@ -75,7 +114,7 @@ class CreateStudentMutation(graphene.Mutation):
             student_id=student.id,
             division_id=student.current_division_id,
             team_id=student.current_team_id,
-            is_alternate=False,
+            is_alternate=is_alternate,
         )
         db.session.add(division_assoc)
         db.session.commit()
@@ -94,10 +133,54 @@ class UpdateStudentMutation(graphene.Mutation):
     @classmethod
     @jwt_required
     def mutate(cls, root, info, studentInfo, id):
+        user = get_current_user()
         query = Student.get_query(info)
         studentInfo = clean_input(studentInfo)
         id = localize_id(id)
         studentToModify = query.get(id)
+        if not studentToModify:
+            raise GraphQLError("Invalid student!")
+        if 'school_id' not in studentInfo.keys():
+            studentInfo['school_id'] = studentToModify.school_id
+        # at this point, IDs have been localized.
+        if (user.school_id != studentInfo.get('school_id')
+                and not user.isAdmin()) or not user.isApproved():
+            raise GraphQLError("Not enough permissions!")
+
+        school = School.get_query(info).get(
+            studentInfo.get('school_id')
+        )
+        division = Division.get_query(info).get(
+            studentInfo.get('current_division_id')
+        )
+        if not school:
+            raise GraphQLError("School not provided!")
+        if not division:
+            division = studentToModify.current_division
+        if division not in school.divisions:
+            raise GraphQLError("Invalid division for given school!")
+        if not user.isSchoolAdmin(school):
+            raise GraphQLError("Not an admin for this school!")
+        is_alternate = False
+        if studentInfo.get('is_alternate'):
+            if studentInfo.get('current_team_id') or (
+                (not studentInfo.get('current_team_id')) and
+                    studentToModify.current_team):
+                raise GraphQLError(
+                    "An alternate cannot actively be on a team!")
+            alternate_limit = division.alternate_limit
+            n = StudentDivisionAssociationModel.query.filter_by(
+                division_id=division.id,
+                is_alternate=True
+            ).filter(
+                StudentDivisionAssociationModel.student.has(
+                    school_id=school.id
+                ),
+                StudentDivisionAssociationModel.student_id != id
+            ).count()
+            if (n >= alternate_limit):
+                raise GraphQLError("Too many alternates already!")
+            is_alternate = True
         student = studentToModify
         if len(studentInfo) != 0:
             update_model_with_dict(studentToModify, studentInfo)
@@ -105,16 +188,22 @@ class UpdateStudentMutation(graphene.Mutation):
         # confirmation
         studentToModify = query.get(id)
         student = studentToModify
-        if not StudentDivisionAssociationModel.query.get({
+        # you can only have one associated with current_division_id
+        old_assoc = StudentDivisionAssociationModel.query.get({
                 'student_id': student.id,
-                'division_id': student.current_division_id}):
+                'division_id': student.current_division_id})
+        if not old_assoc:
             division_assoc = StudentDivisionAssociationModel(
                 student_id=student.id,
                 division_id=student.current_division_id,
                 team_id=student.current_team_id,
-                is_alternate=False,
+                is_alternate=is_alternate,
             )
             db.session.add(division_assoc)
+            db.session.commit()
+        else:
+            old_assoc.is_alternate = is_alternate
+            db.session.add(old_assoc)
             db.session.commit()
         return UpdateStudentMutation(student=studentToModify,
                                      id=id)

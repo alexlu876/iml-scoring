@@ -47,6 +47,7 @@ class StudentDivisionAssociation(SQLAlchemyObjectType):
     class Meta:
         model = StudentDivisionAssociationModel
         interfaces = (graphene.relay.Node,)
+    is_alternate = graphene.Boolean()
 
 
 class StudentDivisionAssociationRelayConnection(graphene.relay.Connection):
