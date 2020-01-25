@@ -27,7 +27,7 @@ import {getLocalAccessToken, getLocalRefreshToken, isTokenValid, setLocalAccessT
 import Routes from './routes'
 
 const httpLink = createHttpLink({
-    uri: 'http://localhost:5000/graphql',
+    uri: `${process.env.REACT_APP_API_URL}/graphql`,
 });
 
 const refreshLink = new TokenRefreshLink(
@@ -41,7 +41,7 @@ const refreshLink = new TokenRefreshLink(
         },
         fetchAccessToken: (args: any[]) => {
             var token = getLocalRefreshToken();
-            return fetch('http://localhost:5000/jwt_refresh', {
+            return fetch(`{process.env.REACT_APP_API_URL}/jwt_refresh`, {
                 method: 'GET',
                 headers: {
                     Authorization: token ? `Bearer ${token}` : ""
