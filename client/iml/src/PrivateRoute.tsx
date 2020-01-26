@@ -5,7 +5,7 @@ import {Component} from 'react';
 import {isLoggedIn} from './Auth';
 
 export const PrivateRoute = ({authorize, component : Component, ...rest}: any) => {
-    var authFunction = authorize || isLoggedIn;
+    const authFunction = authorize || isLoggedIn;
     return (
         <Route {...rest} 
             render= {

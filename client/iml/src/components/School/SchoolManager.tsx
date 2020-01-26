@@ -39,14 +39,14 @@ const SchoolManager = () => {
         </Container>
         )
     return (
-        <Container className={classes.container} maxWidth="lg">
+        <Container className={classes.container} maxWidth="xl">
             <Grid container spacing={3}>
-                <Grid item sm={12} md={8} lg={9}>
+                <Grid item sm={12} md={10} lg={10}>
                     <Paper className={classes.paperNoPadding} style={{minHeight: 240}}>
                         <StudentsManager/>
                     </Paper>
                 </Grid>
-                <Grid item sm={12} md={4} lg={3}>
+                <Grid item sm={12} md={2} lg={2}>
                     <Paper className={classes.paper} style={{minHeight: 240}}>
                         <CardTitle>
                             About

@@ -3,6 +3,7 @@ import {useMutation, useQuery} from '@apollo/react-hooks';
 import Typography from '@material-ui/core/Typography';
 import MaterialTable from 'material-table';
 import {useSnackbar} from 'notistack';
+import {deglobifyId} from '../../utils/serializers';
 
 import {
     VIEWERS_STUDENTS,
@@ -16,6 +17,7 @@ function StudentsTable() {
     const {data, loading, error, refetch} = useQuery(VIEWERS_STUDENTS);
     const [updateStudent] = useMutation(UPDATE_STUDENT);
     const [createStudent] = useMutation(CREATE_STUDENT);
+    const viewerSchool = useQuery(VIEWER_SCHOOL_TEAMS_QUERY); 
     if (!data || loading || error)
         return (<div>Loading...</div>)
     return (
@@ -38,6 +40,7 @@ function StudentsTable() {
                 {
                     title: 'Current Division',
                     field:'currentDivisionId',
+                    lookup: (viewerSchool.data && viewerSchool.data.viewerSchool && Object.fromEntries(new Map(viewerSchool.data.viewerSchool.divisions.edges.map((edge: any) => [deglobifyId(edge.node.id), `${edge.node.name} (${edge.node.season.name})` ] ))))
                 },
                 {title: 
                     'Current Division Alternate?', 

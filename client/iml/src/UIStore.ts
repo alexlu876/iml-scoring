@@ -3,13 +3,13 @@ import {autorun, decorate, observable, computed} from 'mobx';
 import {isLoggedIn} from './Auth';
 
 
-function autosave(store: MainStoreObject, save : any) {
+function autosave(store: UIStoreClass, save : any) {
     // do not autorun on creation-related changes
     let firstRun = false;
     autorun(() => {
     });
 }
-export class MainStoreObject {
+export class UIStoreClass {
     drawerToggled = false;
     darkTheme = false;
     isLoggedIn = false;
@@ -25,7 +25,6 @@ export class MainStoreObject {
 
     toggleDrawer = () => {
         this.drawerToggled = !(this.drawerToggled);
-        console.log("toggled!")
     };
 
     setDrawer = (status : boolean) => {
@@ -37,10 +36,12 @@ export class MainStoreObject {
     };
 }
 
-decorate(MainStoreObject, {
+decorate(UIStoreClass, {
     drawerToggled: observable,
     darkTheme: observable
 });
 
+export const UIStoreObject = new UIStoreClass();
 
-export default createContext(new MainStoreObject())
+export default createContext(UIStoreObject);
+

@@ -16,6 +16,7 @@ import gql from 'graphql-tag';
 import { Query } from 'react-apollo'
 
 import {isLoggedIn, logout} from '../../../Auth';
+import UIStore from '../../../UIStore';
 
 const useStyles = makeStyles(
     (theme: Theme) => 

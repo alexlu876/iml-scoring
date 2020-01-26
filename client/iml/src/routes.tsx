@@ -9,16 +9,19 @@ import Login from './components/Login/Login';
 import {isLoggedIn} from './Auth';
 import AdminPanel from './components/Admin/AdminPanel';
 import ScoreManager from './components/Score/ScoreManager';
+import HomePage from './components/ScoreViewer/HomePage';
 
 const Routes = [
 
     {
         path: '/',
+        exact: true,
         sidebarName: 'Home',
         navbarName: 'Home',
         icon: Home,
         isAccessable: () => true,
-        component: () => <div> bruh </div>,},
+        component: () => (<Redirect to="/scores/view" />),
+    },
     {
         path: '/login',
         sidebarName: 'Login',
@@ -34,6 +37,15 @@ const Routes = [
         icon: AccountCircle,
         isAccessable: () => !isLoggedIn(),
         component: Register 
+    },
+    {
+        path: '/scores/view',
+        exact: true,
+        sidebarName: 'View Scores',
+        navbarName: 'View Scores',
+        icon: Home,
+        isAccessable: () => true,
+        component: HomePage,
     },
     {
         path:'/manage',

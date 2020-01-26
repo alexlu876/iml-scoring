@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
@@ -11,6 +11,7 @@ import {BrowserRouter as Router, Route, Redirect, Link, Switch as RouteSwitch} f
 import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks'
 
 import {VIEWER_QUERY} from '../../../queries/user';
+import UIStore from '../../../UIStore';
 
 const useStyles = makeStyles({
   list: {
@@ -46,6 +47,7 @@ export default function HeaderDrawer({darkTheme, setDarkTheme, open, setOpen} : 
             open={open}
             onClose={handleDrawerClose()}
             onOpen={handleDrawerOpen()}
+            ModalProps={{ keepMounted: true }}
         >
         <div
             onClick={handleDrawerClose()}

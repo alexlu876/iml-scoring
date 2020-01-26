@@ -26,74 +26,74 @@ import {getLocalAccessToken, getLocalRefreshToken, isTokenValid, setLocalAccessT
 
 import Routes from './routes'
 
-const httpLink = createHttpLink({
-    uri: `${process.env.REACT_APP_API_URL}/graphql`,
-});
-
-const refreshLink = new TokenRefreshLink(
-    {
-        accessTokenField: 'accessToken',
-        isTokenValidOrUndefined: () => {
-            var authToken = getLocalAccessToken();
-            console.log(authToken);
-            if (!authToken) return true;
-            return isTokenValid(authToken);
-        },
-        fetchAccessToken: (args: any[]) => {
-            var token = getLocalRefreshToken();
-            return fetch(`{process.env.REACT_APP_API_URL}/jwt_refresh`, {
-                method: 'GET',
-                headers: {
-                    Authorization: token ? `Bearer ${token}` : ""
-                }
-            })
-        },
-        handleFetch: (token : string ) => {
-            setLocalAccessToken(token);
-            setLocalTokenFreshness(false);
-        },
-        handleError: (err : Error) => {
-            /* todo : send accessToken identifier with login request */
-            logout();
-        }
-    }
-);
-
-const authLink = setContext(
-    (_ : any, { headers } : any) => {
-    const token = getLocalAccessToken();
-        if (isLoggedIn()) {
-            if (isTokenValid(getLocalAccessToken() || ''))
-                return {
-                    headers: {
-                        ...headers,
-                        Authorization: token ? `Bearer ${token}` : ""
-                    },
-                };
-            /* todo - figure out how to do this properly */
-            return headers;
-        }
-        return headers;
-    });
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  console.log('graphQLErrors', graphQLErrors)
-  console.log('networkError', networkError)
-})
-
-const link = ApolloLink.from([
-    refreshLink,
-    authLink,
-    httpLink,
-    errorLink
-]);
-const client = new ApolloClient({
-    link: link,
-    cache: new InMemoryCache()
-});
 
 
 const App = observer(() => {
     const store = useContext(UIStore);
+    const httpLink = createHttpLink({
+        uri: `${process.env.REACT_APP_API_URL}/graphql`,
+    });
+
+    const refreshLink = new TokenRefreshLink(
+        {
+            accessTokenField: 'accessToken',
+            isTokenValidOrUndefined: () => {
+                var authToken = getLocalAccessToken();
+                console.log(authToken);
+                if (!authToken) return true;
+                return isTokenValid(authToken);
+            },
+            fetchAccessToken: (args: any[]) => {
+                var token = getLocalRefreshToken();
+                return fetch(`${process.env.REACT_APP_API_URL}/jwt_refresh`, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: token ? `Bearer ${token}` : ""
+                    }
+                })
+            },
+            handleFetch: (token : string ) => {
+                setLocalAccessToken(token);
+                setLocalTokenFreshness(false);
+            },
+            handleError: (err : Error) => {
+                /* todo : send accessToken identifier with login request */
+                logout();
+            }
+        }
+    );
+
+    const authLink = setContext(
+        (_ : any, { headers } : any) => {
+            const token = getLocalAccessToken();
+            if (isLoggedIn()) {
+                if (isTokenValid(getLocalAccessToken() || ''))
+                    return {
+                        headers: {
+                            ...headers,
+                            Authorization: token ? `Bearer ${token}` : ""
+                        },
+                    };
+                /* todo - figure out how to do this properly */
+                return headers;
+            }
+            return headers;
+        });
+    const errorLink = onError(({ graphQLErrors, networkError }) => {
+        console.log('graphQLErrors', graphQLErrors)
+        console.log('networkError', networkError)
+    })
+
+    const link = ApolloLink.from([
+        refreshLink,
+        authLink,
+        httpLink,
+        errorLink
+    ]);
+    const client = new ApolloClient({
+        link: link,
+        cache: new InMemoryCache()
+    });
     return (
         <ApolloProvider client={client}>
             <head><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/></head>
@@ -107,7 +107,7 @@ const App = observer(() => {
                         setDarkTheme = {store.setDarkTheme}
                         open= {store.drawerToggled}
                         setOpen = {store.setDrawer}/>
-                        {Routes.map((prop, key) => <Route path={prop.path} key={key} component={prop.component} />)}
+                        {Routes.map((prop, key) => <Route path={prop.path} key={key} component={prop.component} exact={prop.exact} />)}
                 </Router>
             </SnackbarProvider>
         </MuiThemeProvider>
