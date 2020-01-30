@@ -5,24 +5,39 @@ from flask_migrate import Migrate
 
 from flask_graphql import GraphQLView
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, jwt_optional, get_current_user, jwt_refresh_token_required, get_jwt_identity, create_access_token
+from flask_jwt_extended import (
+    JWTManager, jwt_optional, get_current_user,
+    jwt_refresh_token_required, get_jwt_identity,
+    create_access_token
+)
 from iml.config import DATABASE_TYPE, SQLITE_FILE_NAME
-from iml.config import SQLALCHEMY_TRACK_MODIFICATIONS, APP_SECRET_KEY, SESSION_TYPE
+from iml.config import (
+    SQLALCHEMY_TRACK_MODIFICATIONS,
+    APP_SECRET_KEY,
+    JWT_SECRET_KEY,
+    SESSION_TYPE,
+    DB_USER, DB_PASS,
+    DB_HOST, DATABASE
+)
 from iml.database import db
 from iml.oauth2 import config_oauth
 
-from iml.core.admin.controllers import admin
-from iml.core.user.controllers import user
-from iml.core.students.controllers import students
-from iml.core.scores.controllers import scores
-from iml.api.private.controllers import private_api
-from iml.api.public.controllers import public_api
-from iml.oauth2.controllers import oauth2
+# from iml.core.admin.controllers import admin
+# from iml.core.user.controllers import user
+# from iml.core.students.controllers import students
+# from iml.core.scores.controllers import scores
+# from iml.api.private.controllers import private_api
+# from iml.api.public.controllers import public_api
+# from iml.oauth2.controllers import oauth2
 
 from iml.api.graphql.schemas import gql_schema
 
 from iml.models.user import User
-from iml.util.generate_db import generate_nyc_divisions, generate_nyc_users, generate_nyc_schools, generate_nyc_teams
+
+from iml.util.generate_db import (
+    generate_nyc_divisions, generate_nyc_users,
+    generate_nyc_schools, generate_nyc_teams
+)
 
 import os
 
@@ -38,13 +53,14 @@ app = Flask(__name__,
             static_folder=STATIC_DIR)
 
 
-
 # Config
 if DATABASE_TYPE == 'sqlite':
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///{}".format(
         SQLITE_FILE_NAME)
-else:
-    pass
+elif DATABASE_TYPE == 'mysql':
+    app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://{}:{}@{}/{}".format(
+        DB_USER, DB_PASS, DB_HOST, DATABASE
+    )
 app.config['SECRET_KEY'] = APP_SECRET_KEY
 app.config['SESSION_TYPE'] = SESSION_TYPE
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
@@ -70,19 +86,6 @@ migrate = Migrate(app, db)
 
 # test account
 
-with app.app_context():
-    if not User.query.filter_by(username="admin").first():
-        sampleAdmin = User(first="Bank of",
-                           last="America",
-                           email="ayy@lmao.com",
-                           phone_num="1877CARS",
-                           username="admin",
-                           password="password",
-                           is_admin=True
-                           )
-        db.session.add(sampleAdmin)
-        db.session.commit()
-
 # temp division adder
 
 # generate_nyc_divisions(app, db)
@@ -90,17 +93,17 @@ with app.app_context():
 # generate_nyc_users(app, db)
 # generate_nyc_teams(app, db)
 
-app.register_blueprint(user, url_prefix="")
-app.register_blueprint(students, url_prefix="/students")
-app.register_blueprint(admin, url_prefix="/admin")
-app.register_blueprint(private_api, url_prefix="/api/private")
-app.register_blueprint(public_api, url_prefix="/api/public")
-app.register_blueprint(scores, url_prefix="/scores")
-app.register_blueprint(oauth2, url_prefix="/oauth2")
+# app.register_blueprint(user, url_prefix="")
+# app.register_blueprint(students, url_prefix="/students")
+# app.register_blueprint(admin, url_prefix="/admin")
+# app.register_blueprint(private_api, url_prefix="/api/private")
+# app.register_blueprint(public_api, url_prefix="/api/public")
+# app.register_blueprint(scores, url_prefix="/scores")
+# app.register_blueprint(oauth2, url_prefix="/oauth2")
 
 jwt = JWTManager(app)
 
-app.config["JWT_SECRET_KEY"] = "CHANGETHISFROMPUBLICREPO"
+app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 app.config["JWT_TOKEN_LOCATION"] = ['headers']
 
 

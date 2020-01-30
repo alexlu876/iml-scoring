@@ -2,7 +2,7 @@
 function scalarizeObject(obj : any): any {
 }
 export function serializeInput(data: any): any {
-    var modifiedData = {};
+    let modifiedData = {};
     Object.keys(data).forEach(key => {
     });
 };

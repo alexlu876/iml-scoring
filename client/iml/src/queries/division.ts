@@ -77,6 +77,14 @@ query {
                     id
                     name
                 }
+                contests {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
             }
         }
     }

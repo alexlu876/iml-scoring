@@ -12,6 +12,7 @@ from graphene_sqlalchemy import SQLAlchemyObjectType
 class Contest(SQLAlchemyObjectType):
     class Meta:
         model = ContestModel
+        interfaces = (graphene.relay.Node,)
 
 
 class Question(SQLAlchemyObjectType):

@@ -160,6 +160,7 @@ class UpdateContestAttendanceMutation(graphene.Mutation):
             return UpdateContestAttendanceMutation(
                 attendance=update_attendance(
                     info,
+                    coach_id=user.id,
                     contest_id=contest_id,
                     student_id=student_id,
                     attended=attended,
@@ -197,6 +198,7 @@ class UpdateContestAttendanceMutation(graphene.Mutation):
         return UpdateContestAttendanceMutation(
             attendance=update_attendance(
                 info,
+                coach_id=user.id,
                 contest_id=contest_id,
                 student_id=student_id,
                 attended=attended,
@@ -205,7 +207,8 @@ class UpdateContestAttendanceMutation(graphene.Mutation):
         )
 
 
-def update_attendance(info, contest_id, student_id, attended, team_id):
+def update_attendance(info, coach_id, contest_id,
+                      student_id, attended, team_id):
     attendance = ContestAttendance.get_query(info).get(
         {"contest_id": contest_id, "student_id": student_id})
     if (attendance is None):
@@ -215,6 +218,23 @@ def update_attendance(info, contest_id, student_id, attended, team_id):
             attended=attended,
             team_id=team_id
         )
+        # put in 0-scores for default.
+        contest = Contest.get_query(info).get(contest_id)
+        old_scores = Score.get_query(info).filter_by(
+            contest_id=contest_id,
+            student_id=student_id)
+        if old_scores.count() > 0 and attended:
+            scores = [
+                ScoreModel(
+                    question_id=contest.getQuestion(i+1).id,
+                    points_awarded=0,
+                    timestamp=datetime.utcnow(),
+                    team_id=team_id,
+                    coach_id=coach_id,
+                    student_id=student_id) for i in range(
+                        contest.question_count)]
+            db.session.bulk_save_objects(scores)
+            db.session.commit()
     else:
         attendance.attended = attended
         attendance.team_id = team_id

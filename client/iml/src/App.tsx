@@ -67,22 +67,24 @@ const App = observer(() => {
         (_ : any, { headers } : any) => {
             const token = getLocalAccessToken();
             if (isLoggedIn()) {
-                if (isTokenValid(getLocalAccessToken() || ''))
+                if (isTokenValid(getLocalAccessToken() || '')) {
                     return {
                         headers: {
                             ...headers,
                             Authorization: token ? `Bearer ${token}` : ""
                         },
                     };
+                }
                 /* todo - figure out how to do this properly */
                 return headers;
             }
             return headers;
-        });
+        }
+    );
     const errorLink = onError(({ graphQLErrors, networkError }) => {
         console.log('graphQLErrors', graphQLErrors)
         console.log('networkError', networkError)
-    })
+    });
 
     const link = ApolloLink.from([
         refreshLink,
@@ -96,21 +98,21 @@ const App = observer(() => {
     });
     return (
         <ApolloProvider client={client}>
-            <head><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/></head>
-        <MuiThemeProvider theme={outerTheme(store.darkTheme)}>
-            <SnackbarProvider maxSnack={3}>
-                <CssBaseline/>
-                <Router>
-                    <NavHeader toggleDrawer = {store.toggleDrawer} />
-                    <HeaderDrawer 
-                        darkTheme = {store.darkTheme}
-                        setDarkTheme = {store.setDarkTheme}
-                        open= {store.drawerToggled}
-                        setOpen = {store.setDrawer}/>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+            <MuiThemeProvider theme={outerTheme(store.darkTheme)}>
+                <SnackbarProvider maxSnack={3}>
+                    <CssBaseline/>
+                    <Router>
+                        <NavHeader toggleDrawer = {store.toggleDrawer} />
+                        <HeaderDrawer 
+                            darkTheme = {store.darkTheme}
+                            setDarkTheme = {store.setDarkTheme}
+                            open= {store.drawerToggled}
+                            setOpen = {store.setDrawer}/>
                         {Routes.map((prop, key) => <Route path={prop.path} key={key} component={prop.component} exact={prop.exact} />)}
-                </Router>
-            </SnackbarProvider>
-        </MuiThemeProvider>
+                    </Router>
+                </SnackbarProvider>
+            </MuiThemeProvider>
         </ApolloProvider>
     );
 });

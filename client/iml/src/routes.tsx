@@ -20,6 +20,7 @@ const Routes = [
         navbarName: 'Home',
         icon: Home,
         isAccessable: () => true,
+        isAccessableStrict: (is_admin: boolean ) => true,
         component: () => (<Redirect to="/scores/view" />),
     },
     {
@@ -40,11 +41,12 @@ const Routes = [
     },
     {
         path: '/scores/view',
-        exact: true,
+        exact: false,
         sidebarName: 'View Scores',
         navbarName: 'View Scores',
         icon: Home,
         isAccessable: () => true,
+        isAccessableStrict: (is_admin: boolean ) => true,
         component: HomePage,
     },
     {
@@ -53,6 +55,7 @@ const Routes = [
         navbarName: 'Manage School',
         icon: AccountCircle,
         isAccessable: isLoggedIn,
+        isAccessableStrict: (is_admin: boolean ) => !is_admin,
         component: SchoolManager 
     },
     {
@@ -61,6 +64,7 @@ const Routes = [
         navbarName: 'Add Scores',
         icon: AccountCircle,
         isAccessable: isLoggedIn,
+        isAccessableStrict: (is_admin: boolean ) => isLoggedIn() && !is_admin,
         component: ScoreManager,
     },
     {
@@ -69,6 +73,7 @@ const Routes = [
         navbarName: 'Admin Panel',
         icon: AccountCircle,
         isAccessable: isLoggedIn,
+        isAccessableStrict: (is_admin: boolean ) => isLoggedIn() && is_admin,
         component: AdminPanel
     }
 ];
