@@ -44,6 +44,31 @@ query Contest($contestId: ID!) {
             }
         }
         questionCount
+        scores {
+            edges {
+                node {
+                    id
+                    question {
+                        questionNum
+                    }
+                    team {
+                        id
+                        name
+                    }
+                    studentId
+                    student {
+                        id
+                        school {
+                            name
+                            id
+                        }
+                        first
+                        last
+                    }
+                    pointsAwarded
+                }
+            }
+        }
         questions {
             edges {
                 node {
