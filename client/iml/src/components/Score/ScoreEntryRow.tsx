@@ -101,9 +101,9 @@ export default function ScoreEntryRow({student, contest}: any) {
         }}).then(
             res=> {
                 setChanged(false);
-                scoresQuery.refetch().then(
-                    res=> {}, 
-                    err=>{enqueueSnackbar("Error confirming deletion!")});
+                /* scoresQuery.refetch().then( */
+                /*     res=> {}, */ 
+                /*     err=>{enqueueSnackbar("Error confirming deletion!")}); */
             },
             err=> {
                 enqueueSnackbar(err.message.split(":")[1]);

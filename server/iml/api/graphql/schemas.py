@@ -18,6 +18,7 @@ from iml.models import (
     School as SchoolModel,
     Season as SeasonModel,
     Student as StudentModel,
+    StudentDivisionAssociation as StudentDivisionAssociationModel,
     Score as ScoreModel
 )
 
@@ -218,7 +219,11 @@ class Query(graphene.ObjectType):
         return Student.get_query(info).filter_by(
             current_division_id=contest.division_id,
             school_id=user.school_id
+        ).join(
+            StudentDivisionAssociationModel,
+            StudentModel.current_division_assoc
         ).order_by(StudentModel.current_team_id.desc(),
+                   StudentDivisionAssociationModel.is_alternate.desc(),
                    StudentModel.username).all()
 
     @jwt_required

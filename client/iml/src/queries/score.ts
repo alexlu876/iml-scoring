@@ -55,6 +55,7 @@ query Contest($contestId: ID!) {
                         id
                         name
                     }
+                    teamId
                     studentId
                     student {
                         id

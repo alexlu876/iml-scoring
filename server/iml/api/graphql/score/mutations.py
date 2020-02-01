@@ -27,6 +27,7 @@ from iml.models import (
     ContestAttendance as ContestAttendanceModel,
     Student as StudentModel,
     User as UserModel,
+    StudentDivisionAssociation as StudentDivisionAssociationModel,
 )
 
 from iml.api.graphql.utils import (
@@ -167,25 +168,31 @@ class UpdateContestAttendanceMutation(graphene.Mutation):
                     team_id=team_id
                 )
             )
-        if not attended:
-            # do not allow changing to "not attended if scores exist"
-            scores = db.session.query(ScoreModel).filter_by(
-                student_id=student_id,
-            ).filter(ScoreModel.question.has(
-                contest_id=contest_id))
-            if scores and scores.count() <= 0:
-                raise GraphQLError("Remove scores first!")
+        # if not attended:
+        #     # do not allow changing to "not attended if scores exist"
+        #     scores = db.session.query(ScoreModel).filter_by(
+        #         student_id=student_id,
+        #     ).filter(ScoreModel.question.has(
+        #         contest_id=contest_id))
+        #     if scores and scores.count() <= 0:
+        #         raise GraphQLError("Remove scores first!")
         if not team:
             raise GraphQLError("Invalid team!")
         if team.school != school:
             raise GraphQLError("You don't control this team!")
-        for student in team.current_students:
-            if not ContestAttendance.get_query(info).filter_by(
-                contest_id=contest_id,
-                student_id=student.id
-            ).first():
-                raise GraphQLError("Update regular students status first!")
-        # end loop
+        if attended and not student.current_team_id:
+            division_assoc = StudentDivisionAssociationModel.query.filter_by(
+                student_id=student.id,
+                division_id=contest.division_id).first()
+            if not division_assoc or not division_assoc.is_alternate:
+                raise GraphQLError("Student not an alternate!")
+            for student in team.current_students:
+                if not ContestAttendance.get_query(info).filter_by(
+                    contest_id=contest_id,
+                    student_id=student.id
+                ).first():
+                    raise GraphQLError("Update regular students status first!")
+            # end loop
 
         participants = ContestAttendance.get_query(info).filter_by(
             contest_id=contest_id,
@@ -209,8 +216,18 @@ class UpdateContestAttendanceMutation(graphene.Mutation):
 
 def update_attendance(info, coach_id, contest_id,
                       student_id, attended, team_id):
+    if (not attended):
+        # delete scores if attendance is removed..
+        scores = db.session.query(ScoreModel).filter_by(
+            student_id=student_id,
+        ).filter(ScoreModel.question.has(
+            contest_id=contest_id))
+        scores.delete(synchronize_session='fetch')
+        db.session.commit()
+
     attendance = ContestAttendance.get_query(info).get(
         {"contest_id": contest_id, "student_id": student_id})
+    new_attendance_used = False
     if (attendance is None):
         attendance = ContestAttendanceModel(
             contest_id=contest_id,
@@ -218,12 +235,21 @@ def update_attendance(info, coach_id, contest_id,
             attended=attended,
             team_id=team_id
         )
+        new_attendance_used = True
+
+    if (attended and (new_attendance_used or not attendance.attended)):
+        # if a new attendance object is generated or the status was changed
+        # from not attended to attended,
         # put in 0-scores for default.
         contest = Contest.get_query(info).get(contest_id)
         old_scores = Score.get_query(info).filter_by(
-            contest_id=contest_id,
-            student_id=student_id)
-        if old_scores.count() > 0 and attended:
+            student_id=student_id
+        ).filter(ScoreModel.question.has(
+                contest_id=contest_id)
+        )
+        print(old_scores.count())
+        if old_scores.count() <= 0:
+            print("Adding 0-scores!")
             scores = [
                 ScoreModel(
                     question_id=contest.getQuestion(i+1).id,
@@ -235,19 +261,19 @@ def update_attendance(info, coach_id, contest_id,
                         contest.question_count)]
             db.session.bulk_save_objects(scores)
             db.session.commit()
-    else:
-        attendance.attended = attended
-        attendance.team_id = team_id
-        # update the scores for this contest with the new team_id,
-        # if they exist:
-        db.session.query(ScoreModel).filter_by(
-            student_id=student_id,
-        ).filter(ScoreModel.question.has(
-            contest_id=contest_id)).update(
-                {'team_id': team_id},
-                synchronize_session='fetch'
-            )
-        db.session.commit()
+
+    attendance.attended = attended
+    attendance.team_id = team_id
+    # update the scores for this contest with the new team_id,
+    # if they exist:
+    db.session.query(ScoreModel).filter_by(
+        student_id=student_id,
+    ).filter(ScoreModel.question.has(
+        contest_id=contest_id)).update(
+            {'team_id': team_id},
+            synchronize_session='fetch'
+        )
+    db.session.commit()
     db.session.add(attendance)
     db.session.commit()
     return attendance

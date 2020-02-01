@@ -90,7 +90,11 @@ export default function HeaderNav({toggleDrawer} : any) {
                                 open={open}
                                 onClose={handleClose}
                             >
-                                <MenuItem onClick={logout}>Log Out</MenuItem>
+                                <MenuItem onClick={() => {
+                                    logout();
+                                    setAnchorEl(null);
+                                }
+                                    }>Log Out</MenuItem>
                             </Menu>
                         </div>
                         )}

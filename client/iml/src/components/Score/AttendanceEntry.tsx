@@ -113,20 +113,20 @@ export default function AttendanceEntry({studentId, contestId}: any) {
             (<FormControlLabel
                 value={""+studentAttendance.data.student.currentTeamId}
                 control={<Radio color="primary" />}
-                label={studentAttendance.data.student.currentTeam.name}
+                label={`${studentAttendance.data.student.currentTeam.name}`}
                 labelPlacement="end"
                 />) : 
             (<FormControlLabel
                 value="noTeam"
                 control={<Radio color="primary" />}
-                label="Attending (No Team)"
+                label={`Present${studentAttendance.data.studentIsAlternate ? ' (Not Competing)' : ''}`}
                 labelPlacement="end"
             />)
             }
 			<FormControlLabel
                 value="notAttending"
                 control={<Radio color="secondary" />}
-                label="Not Attending"
+                label="Absent"
                 labelPlacement="end"
 			/>
 		  </RadioGroup>

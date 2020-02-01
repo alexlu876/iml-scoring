@@ -33,6 +33,7 @@
     "mobx": "^5.11.0",
     "mobx-react": "^6.1.1",
     "moment": "^2.24.0",
+    "nivo": "^0.31.0",
     "notistack": "^0.9.7",
     "package.json": "^2.0.1",
     "react": "^16.8.6",
