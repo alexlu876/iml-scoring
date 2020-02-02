@@ -20,6 +20,9 @@ const useStyles = makeStyles({
   fullList: {
     width: 'auto',
   },
+  heading: {
+      minHeight: 100,
+  }
 });
 
 export default function HeaderDrawer({darkTheme, setDarkTheme, open, setOpen} : any) {
@@ -53,15 +56,16 @@ export default function HeaderDrawer({darkTheme, setDarkTheme, open, setOpen} : 
             onClick={handleDrawerClose()}
             role="presentation"
             className={classes.list} >
-                <br/>
+            <div className={classes.heading}>
+                <br />
                 <Typography variant="h5" align='center'>
-                    {data && data.viewer && `${data.viewer.first} ${data.viewer.last} `}
+                    {loading ? 'Loading...' : (data && data.viewer && `${data.viewer.first} ${data.viewer.last} `) || 'Guest'}
                 </Typography>
-                <br/>
                 <Typography variant="h6" align='center'>
                     {data && data.viewer && data.viewer.school && `${data.viewer.school.name}` }
                 </Typography>
                 {data && data.viewer && data.viewer.school && (<br/>)}
+            </div>
                 <Divider />
                 <MenuList>
                 {Routes.map((prop, key) => {

@@ -24,6 +24,7 @@ def admin_required(f):
         claims = get_jwt_claims()
         if claims.get('role', 'user') != 'admin':
             # TODO - error handling
+            raise GraphQLError("Admin required!")
             return None
         return f(*args, **kwargs)
     return check_and_call

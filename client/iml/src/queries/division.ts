@@ -62,6 +62,30 @@ mutation UpdateSeason(
   }
 `
 
+export const VIEWER_CONTESTS_QUERY = gql`
+query {
+    viewerSchool {
+        id
+        divisions {
+            edges {
+                node {
+                    id
+                    name
+                    contests {
+                        edges {
+                            node {
+                                id
+                                name
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+`
 export const DIVISIONS_QUERY = gql`
 query {
     divisions {

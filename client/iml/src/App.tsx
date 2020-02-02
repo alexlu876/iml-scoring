@@ -39,7 +39,6 @@ const App = observer(() => {
             accessTokenField: 'accessToken',
             isTokenValidOrUndefined: () => {
                 var authToken = getLocalAccessToken();
-                console.log(authToken);
                 if (!authToken) return true;
                 return isTokenValid(authToken);
             },

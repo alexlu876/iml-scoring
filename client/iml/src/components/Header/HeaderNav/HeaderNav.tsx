@@ -17,6 +17,9 @@ import { Query } from 'react-apollo'
 
 import {isLoggedIn, logout} from '../../../Auth';
 import UIStore from '../../../UIStore';
+import {
+    useHistory
+} from 'react-router-dom';
 
 const useStyles = makeStyles(
     (theme: Theme) => 
@@ -36,6 +39,7 @@ const useStyles = makeStyles(
 
 export default function HeaderNav({toggleDrawer} : any) {
     const classes = useStyles();
+    const history = useHistory();
     const [auth, setAuth] = React.useState(true);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -75,34 +79,35 @@ export default function HeaderNav({toggleDrawer} : any) {
                                 >
                                     <AccountCircle />
                                 </IconButton>
-                            <Menu
-                                id="menu-appbar"
-                                anchorEl={anchorEl}
-                                anchorOrigin={{
-                                    vertical: 'top',
+                                <Menu
+                                    id="menu-appbar"
+                                    anchorEl={anchorEl}
+                                    anchorOrigin={{
+                                        vertical: 'top',
                                         horizontal: 'right',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
+                                    }}
+                                    keepMounted
+                                    transformOrigin={{
+                                        vertical: 'top',
                                         horizontal: 'right',
-                                }}
-                                open={open}
-                                onClose={handleClose}
-                            >
-                                <MenuItem onClick={() => {
-                                    logout();
-                                    setAnchorEl(null);
-                                }
-                                    }>Log Out</MenuItem>
-                            </Menu>
-                        </div>
+                                    }}
+                                    open={open}
+                                    onClose={handleClose}
+                                >
+                                    <MenuItem onClick={() => {
+                                        logout();
+                                        setAnchorEl(null);
+                                        history.push("");
+                                    }
+                                        }>Log Out</MenuItem>
+                                </Menu>
+                            </div>
                         )}
 
 
-        </Toolbar>
-    </AppBar>
-</div>
+                </Toolbar>
+            </AppBar>
+        </div>
     )
 
 

@@ -44,6 +44,10 @@ export default function AttendanceEntry({studentId, contestId}: any) {
                     setValue(""+studentAttendance.data.studentContestAttendance.teamId);
             }
         }
+        else {
+            if (value !== '')
+                setValue('');
+        }
     }
 
 	const handleChange =
