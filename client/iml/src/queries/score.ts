@@ -24,6 +24,49 @@ query{
     }
 }
 `
+
+export const DIVISION_SCORES_BY_ID = gql`
+query DivisionScores($divisionUrl: String!, $seasonUrl: String) {
+    division: divisionByUrl (url: $divisionUrl, seasonUrl: $seasonUrl) {
+        id
+        name
+        contests {
+            edges {
+                node {
+                    id
+                    name
+                    scores {
+                        edges {
+                            node {
+                                id
+                                pointsAwarded
+                                question {
+                                    questionNum
+                                }
+                                team {
+                                    id
+                                    name
+                                }
+                                teamId
+                                studentId
+                                student {
+                                    id
+                                    school {
+                                        name
+                                        id
+                                    }
+                                    first
+                                    last
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+`
 export const CONTEST_BY_ID = gql`
 query Contest($contestId: ID!) {
     contest (id: $contestId) {

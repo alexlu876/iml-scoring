@@ -28,7 +28,8 @@ from iml.api.graphql.user.types import (
 from iml.api.graphql.user.mutations import (
     AdminCreationMutation,
     UserRegisterMutation,
-    CodeCreationMutation
+    CodeCreationMutation,
+    PasswordResetRequestMutation,
 )
 from iml.api.graphql.score.queries import (
     SimpleScore
@@ -137,6 +138,8 @@ class Query(graphene.ObjectType):
 
     divisions = SQLAlchemyConnectionField(DivisionRelayConnection)
     division = graphene.Field(lambda: Division, id=graphene.ID(required=True))
+    division_by_url = graphene.Field(lambda: Division, url=graphene.String(
+        required=True), season_url=graphene.String(required=False))
 
     seasons = SQLAlchemyConnectionField(SeasonRelayConnection)
     season = graphene.Field(lambda: Season, id=graphene.ID(required=True))
@@ -188,6 +191,17 @@ class Query(graphene.ObjectType):
     def resolve_division(root, info, id):
         query = Division.get_query(info)
         return query.get(localize_id(id))
+
+    def resolve_division_by_url(root, info, url, season_url=None):
+        query = Division.get_query(info)
+        divisions = query.filter_by(url=url)
+        if season_url:
+            season = Season.get_query(info).filter_by(
+                season_url=season_url).first()
+            if not season:
+                raise GraphQLError("Invalid season!")
+            divisions = divisions.filter_by(season_id=season.id)
+        return divisions.first()
 
     def resolve_season(root, info, id):
         query = Season.get_query(info)
@@ -315,6 +329,7 @@ class Mutation(graphene.ObjectType):
     createCode = CodeCreationMutation.Field()
     createAdmin = AdminCreationMutation.Field()
     register = UserRegisterMutation.Field()
+    passwordResetRequest = PasswordResetRequestMutation.Field()
 
     createStudent = CreateStudentMutation.Field()
     updateStudent = UpdateStudentMutation.Field()

@@ -1,6 +1,34 @@
 import bcrypt
+import secrets
+import datetime
 
 from iml import db
+
+
+class PasswordReset(db.Model):
+    __tablename__ = 'password_resets'
+    __table_args__ = (
+        db.UniqueConstraint('code',),
+    )
+    id = db.Column(db.Integer,
+                   primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    code = db.Column(db.String(16), nullable=False)
+    expiration_time = db.Column(db.DateTime(), nullable=False)
+    used = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __init__(self, user_id, code=None, expiration_time=None):
+        self.user_id = user_id
+        if code:
+            self.code = code
+        else:
+            self.code = hex(0x100000 +
+                            secrets.randbelow(0xffffff-0x100000))[2:]
+        if expiration_time:
+            self.expiration_time = expiration_time
+        else:
+            self.expiration_time = datetime.datetime.utcnow() \
+                + datetime.timedelta(minutes=30)
 
 
 class User(db.Model):

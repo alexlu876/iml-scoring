@@ -1,16 +1,20 @@
 import re
+import os
 import graphene
 from graphql.error import GraphQLError
-
 from flask_jwt_extended import (
     get_current_user,
 )
+from flask_mail import Message
+from flask import render_template
+
 from iml.api.graphql.wrappers import admin_required
 from iml.api.graphql.utils import localize_id
 from iml.api.graphql.user.types import User, RegistrationCode
 from iml.models import (
     User as UserModel,
-    RegistrationCode as RegistrationCodeModel
+    RegistrationCode as RegistrationCodeModel,
+    PasswordReset as PasswordResetModel,
 )
 from iml.database import db
 
@@ -129,3 +133,44 @@ def createUserAndAddToSession(userData, password,
         db.session.commit()
         return user
     return None
+
+
+class PasswordResetRequestMutation(graphene.Mutation):
+    class Arguments:
+        email = graphene.String(required=True)
+    success = graphene.Boolean()
+
+    @classmethod
+    def mutate(cls, root, info, email):
+        from iml import mail
+        user = User.get_query(info).filter_by(email=email).first()
+        if not user:
+            raise GraphQLError("Invalid email!")
+        password_reset = PasswordResetModel(user.id)
+        db.session.add(password_reset)
+        db.session.commit()
+        msg = Message(
+            subject="Password Reset Request for NYCIML Scores",
+            sender=os.environ.get("FLASK_EMAIL_USER"),
+            recipients=[email],
+        )
+        msg.html = render_template("email/password_reset.html",
+                                   code=password_reset.code
+                                   )
+        mail.send(msg)
+        return PasswordResetRequestMutation(success=True)
+
+
+class PasswordResetMutation(graphene.Mutation):
+    class Arguments:
+        code = graphene.String(required=True)
+        new_password = graphene.String(required=True)
+    success = graphene.Boolean()
+
+    @classmethod
+    def mutate(cls, root, info, code, new_password):
+        password_reset_obj = PasswordResetModel.query.filter_by(
+            code=code
+        )
+        if not password_reset_obj:
+            raise GraphQLError("Invalid code!")

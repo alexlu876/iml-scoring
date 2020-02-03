@@ -10,6 +10,9 @@ from flask_jwt_extended import (
     jwt_refresh_token_required, get_jwt_identity,
     create_access_token
 )
+
+from flask_mail import Mail, Message
+
 from iml.config import DATABASE_TYPE, SQLITE_FILE_NAME
 from iml.config import (
     SQLALCHEMY_TRACK_MODIFICATIONS,
@@ -72,15 +75,35 @@ app.config['OAUTH2_REFRESH_TOKEN_GENERATOR'] = True
 session = Session()
 session.init_app(app)
 
+
+# set up mail session
+
+mail_settings = {
+    "MAIL_SERVER": 'smtp.gmail.com',
+    "MAIL_PORT": 465,
+    "MAIL_USE_TLS": False,
+    "MAIL_USE_SSL": True,
+    "MAIL_USERNAME": os.environ.get('FLASK_EMAIL_USER'),
+    "MAIL_PASSWORD": os.environ.get('FLASK_EMAIL_PASSWORD')
+}
+
+app.config.update(mail_settings)
+mail = Mail(app)
+
+
 with app.app_context():
     db.init_app(app)
     db.create_all()
     db.session.commit()
     config_oauth(app)
-
+    if app.config.get("MAIL_USERNAME"):
+        msg = Message(subject="Hello",
+                      sender=app.config.get("MAIL_USERNAME"),
+                      recipients=["noreply@nyciml.org"],
+                      body="Restarting application/validating SMTP!")
+        mail.send(msg)
 
 # automatic app migration
-
 migrate = Migrate(app, db)
 
 

@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import CardTitle from '../../components/CardTitle';
 import ScoreViewNav from '../../components/ScoreViewer/ScoreViewNav';
 import ContestScoreView from '../../components/ScoreViewer/ContestScoreView';
+import DivisionScoreView from '../../components/ScoreViewer/DivisionScoreView';
 import { Switch, Route, Link, BrowserRouter as Router, Redirect } from "react-router-dom";
 import WelcomePage from '../../components/ScoreViewer/WelcomePage';
 
@@ -41,6 +42,15 @@ const HomePage = ({match, location} : any) => {
                             exact
                             path={'/scores/view'}
                             component={WelcomePage}
+                        />
+                        <Route
+                            exact
+                            path={'/scores/view/:divisionId'}
+                            component={function({match} : any)
+                                {
+                                    return <DivisionScoreView id={match.params.divisionId}/>
+                                }
+                            }
                         />
                         <Route
                             path={`/scores/view/:divisionId/:contestId`}

@@ -10,6 +10,6 @@ from iml.models.student import (
 from iml.models.division import school_division_table, Division
 from iml.models.schoolgrouping import SchoolGrouping
 from iml.models.school import School, RegistrationCode
-from iml.models.user import User
+from iml.models.user import User, PasswordReset
 from iml.models.team import Team
 from iml.models.season import Season
