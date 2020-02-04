@@ -30,6 +30,7 @@ from iml.api.graphql.user.mutations import (
     UserRegisterMutation,
     CodeCreationMutation,
     PasswordResetRequestMutation,
+    PasswordResetMutation,
 )
 from iml.api.graphql.score.queries import (
     SimpleScore
@@ -330,6 +331,7 @@ class Mutation(graphene.ObjectType):
     createAdmin = AdminCreationMutation.Field()
     register = UserRegisterMutation.Field()
     passwordResetRequest = PasswordResetRequestMutation.Field()
+    passwordReset = PasswordResetMutation.Field()
 
     createStudent = CreateStudentMutation.Field()
     updateStudent = UpdateStudentMutation.Field()

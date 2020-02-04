@@ -1,4 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, render_template, jsonify
+import click
+import csv
+import datetime
 from flask_session import Session
 from flask_migrate import Migrate
 
@@ -35,7 +38,7 @@ from iml.oauth2 import config_oauth
 
 from iml.api.graphql.schemas import gql_schema
 
-from iml.models.user import User
+from iml.models import User, Season, School, Division, SchoolGrouping, RegistrationCode
 
 from iml.util.generate_db import (
     generate_nyc_divisions, generate_nyc_users,
@@ -106,6 +109,114 @@ with app.app_context():
 # automatic app migration
 migrate = Migrate(app, db)
 
+
+@app.cli.command("create-default-admin")
+@click.argument('password')
+def create_default_admin(password):
+    if User.query.filter_by(email="noreply@nyciml.org").first():
+        return
+    else:
+        new_admin = User(
+            first="Admin",
+            last="Admin",
+            email="noreply@nyciml.org",
+            phone_num=None,
+            username="admin",
+            password=password,
+            is_admin=True)
+        db.session.add(new_admin)
+        db.session.commit()
+
+
+# create-admin-account run
+@app.cli.command("initialize-schools")
+@click.argument('season_url', nargs=1)
+@click.argument('filename', nargs=1)
+def initialize_schools(season_url, filename):
+    default_admin = User.query.filter_by(email="noreply@nyciml.org").first()
+    if not default_admin:
+        print("Set up default admin first!")
+        return
+
+    print("Opening file \"{}\"...".format(filename))
+    with open(filename, newline='') as file:
+        reader = csv.DictReader(file)
+        season_obj = Season.query.filter_by(url=season_url).first()
+        if not season_obj:
+            new_season = Season(name=season_url, url=season_url,
+                                start_date=datetime.date.today(),
+                                end_date=datetime.date.today()
+                                )
+            db.session.add(new_season)
+            db.session.commit()
+            season_obj = new_season
+
+        # default all schools into nyc
+        nyc_sg = SchoolGrouping.query.filter_by(url='nyc').first()
+        if not nyc_sg:
+            nyc_sg = SchoolGrouping(name="NYC", url="nyc")
+            db.session.add(nyc_sg)
+            db.session.commit()
+
+        # create divisions SophFrosh, Junior, Senior A, Senior B
+        divs = {}
+        for div_name_url in [('SophFrosh', 'sf'),
+                             ('Junior', 'jr'),
+                             ('Senior A', 'sra'),
+                             ('Senior B', 'srb')]:
+            div_obj = Division.query.filter_by(name=div_name_url[0],
+                                               season_id=season_obj.id).first()
+            if not div_obj:
+                div_obj = Division(name=div_name_url[0],
+                                   url=div_name_url[1],
+                                   season_id=season_obj.id)
+                db.session.add(div_obj)
+                db.session.commit()
+            divs[div_name_url[0]] = div_obj
+        for row in reader:
+            email = row.get("Coach Email Address").strip()
+            coach_name = row.get("Coach Name").strip()
+            school_name = row.get("School Name").strip()
+            registered_divisions = row.get('Divisions').split(',') if row.get(
+                'Divisions') else []
+            registered_divisions = [div.strip().replace(
+                '-', ''
+            ) for div in registered_divisions]
+            print(
+                "{}|{}|{}|{}".format(
+                    email, coach_name, school_name, registered_divisions
+                )
+            )
+            if School.query.filter_by(name=school_name).first():
+                print("  School already exists!")
+                continue
+            else:
+                school = School(
+                    name=school_name,
+                    url=school_name.replace(' ', ''),
+                    groupId=nyc_sg.id
+                )
+                for div in registered_divisions:
+                    school.divisions.append(divs[div])
+                db.session.add(school)
+                db.session.commit()
+                reg_codes = []
+                for i in range(3):
+                    new_code = RegistrationCode(school.id, default_admin.id)
+                    db.session.add(new_code)
+                    db.session.commit()
+                    reg_codes.append(new_code)
+                msg = Message(
+                    subject="Registration Information For NYCIML Scoring",
+                    sender=os.environ.get("FLASK_EMAIL_USER"),
+                    recipients=["noreply@nyciml.org", email],
+                    )
+                msg.html = render_template("email/registration_codes.html",
+                                           coach_name=coach_name,
+                                           school_name=school_name,
+                                           codes=reg_codes
+                                           )
+                mail.send(msg)
 
 # test account
 

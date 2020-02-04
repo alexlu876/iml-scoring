@@ -159,7 +159,7 @@ export default function ContestScoreUpdate() {
                 {activeStep === steps.length ? (
                     <div>
                         <Typography className={classes.instructions}>All steps completed</Typography>
-                        <Button onClick={handleReset}>Reset</Button>
+                        <Button onClick={handleReset}>Go Back</Button>
                     </div>
                 ) : (
                     <div>

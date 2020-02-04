@@ -1,0 +1,15 @@
+Hello <strong>{{coach_name}}</strong>,
+<br/>
+Welcome to <i>scoring.nyciml.org</i>, the new system for submitting scores for the New York City IML. 
+Here is the information required to make an account. Please visit the website for directions, and contact us
+if any of the information is incorrect or if there are any other issues:
+<br/>
+<br/>
+School Name: <strong>{{school_name}}</strong>
+<br/>
+Registration Codes: 
+<ul>
+{% for code in codes %} 
+<li><strong>{{code.code}}</strong></li>
+{% endfor %}
+</ul>

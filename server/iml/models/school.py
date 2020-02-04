@@ -7,7 +7,7 @@ class School(db.Model):
     __tablename__ = 'schools'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(256), nullable=False)
     url = db.Column(db.String(64), nullable=False)
     school_grouping_id = db.Column(
         db.Integer,

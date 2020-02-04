@@ -1,5 +1,6 @@
 import re
 import os
+import datetime
 import graphene
 from graphql.error import GraphQLError
 from flask_jwt_extended import (
@@ -171,6 +172,21 @@ class PasswordResetMutation(graphene.Mutation):
     def mutate(cls, root, info, code, new_password):
         password_reset_obj = PasswordResetModel.query.filter_by(
             code=code
-        )
+        ).first()
         if not password_reset_obj:
-            raise GraphQLError("Invalid code!")
+            raise GraphQLError("Invalid Code!")
+        user = User.get_query.get(password_reset_obj.user)
+        if not user:
+            raise GraphQLError("Invalid Code!")
+        if password_reset_obj.used:
+            raise GraphQLError("Invalid Code!")
+        if datetime.datetime.utcnow() > password_reset_obj.expiration_time:
+            raise GraphQLError("Invalid Code!")
+        else:
+            user.setPassword(new_password)
+            password_reset_obj.used = True
+            db.session.add(user)
+            db.session.add(password_reset_obj)
+            db.session.commit()
+            return PasswordResetMutation(success=True)
+        return PasswordResetMutation(success=False)

@@ -43,7 +43,7 @@ class User(db.Model):
     username = db.Column(db.String(32), nullable=False)
     password = db.Column(db.Binary(60), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
-    approval_status = db.Column(db.Integer, nullable=False, default=0)
+    approval_status = db.Column(db.Integer, nullable=False, default=1)
     school_id = db.Column(db.Integer, db.ForeignKey('schools.id'))
 
     school = db.relationship('School', back_populates='coaches')
