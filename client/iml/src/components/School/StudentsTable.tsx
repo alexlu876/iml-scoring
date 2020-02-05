@@ -25,6 +25,8 @@ function StudentsTable() {
         <MaterialTable
             title='Students'
             options={{
+                pageSize: Math.max(10, Math.min(25, data.viewerStudents ? data.viewerStudents.edges.length + 5: 0)),
+                pageSizeOptions: [5,10,25,50,100,150]
             }}
             columns ={[
                 {title: 'First Name', field: 'first'},
@@ -59,6 +61,12 @@ function StudentsTable() {
                 isEditable: rowData => true,
                     isDeletable: rowData => false,
                     onRowAdd: (newData) => {
+                        if (!newData.currentDivisionId) {
+                            return new Promise((resolve, reject) => {
+                                reject();
+                                enqueueSnackbar("Please specify a division!");
+                            });
+                        }
                         return createStudent({
                             variables: newData,
                             refetchQueries: [{

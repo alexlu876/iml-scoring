@@ -113,7 +113,7 @@ export default function ScoreEntryRow({student, contest}: any) {
     return (
         <TableRow key={student.id}>
             <TableCell component="th" scope="row">
-                {student.username}
+                {`${student.first} ${student.nickname ? `"${student.nickname}" ` : ''}${student.last}`}
             </TableCell>
         {[...Array(contest.questionCount)].map((x,i) => {
             return (

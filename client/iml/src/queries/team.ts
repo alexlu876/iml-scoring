@@ -21,6 +21,7 @@ query NoTeamStudents($divisionId: ID!, $schoolId: ID!) {
         edges {
             node {
                 username
+                nickname
                 id
                 first
                 last
@@ -36,6 +37,9 @@ query TeamCurrentStudents ($teamId: ID!) {
         edges {
             node {
                 username
+                first
+                last
+                nickname
                 id
             }
         }

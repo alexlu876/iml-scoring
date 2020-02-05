@@ -49,9 +49,9 @@ export default function AttendanceTable() {
         <TableBody>
           {eligibleStudents.data.viewerStudentsByContest.edges.map((edge:any) => (
             <TableRow key={edge.node.id}>
-              <TableCell component="th" scope="row">
-                {edge.node.username}
-              </TableCell>
+                <TableCell component="th" scope="row">
+                    {`${edge.node.first} ${edge.node.nickname ? `"${edge.node.nickname}" ` : ''}${edge.node.last}`}
+                </TableCell>
               <TableCell align="left">
                   <AttendanceEntry 
                       studentId={deglobifyId(edge.node.id)}

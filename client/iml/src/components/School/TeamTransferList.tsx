@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         paper: {
             width: 300,
-            height: 260,
+            minHeight: 260,
+            maxHeight: 600,
             overflow: 'auto',
         },
         button: {
@@ -133,7 +134,7 @@ export default function TeamTransferList({divisionId, schoolId, teamId }:any) {
                       inputProps={{ 'aria-labelledby': labelId }}
                     />
                   </ListItemIcon>
-                  <ListItemText id={labelId} primary={`${item.username}`} />
+                    <ListItemText id={labelId} primary={`${item.first} ${item.nickname ? `"${item.nickname}" ` : ''}${item.last}`} />
                 </ListItem>
               );
             })}

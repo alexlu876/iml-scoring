@@ -102,6 +102,7 @@ query ViewerStudentsByContest($contestId: ID!) {
                 currentTeamId
                 schoolId
                 username
+                nickname
                 first
                 last
             }
@@ -118,6 +119,7 @@ query ViewerAttendeesByContest($contestId: ID!) {
                 first
                 last
                 username
+                nickname
             }
         }
     }

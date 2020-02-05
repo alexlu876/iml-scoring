@@ -157,6 +157,9 @@ class UpdateContestAttendanceMutation(graphene.Mutation):
         if student.current_division != contest.division:
             raise GraphQLError(
                 "This student cannot participate in the given contest!")
+        if team_id and not attended:
+            raise GraphQLError(
+                "You cannot be absent while substituting in for a team!")
         if not team_id:
             return UpdateContestAttendanceMutation(
                 attendance=update_attendance(
@@ -199,8 +202,8 @@ class UpdateContestAttendanceMutation(graphene.Mutation):
             team_id=team_id,
             attended=True
         )
-        if (participants.count() >= contest.team_size-1 and
-                not participants.filter_by(student_id=student.id).first()):
+        if (participants.count() >= contest.team_size and
+                not participants.filter_by(student_id=student_id).first()):
             raise GraphQLError("This team already has too many participants!")
         return UpdateContestAttendanceMutation(
             attendance=update_attendance(
