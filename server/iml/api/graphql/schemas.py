@@ -1,6 +1,7 @@
 import graphene
 from graphene import relay
 import datetime
+from sqlalchemy.sql.expression import func
 
 from graphql import GraphQLError
 from graphene_sqlalchemy import (
@@ -182,11 +183,17 @@ class Query(graphene.ObjectType):
         return Student.get_query(info).filter_by(
             school_id=school_id,
             current_division_id=division_id,
-            current_team_id=None).all()
+            current_team_id=None).order_by(
+                func.lower(StudentModel.last),
+                func.lower(StudentModel.first)
+            ).all()
 
     def resolve_team_current_students(root, info, team_id):
         return Student.get_query(info).filter_by(
             current_team_id=team_id
+        ).order_by(
+            func.lower(StudentModel.last),
+            func.lower(StudentModel.first)
         ).all()
 
     def resolve_division(root, info, id):
@@ -239,7 +246,9 @@ class Query(graphene.ObjectType):
             StudentModel.current_division_assoc
         ).order_by(StudentModel.current_team_id.desc(),
                    StudentDivisionAssociationModel.is_alternate.desc(),
-                   StudentModel.username).all()
+                   func.lower(StudentModel.last),
+                   func.lower(StudentModel.first),
+                   ).all()
 
     @jwt_required
     def resolve_viewer_attendees_by_contest(root, info, contest_id, **kwargs):
@@ -253,7 +262,9 @@ class Query(graphene.ObjectType):
             StudentModel.attendance.any(contest_id=contest.id,
                                         attended=True)
         ).order_by(StudentModel.current_team_id.desc(),
-                   StudentModel.username).all()
+                   func.lower(StudentModel.last),
+                   func.lower(StudentModel.first),
+                   ).all()
 
     def resolve_school_grouping(root, info):
         query = SchoolGrouping.get_query(info)
@@ -272,6 +283,8 @@ class Query(graphene.ObjectType):
              })
 
     def resolve_student_is_alternate(root, info, contest_id, student_id):
+        contest_id = localize_id(contest_id)
+        student_id = localize_id(student_id)
         contest = Contest.get_query(info).get(contest_id)
         if not contest:
             raise GraphQLError("Invalid contest!")

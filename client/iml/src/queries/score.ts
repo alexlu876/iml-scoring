@@ -56,6 +56,11 @@ query DivisionScores($divisionUrl: String!, $seasonUrl: String) {
                                         id
                                     }
                                     first
+                                    nickname
+                                    currentTeam {
+                                        name
+                                        id
+                                    }
                                     last
                                 }
                             }

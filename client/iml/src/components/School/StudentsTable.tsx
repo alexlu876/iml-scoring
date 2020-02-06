@@ -60,12 +60,25 @@ function StudentsTable() {
             editable={{
                 isEditable: rowData => true,
                     isDeletable: rowData => false,
-                    onRowAdd: (newData) => {
-                        if (!newData.currentDivisionId) {
-                            return new Promise((resolve, reject) => {
+                    onRowAdd: (newData : any) => {
+                        let allExist = true;
+                        let notExisting = [] as string[];
+                        ['currentDivisionId', 'first', 'last', 'graduationYear'].forEach((s : string) => {
+                            if (!newData[s]) {
+                                allExist=false;
+                                if (s==='first' || s==='last')
+                                    notExisting.push(s + ' name');
+                                else 
+                                    notExisting.push(s);
+                            }
+                        });
+                        if (!allExist) {
+                            return new Promise<any>((resolve, reject) => {
                                 reject();
-                                enqueueSnackbar("Please specify a division!");
-                            });
+                                notExisting.forEach((s: string)=> {
+                                    enqueueSnackbar(`Please specify ${s}!`);
+                                });
+                            })
                         }
                         return createStudent({
                             variables: newData,

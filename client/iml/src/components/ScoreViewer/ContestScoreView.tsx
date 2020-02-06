@@ -25,6 +25,7 @@ export const formatData = (data : any) : any => {
                 team: score.team ? score.team.name : 'Unassigned',
                 id: score.teamId,
                 school: score.student.school.name,
+                schoolId: score.student.schoolId
             });
             teamIndex = formattedDataTeam.length-1;
         }
@@ -47,7 +48,20 @@ export const formatData = (data : any) : any => {
         formattedDataTeam[teamIndex][''+score.question.questionNum] = (formattedDataTeam[teamIndex][''+score.question.questionNum] || 0) + score.pointsAwarded;
         formattedDataTeam[teamIndex]['total'] = (formattedDataTeam[teamIndex]['total'] || 0)+score.pointsAwarded;
     });
-    return {student:formattedDataStudent, team: formattedDataTeam};
+
+    formattedDataStudent.sort((student1, student2) => -(student1.total-student2.total));
+    formattedDataTeam.sort((team1, team2) => -(team1.total-team2.total)); // sort desc
+    const occurences = {} as any;
+    const filteredDataTeam=[] as any[];
+    formattedDataTeam.forEach((team) => {
+        if (team.team=='Unassigned')
+            return;
+        if (!occurences[team.schoolId] || occurences[team.schoolId] < 2) {
+            filteredDataTeam.push(team);
+            occurences[team.schoolId] = (occurences[team.schoolId] ||0) +1;
+        }
+    });
+    return {team: filteredDataTeam, student: formattedDataStudent}
 }
 
 const ContestScoreView = ({id} : any) => {

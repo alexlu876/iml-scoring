@@ -43,6 +43,7 @@ export default function ScoreEntryTable() {
         <TableHead>
           <TableRow>
             <TableCell>Student</TableCell>
+            <TableCell>Team</TableCell>
         {[...Array(contestInfo.data.contest.questionCount)].map((x, i) => {
             return (
                 <TableCell key={i+1}>{i+1}</TableCell>

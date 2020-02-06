@@ -7,6 +7,7 @@ import {deglobifyId} from '../../utils/serializers';
 import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks'
 import {
     VIEWER_ATTENDEES_BY_CONTEST,
+    STUDENT_CONTEST_ATTENDANCE,
 } from '../../queries/student';
 import {
     UPDATE_SCORE,
@@ -14,6 +15,7 @@ import {
     CONTEST_BY_ID,
     SIMPLE_SCORE_BY_CONTEST
 } from '../../queries/score';
+
 import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
 import PublishIcon from '@material-ui/icons/Publish';
 import IconButton from '@material-ui/core/IconButton';
@@ -65,8 +67,8 @@ export default function ScoreEntryRow({student, contest}: any) {
         event.preventDefault();
         scoresQuery.refetch().then(
             res=> {
-                setChanged(false);
                 restoreState();
+                setChanged(false);
             },
             err=> {
                 enqueueSnackbar("Failed to refetch!");
@@ -82,9 +84,8 @@ export default function ScoreEntryRow({student, contest}: any) {
             studentId: student.id,
         }}).then(
             res=> {
-                setChanged(false);
                 scoresQuery.refetch().then(
-                    res=> {}, 
+                    res=> {setChanged(false);}, 
                     err=>{enqueueSnackbar("Error confirming upload!")});
             },
             err=> {
@@ -114,6 +115,9 @@ export default function ScoreEntryRow({student, contest}: any) {
         <TableRow key={student.id}>
             <TableCell component="th" scope="row">
                 {`${student.first} ${student.nickname ? `"${student.nickname}" ` : ''}${student.last}`}
+            </TableCell>
+            <TableCell key={student.id+(student.currentTeamId || 0)}>
+                {student.currentTeam && student.currentTeam.name}
             </TableCell>
         {[...Array(contest.questionCount)].map((x,i) => {
             return (

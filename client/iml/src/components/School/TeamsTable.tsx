@@ -38,7 +38,27 @@ export default function TeamsTable() {
             editable={{
                 isEditable: rowData => true,
                     isDeletable: rowData => false,
-                    onRowAdd: (newData) => {
+                    onRowAdd: (newData : any) => {
+                        let allExist = true;
+                        let notExisting = [] as string[];
+                        ['name', 'divisionId'].forEach((s : string) => {
+                            if (!newData[s]) {
+                                allExist=false;
+                                if (s==='first' || s==='last')
+                                    notExisting.push(s + ' name');
+                                else 
+                                    notExisting.push(s);
+                            }
+                        });
+                        if (!allExist) {
+                            return new Promise<any>((resolve, reject) => {
+                                reject();
+                                notExisting.forEach((s: string)=> {
+                                    enqueueSnackbar(`Please specify ${s}!`);
+                                });
+                            })
+                        }
+
                         return createTeam({ variables: newData}).then(refetch) as Promise<any>;
                     },
                     onRowUpdate: (newData, oldData) => {
