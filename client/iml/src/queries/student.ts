@@ -72,14 +72,12 @@ query StudentContestAttendance($contestId: ID!, $studentId: ID!) {
     studentContestAttendance(contestId: $contestId, studentId: $studentId) {
         attended
         contest {
-            id
             divisionId
         }
         studentId
         contestId
         teamId
         team {
-            id
             name
         }
     }
