@@ -70,21 +70,25 @@ export const STUDENT_CONTEST_ATTENDANCE = gql`
 query StudentContestAttendance($contestId: ID!, $studentId: ID!) {
     studentIsAlternate(contestId: $contestId, studentId: $studentId)
     studentContestAttendance(contestId: $contestId, studentId: $studentId) {
+        id
         attended
         contest {
             divisionId
+            id
         }
         studentId
         contestId
         teamId
         team {
             name
+            id
         }
     }
     student (id: $studentId) {
         currentTeamId
         currentTeam {
             name
+            id
         }
         id
         first
