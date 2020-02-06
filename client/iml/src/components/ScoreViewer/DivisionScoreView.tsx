@@ -119,7 +119,7 @@ const DivisionScoreView = ({id} : any) => {
                             data.division.contests.edges.map(
                                  (edge : any) => {
                                     return {
-                                        title: ""+(edge.node.name),
+                                        title: ""+(!edge.node.name.match(/Contest(\s)+[0-9]+/) ? edge.node.name :  (()=>{let nameAsList=edge.node.name.trim().split(/(\s)+/); return nameAsList[nameAsList.length-1]})()),
                                         field: ""+(deglobifyId(edge.node.id)),
                                         type: 'numeric'};
                                 }
