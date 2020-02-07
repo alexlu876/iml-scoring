@@ -202,6 +202,7 @@ export default function Register() {
                                     <Button
                                         variant="contained"
                                         color="primary"
+                                        type="submit"
                                         disabled={isSubmitting}
                                         onClick={submitForm}
                                         className={classes.submit}>

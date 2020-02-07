@@ -3,35 +3,17 @@ import {Redirect} from 'react-router-dom';
 import {Formik, Field, Form} from 'formik';
 import {
   Button,
-  LinearProgress,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  FormControlLabel,
 } from '@material-ui/core';
 import * as Yup from 'yup';
-import MuiTextField from '@material-ui/core/TextField';
-import {
-  fieldToTextField,
-  TextField,
-  TextFieldProps,
-  Select,
-  Switch,
-} from 'formik-material-ui';
 
-import { makeStyles } from '@material-ui/core/styles'
+import { useMutation, useApolloClient} from '@apollo/react-hooks'
+import { useSnackbar } from 'notistack';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
-
-import CssBaseline from '@material-ui/core/CssBaseline';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Avatar from '@material-ui/core/Avatar';
-
-import { useMutation, useApolloClient} from '@apollo/react-hooks'
-import { useSnackbar } from 'notistack';
 
 import {AUTH} from '../../queries/user';
 import {
@@ -45,6 +27,8 @@ import {
     useHistory,
     Link as RouterLink,
 } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -77,15 +61,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-
-const validationSchema = Yup.object().shape(
-    {
-        email: Yup.string()
-            .email('Invalid Email Address!'),
-    }
-);
-
-export const Login = (redirect : string | undefined) => {
+export const ForgotPassword = () => {
     const classes = useStyles();
 
     const [authUser,] = useMutation(AUTH);
@@ -99,7 +75,6 @@ export const Login = (redirect : string | undefined) => {
         <div>
             <Container component="main" maxWidth = "sm">
                 <Paper>
-                    <CssBaseline/>
                     <div className={classes.paper}>
                         <Avatar className={classes.avatar}>
                            <LockOutlinedIcon />
@@ -165,7 +140,7 @@ export const Login = (redirect : string | undefined) => {
                     </Button>
                     <Grid container className={classes.instructions}>
                         <Grid item xs>
-                            <Link component={RouterLink} to="/password_reset" variant="body2" color="secondary">
+                            <Link component={RouterLink} to="/forgot_password" variant="body2" color="secondary">
                                 Forgot password?
                             </Link>
                         </Grid>
@@ -185,5 +160,3 @@ export const Login = (redirect : string | undefined) => {
         </div>
                 );
 }
-
-export default Login;

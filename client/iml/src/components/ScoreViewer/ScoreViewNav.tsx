@@ -114,7 +114,7 @@ const ScoreViewNav = () => {
                       );
                       const toDisplay = index===0 ? division.node.name : (index===1 ? contest && contest.node.name : null);
                   return last ? (
-                    <Typography color="textPrimary" key={to}>
+                    <Typography color="textPrimary" key={to+"text"}>
                         {toDisplay}
                     </Typography>
                   ) : (
@@ -147,7 +147,7 @@ const ScoreViewNav = () => {
                                           const toContest = `${to}/${(deglobifyId(contestEdge.node.id) || "")}`;
                                           const primary = contestEdge.node.name;
                                           return (
-                                              <ListItemLink key={to} to={toContest} primary={primary} className={classes.nested} />
+                                              <ListItemLink key={toContest} to={toContest} primary={primary} className={classes.nested} />
                                           )
                                       })}
                                   </List>

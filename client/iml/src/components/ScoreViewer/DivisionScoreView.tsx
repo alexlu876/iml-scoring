@@ -5,17 +5,34 @@ import MaterialTable, {MaterialTableProps} from 'material-table';
 import {useSnackbar} from 'notistack';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Container from '@material-ui/core/Container';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 
 import {CONTEST_BY_ID, DIVISION_SCORES_BY_ID} from '../../queries/score';
 
 import {deglobifyId} from '../../utils/serializers';
+import { ResponsiveStream } from '@nivo/stream';
 
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        container: {
+            margin: (theme.spacing(4),theme.spacing(4), theme.spacing(10), theme.spacing(4)),
+            align: 'center',
+            alignItems: 'center',
+            height: 400,
+        },
+    }),
+);
+
+const DELIM = '?';
 
 export const formatData = (division: any) : any => {
     const formattedDataStudent = [] as any[];
     const formattedDataTeam = [] as any[];
+    const formattedDataSum = [{}, {}, {}, {}, {}, {}] as any[];
     division.contests.edges.forEach((contestEdge : any) => {
         const contestId = deglobifyId(contestEdge.node.id);
+        const contestNameAndId = `${contestEdge.node.name}`
         contestEdge.node.scores.edges.forEach((scoreEdge: any) => {
             const score = scoreEdge.node;
             let teamIndex=formattedDataTeam.findIndex(
@@ -49,6 +66,7 @@ export const formatData = (division: any) : any => {
 
             formattedDataStudent[studentIndex][''+contestId] = (formattedDataStudent[studentIndex][''+contestId] || 0) + score.pointsAwarded;
             formattedDataStudent[studentIndex]['total'] = (formattedDataStudent[studentIndex]['total'] || 0) + score.pointsAwarded;
+            formattedDataSum[score.question.questionNum-1][contestNameAndId] = (formattedDataSum[score.question.questionNum-1][contestNameAndId] || 0) + score.pointsAwarded;
         }
         );
     }
@@ -73,9 +91,10 @@ export const formatData = (division: any) : any => {
             occurencesStudent[student.schoolId] = (occurencesStudent[student.schoolId] || 0) +1;
         }
     });
-    return {team: filteredDataTeam, student: filteredDataStudent}
+    return {team: filteredDataTeam, student: filteredDataStudent, sum: formattedDataSum}
 }
 const DivisionScoreView = ({id} : any) => {
+    const classes= useStyles();
     const [useTeam, setUseTeam] = React.useState(true); 
     const {enqueueSnackbar} = useSnackbar();
     const { data, refetch, loading, error } = useQuery(DIVISION_SCORES_BY_ID, {variables: {divisionUrl: id}
@@ -129,6 +148,85 @@ const DivisionScoreView = ({id} : any) => {
                     ]}
                     data={useTeam ? formatData(data.division).team : formatData(data.division).student}
                                     />
+
+            {
+                data && data.division.contests.edges.length && formatData(data.division).sum[0] && Object.keys(formatData(data.division).sum[0]).length > 0 && (
+            <Container className={classes.container}>
+			<ResponsiveStream
+				data={formatData(data.division).sum}
+                keys={Object.keys(formatData(data.division).sum[0]) }
+				margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+				axisTop={null}
+				axisRight={null}
+				axisBottom={{
+					orient: 'bottom',
+					tickSize: 5,
+					tickPadding: 5,
+					tickRotation: 0,
+					legend: 'Question',
+					legendOffset: 36,
+                    format: v => v as number +1,
+				}}
+				axisLeft={{ orient: 'left', tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Score Across All Students', legendOffset: -40 }}
+				offsetType="silhouette"
+				colors={{ scheme: 'nivo' }}
+				fillOpacity={0.85}
+				borderColor={{ theme: 'background' }}
+				defs={[
+					{
+						id: 'dots',
+						type: 'patternDots',
+						background: 'inherit',
+						color: '#2c998f',
+						size: 4,
+						padding: 2,
+						stagger: true
+					},
+					{
+						id: 'squares',
+						type: 'patternSquares',
+						background: 'inherit',
+						color: '#e4c912',
+						size: 6,
+						padding: 2,
+						stagger: true
+					}
+				]}
+				fill={[
+				]}
+				dotSize={8}
+				dotColor={{ from: 'color' }}
+				dotBorderWidth={2}
+				dotBorderColor={{ from: 'color', modifiers: [ [ 'darker', 0.7 ] ] }}
+				animate={true}
+				motionStiffness={90}
+				motionDamping={15}
+				legends={[
+					{
+						anchor: 'bottom-right',
+						direction: 'column',
+						translateX: 120,
+						itemWidth: 120,
+						itemHeight: 20,
+						itemTextColor: '#999999',
+						symbolSize: 12,
+						symbolShape: 'circle',
+						effects: [
+							{
+								on: 'hover',
+								style: {
+									itemTextColor: '#000000'
+								}
+							}
+						]
+					}
+				]}
+            />
+            </Container>
+                )
+            }
+
+
         </Typography>
    );
 };
