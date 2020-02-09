@@ -30,6 +30,7 @@
     "graphql": "^14.3.1",
     "graphql-tag": "^2.10.1",
     "jwt-decode": "^2.2.0",
+    "markdown-to-jsx": "^6.11.0",
     "material-table": "^1.48.0",
     "mobx": "^5.11.0",
     "mobx-react": "^6.1.1",
@@ -37,6 +38,7 @@
     "nivo": "^0.31.0",
     "notistack": "^0.9.7",
     "package.json": "^2.0.1",
+    "raw-loader": "^4.0.0",
     "react": "^16.8.6",
     "react-apollo": "^3.0.0",
     "react-cookie": "^4.0.3",
@@ -44,6 +46,7 @@
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-scripts": "^3.0.1",
+    "ts-loader": "^6.2.1",
     "typescript": "^3.5.2",
     "yup": "^0.28.0"
   },
