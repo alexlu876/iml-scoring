@@ -3,11 +3,6 @@ import {Redirect} from 'react-router-dom';
 import {Formik, Field, Form} from 'formik';
 import {
   Button,
-  LinearProgress,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  FormControlLabel,
 } from '@material-ui/core';
 import * as Yup from 'yup';
 import MuiTextField from '@material-ui/core/TextField';
@@ -165,12 +160,12 @@ export const Login = (redirect : string | undefined) => {
                     </Button>
                     <Grid container className={classes.instructions}>
                         <Grid item xs>
-                            <Link component={RouterLink} to="/password_reset" variant="body2" color="secondary">
+                            <Link component={RouterLink} to="/forgot_password" variant="body2" color="secondary">
                                 Forgot password?
                             </Link>
                         </Grid>
                         <Grid item>
-                            <Link href="#" variant="body2" color="secondary">
+                            <Link component={RouterLink} to="/signup"  variant="body2" color="secondary">
                                 {"Need account?"}
                             </Link>
                         </Grid>

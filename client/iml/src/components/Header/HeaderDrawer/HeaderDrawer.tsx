@@ -69,7 +69,7 @@ export default function HeaderDrawer({darkTheme, setDarkTheme, open, setOpen} : 
                 <Divider />
                 <MenuList>
                 {Routes.map((prop, key) => {
-                    return (prop.isAccessable ? prop.isAccessable() : true) && ((data && data.viewer) ? (prop.isAccessableStrict ? prop.isAccessableStrict(data.viewer.isAdmin): true)  : (prop.isAccessableStrict ? prop.isAccessableStrict(false) : true)) &&(
+                    return prop.navbarName && (prop.isAccessable ? prop.isAccessable() : true) && ((data && data.viewer) ? (prop.isAccessableStrict ? prop.isAccessableStrict(data.viewer.isAdmin): true)  : (prop.isAccessableStrict ? prop.isAccessableStrict(false) : true)) &&(
                       <MenuItem component={Link} to={prop.path} key={key}>
                         <ListItemIcon>
                             <prop.icon />

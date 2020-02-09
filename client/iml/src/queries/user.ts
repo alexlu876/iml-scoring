@@ -61,6 +61,20 @@ mutation AuthenticateUser($email: String! $password:String!) {
 
 }
 `
+export const FORGOT_PASSWORD_MUTATION = gql`
+mutation PasswordResetRequest($email: String!) {
+    passwordResetRequest(email: $email) {
+        success
+    }
+}
+`
+export const PASSWORD_RESET_MUTATION = gql`
+mutation PasswordReset($code: String!, $password: String!) {
+    passwordReset(code: $code, newPassword: $password) {
+        success
+    }
+}
+`
 
 export const USERS_QUERY = gql`
     {

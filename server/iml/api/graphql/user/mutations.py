@@ -146,7 +146,8 @@ class PasswordResetRequestMutation(graphene.Mutation):
         from iml import mail
         user = User.get_query(info).filter_by(email=email).first()
         if not user:
-            raise GraphQLError("Invalid email!")
+            # return true nonetheless
+            return PasswordResetRequestMutation(success=True)
         password_reset = PasswordResetModel(user.id)
         db.session.add(password_reset)
         db.session.commit()
@@ -175,7 +176,7 @@ class PasswordResetMutation(graphene.Mutation):
         ).first()
         if not password_reset_obj:
             raise GraphQLError("Invalid Code!")
-        user = User.get_query.get(password_reset_obj.user)
+        user = User.get_query(info).get(password_reset_obj.user_id)
         if not user:
             raise GraphQLError("Invalid Code!")
         if password_reset_obj.used:

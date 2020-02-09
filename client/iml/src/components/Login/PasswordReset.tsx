@@ -18,7 +18,7 @@ import {
   TextField,
 } from 'formik-material-ui';
 
-import {FORGOT_PASSWORD_MUTATION} from '../../queries/user';
+import {PASSWORD_RESET_MUTATION} from '../../queries/user';
 import {
     getTokenIdentifier,
     getLocalAccessToken,
@@ -45,34 +45,32 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3),
+        width: '96%', // Fix IE 11 issue.
+        margin: theme.spacing(3,1,1,1),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
     },
     submit: {
-        marginBottom: theme.spacing(1)
+        margin: theme.spacing(3, 1, 2, 1),
     },
     field: {
-        width: '50%',
-        margin: theme.spacing(0, 1, 0, 1),
+        width: '100%',
     },
-    instructions: {
-        width: '52%',
-        margin: theme.spacing(0, 0, 4, 0),
-    }
 }));
 
 const validationSchema = Yup.object().shape(
     {
+        password: Yup.string().required('Password is required.').min(6, "Must be at least 6 characters!"),
+        confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password'), null], 'Passwords must match.').required('Password must be confirmed.'),
     }
 );
 
-const ForgotPassword =  () => {
+const PasswordReset =  () => {
     const classes = useStyles();
 
-    const [authUser,] = useMutation(FORGOT_PASSWORD_MUTATION);
+    const [resetPassword,] = useMutation(PASSWORD_RESET_MUTATION);
     const history = useHistory();
     const { enqueueSnackbar } = useSnackbar();
     if (isLoggedIn())
@@ -89,27 +87,29 @@ const ForgotPassword =  () => {
                         </Avatar>
 
                         <Typography component="h1" variant="h5">
-                            Reload
+                            Reset Password With Emailed Code
                         </Typography>
 
         <Formik
             validationSchema={validationSchema}
             initialValues={{
-                email: getTokenIdentifier(getLocalAccessToken() || '') || '',
+                code: '',
+                password: '',
+                confirmPassword: '',
             }}
             onSubmit = {
                 (values, {setSubmitting}) => {
-                    return authUser({variables: values})
+                    return resetPassword({variables: values})
                         .then(
                             res => {
                                 console.log(res);
                                 setSubmitting(false);
-                                history.push("/reset_password");
-                                enqueueSnackbar("Email sent!");
+                                history.push("/login");
+                                enqueueSnackbar("Password Reset!");
                             },
                             err => {
                                 setSubmitting(false);
-                                enqueueSnackbar('Invalid Login!');
+                                enqueueSnackbar(err.message.split(':')[1]);
                             }
                         )
                         .then(() => {
@@ -120,13 +120,32 @@ const ForgotPassword =  () => {
             render = {
                 ({submitForm, isSubmitting, values, setFieldValue}) => (
                 <Form className={classes.form}>
-                    <Field
-                        name="email"
-                        type="email"
-                        label="Email"
-                        component={TextField}
-                        className={classes.field} />
-                      <br />
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Field
+                                type="text"
+                                label="Password Reset Code (as emailed)"
+                                name="code"
+                                component={TextField}
+                                className={classes.field}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Field
+                                type="password"
+                                label="New Password"
+                                name="password"
+                                component={TextField}
+                                className={classes.field}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Field
+                                type="password"
+                                label="Confirm Password"
+                                name="confirmPassword"
+                                component={TextField}
+                                className={classes.field}/>
+                        </Grid>
+                    </Grid>
                     <Button
                         variant="contained"
                         color="primary"
@@ -134,7 +153,7 @@ const ForgotPassword =  () => {
                         disabled={isSubmitting}
                         onClick={submitForm}
                         className={classes.submit}>
-                        Send Email
+                        Reset Password
                     </Button>
                 </Form>
                 )
@@ -147,4 +166,4 @@ const ForgotPassword =  () => {
                 );
 }
 
-export default ForgotPassword;
+export default PasswordReset;

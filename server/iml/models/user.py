@@ -24,6 +24,9 @@ class PasswordReset(db.Model):
         else:
             self.code = hex(0x100000 +
                             secrets.randbelow(0xffffff-0x100000))[2:]
+        while (PasswordReset.query.filter_by(code=self.code).first()):
+            self.code = hex(0x100000 +
+                            secrets.randbelow(0xffffff-0x100000))[2:]
         if expiration_time:
             self.expiration_time = expiration_time
         else:

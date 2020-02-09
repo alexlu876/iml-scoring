@@ -10,6 +10,8 @@ import {isLoggedIn} from './Auth';
 import AdminPanel from './components/Admin/AdminPanel';
 import ScoreManager from './components/Score/ScoreManager';
 import HomePage from './components/ScoreViewer/HomePage';
+import ForgotPassword from './components/Login/ForgotPassword';
+import PasswordReset from './components/Login/PasswordReset';
 
 const Routes = [
 
@@ -30,6 +32,16 @@ const Routes = [
         icon: AccountCircle,
         isAccessable: () => !isLoggedIn(),
         component: Login
+    },
+    {
+        path: '/forgot_password',
+        isAccessable: () => !isLoggedIn(),
+        component: ForgotPassword,
+    },
+    {
+        path: '/reset_password',
+        isAccessable: () => !isLoggedIn(),
+        component: PasswordReset,
     },
     {
         path: '/signup',
