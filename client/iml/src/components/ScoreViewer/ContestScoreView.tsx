@@ -25,7 +25,7 @@ export const formatData = (data : any) : any => {
                 team: score.team ? score.team.name : 'Unassigned',
                 id: score.teamId,
                 school: score.student.school.name,
-                schoolId: score.student.schoolId
+                schoolId: score.student.school.id
             });
             teamIndex = formattedDataTeam.length-1;
         }
@@ -35,6 +35,7 @@ export const formatData = (data : any) : any => {
                 id: score.studentId,
                 first: score.student.first,
                 school: score.student.school.name,
+				schoolId: score.student.school.id, 
                 team: score.team ? score.team.name : '',
                 last: score.student.last,
             });
